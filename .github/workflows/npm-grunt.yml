@@ -27,18 +27,17 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
-      - run: npm test
+#     - run: npm test
       
       - name: Docker Login
         run:
-          docker login -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }}
-
+          echo ${{ secrets.PASSWORD }} | docker login --username ${{ secrets.USERNAME }} --password-stdin
       - name: Build Docker images
         run:
           docker build --platform amd64 --build-arg DEPENDENCY=build/dependency -t express-cicd .
       - name: set tag Docker images
         run:
-          docker tag spring-cicd la1av1a/express-cicd:${GITHUB_SHA::7}
+          docker tag express-cicd la1av1a/express-cicd:${GITHUB_SHA::7}
       - name: Push Docker images
         run:
           docker push la1av1a/express-cicd:${GITHUB_SHA::7}

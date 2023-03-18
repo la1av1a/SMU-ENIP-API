@@ -1,4 +1,4 @@
-package com.smu.smuenip;
+package com.smu.smuenip.user.application;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HealthCheck {
 
+
     @GetMapping("/health")
-    private HttpStatus healthCheck(){
+    private HttpStatus healthCheck() {
         return HttpStatus.OK;
     }
 }

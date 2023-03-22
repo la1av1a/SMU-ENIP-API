@@ -13,6 +13,7 @@ import com.smu.smuenip.user.application.enums.MessagesSuccess;
 import com.smu.smuenip.user.domain.model.Users;
 import com.smu.smuenip.user.domain.repository.UserRepository;
 import com.smu.smuenip.user.domain.repository.UsersAuthRepository;
+import io.jsonwebtoken.Jwts;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -77,6 +78,12 @@ class UserControllerTest {
         Assertions.assertThat(failMessage).isEqualTo(MessagesFail.USER_EXISTS);
 
         assertUserAndAuthExist(userOptional);
+    }
+
+    @Test
+    void loginTest() {
+        //given
+        Jwts.builder();
     }
 
     private void assertUserAndAuthExist(Optional<Users> userOptional) {

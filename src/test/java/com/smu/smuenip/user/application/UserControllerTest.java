@@ -8,8 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smu.smuenip.user.application.dto.UserRequestDto;
 import com.smu.smuenip.user.application.enums.Messages;
-import com.smu.smuenip.user.application.enums.MessagesFail;
-import com.smu.smuenip.user.application.enums.MessagesSuccess;
+import com.smu.smuenip.user.application.enums.meesagesDetail.MessagesFail;
+import com.smu.smuenip.user.application.enums.meesagesDetail.MessagesSuccess;
 import com.smu.smuenip.user.domain.model.Users;
 import com.smu.smuenip.user.domain.repository.UserRepository;
 import com.smu.smuenip.user.domain.repository.UsersAuthRepository;

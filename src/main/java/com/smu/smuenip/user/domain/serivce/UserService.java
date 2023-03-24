@@ -5,7 +5,7 @@ import com.smu.smuenip.infra.config.jwt.JwtProvider;
 import com.smu.smuenip.infra.config.jwt.Subject;
 import com.smu.smuenip.user.application.dto.UserLoginRequestDto;
 import com.smu.smuenip.user.application.dto.UserRequestDto;
-import com.smu.smuenip.user.application.enums.MessagesFail;
+import com.smu.smuenip.user.application.enums.meesagesDetail.MessagesFail;
 import com.smu.smuenip.user.domain.enums.Provider;
 import com.smu.smuenip.user.domain.model.Users;
 import com.smu.smuenip.user.domain.model.UsersAuth;

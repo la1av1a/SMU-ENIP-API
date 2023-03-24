@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class UserControllerTest {
+class LoginControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

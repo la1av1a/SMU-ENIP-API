@@ -15,6 +15,12 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    private final String[] swaggerURL = {
+        "/v3/api-docs", "/configuration/ui",
+        "/swagger-resources", "/configuration/security",
+        "/swagger-ui.html", "/webjars/**", "/swagger/**"
+    };
+
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
@@ -24,6 +30,7 @@ public class SecurityConfig {
             .httpBasic().disable()
             .formLogin().disable()
             .authorizeRequests()
+            .antMatchers(swaggerURL).permitAll()
             .anyRequest().permitAll()
             .and()
             .sessionManagement()

@@ -17,15 +17,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RequestMapping("/user")
 @RequiredArgsConstructor
 @RestController
-public class UserController {
+public class LoginController implements LoginControllerSwagger {
 
     private final UserService userService;
 
     @PostMapping("/signUp")
-    private ResponseEntity<Messages> signUp(@RequestBody UserRequestDto requestDto) {
+    public ResponseEntity<Messages> signUp(@RequestBody UserRequestDto requestDto) {
         boolean isSuccess = userService.createUser(requestDto);
 
         if (isSuccess) {
@@ -35,13 +36,15 @@ public class UserController {
         return new ResponseEntity<>(MessagesFail.USER_EXISTS, HttpStatus.CONFLICT);
     }
 
+
     @PostMapping("/login")
-    private String login(@RequestBody UserLoginRequestDto requestDto) {
+    public String login(@RequestBody UserLoginRequestDto requestDto) {
         return userService.login(requestDto);
     }
 
+
     @GetMapping("/loginTest")
-    private String loginTest(@AuthenticationPrincipal CustomUserDetails user) {
+    public String loginTest(@AuthenticationPrincipal CustomUserDetails user) {
         return user.getUserId();
     }
 

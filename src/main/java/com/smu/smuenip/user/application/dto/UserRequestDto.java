@@ -1,10 +1,8 @@
 package com.smu.smuenip.user.application.dto;
 
 import java.time.LocalDate;
-import lombok.Builder;
 import lombok.Getter;
 
-@Builder
 @Getter
 public class UserRequestDto {
 

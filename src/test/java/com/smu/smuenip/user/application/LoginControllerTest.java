@@ -6,13 +6,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smu.smuenip.user.application.dto.UserRequestDto;
-import com.smu.smuenip.user.application.enums.Messages;
-import com.smu.smuenip.user.application.enums.meesagesDetail.MessagesFail;
-import com.smu.smuenip.user.application.enums.meesagesDetail.MessagesSuccess;
-import com.smu.smuenip.user.domain.model.Users;
-import com.smu.smuenip.user.domain.repository.UserRepository;
-import com.smu.smuenip.user.domain.repository.UsersAuthRepository;
+import com.smu.smuenip.application.user.dto.UserRequestDto;
+import com.smu.smuenip.enums.Messages;
+import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
+import com.smu.smuenip.enums.meesagesDetail.MessagesSuccess;
+import com.smu.smuenip.domain.user.model.User;
+import com.smu.smuenip.domain.user.repository.UserRepository;
+import com.smu.smuenip.domain.user.repository.UserAuthRepository;
 import io.jsonwebtoken.Jwts;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
@@ -40,7 +40,7 @@ class LoginControllerTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private UsersAuthRepository usersAuthRepository;
+    private UserAuthRepository userAuthRepository;
 
     @Test
     void signUpTest() throws Exception {
@@ -70,7 +70,7 @@ class LoginControllerTest {
         String responseFailString = resultFail.getResponse().getContentAsString();
         Messages successMessage = objectMapper.readValue(responseString, MessagesSuccess.class);
         Messages failMessage = objectMapper.readValue(responseFailString, MessagesFail.class);
-        Optional<Users> userOptional = userRepository.findUserByUserId(userRequestDto.getUserId());
+        Optional<User> userOptional = userRepository.findUserByUserId(userRequestDto.getUserId());
 
         // then
 
@@ -86,8 +86,8 @@ class LoginControllerTest {
         Jwts.builder();
     }
 
-    private void assertUserAndAuthExist(Optional<Users> userOptional) {
-        userOptional.map(user -> usersAuthRepository.findUsersAuthsByUser(user))
+    private void assertUserAndAuthExist(Optional<User> userOptional) {
+        userOptional.map(user -> userAuthRepository.findUsersAuthsByUser(user))
             .ifPresentOrElse(
                 usersAuthOptional -> usersAuthOptional.ifPresentOrElse(
                     usersAuth -> assertTrue(true),

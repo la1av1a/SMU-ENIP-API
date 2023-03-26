@@ -2,7 +2,6 @@ package com.smu.smuenip.Infrastructure.config.redis;
 
 import com.smu.smuenip.Infrastructure.config.jwt.Subject;
 import com.smu.smuenip.domain.auth.service.JwtService;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -32,12 +31,12 @@ class TokenInfoRepositoryTest {
         String refreshToken = jwtService.createToken(Subject.rtk(5L, userId, email, role));
         TokenInfo tokenInfo = TokenInfo.builder()
             .id(null)
-            .userId(userId)
+            .loginId(userId)
             .email(email)
             .accessToken(accessToken)
             .refreshToken(refreshToken)
-            .accessTokenExpiration(Instant.now())
-            .refreshTokenExpiration(Instant.now())
+            .accessTokenExpiration(1342141412L)
+            .refreshTokenExpiration(66934140124L)
             .build();
 
         //when
@@ -52,7 +51,6 @@ class TokenInfoRepositoryTest {
                 TokenInfo getTokenInfo = tokenInfoOpt.get();
                 Assertions.assertThat(getTokenInfo.getEmail()).isEqualTo(email);
                 Assertions.assertThat(getTokenInfo.getAccessToken()).isEqualTo(accessToken);
-                Assertions.assertThat(getTokenInfo.getRoles().get)
             });
     }
 }

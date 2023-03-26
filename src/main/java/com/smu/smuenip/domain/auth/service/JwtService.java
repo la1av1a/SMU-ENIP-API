@@ -4,8 +4,8 @@ import com.smu.smuenip.Infrastructure.config.exception.BadRequestException;
 import com.smu.smuenip.Infrastructure.config.exception.UnauthorizedException;
 import com.smu.smuenip.Infrastructure.config.jwt.JwtProvider;
 import com.smu.smuenip.Infrastructure.config.jwt.Subject;
-import com.smu.smuenip.domain.user.model.User;
-import com.smu.smuenip.domain.user.repository.UserRepository;
+import com.smu.smuenip.Infrastructure.config.redis.TokenInfo;
+import com.smu.smuenip.Infrastructure.config.redis.TokenInfoRepository;
 import com.smu.smuenip.enums.TokenType;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
 import io.jsonwebtoken.Claims;
@@ -23,12 +23,14 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class JwtService {
 
-    private final UserRepository userRepository;
+    private final TokenInfoRepository tokenInfoRepository;
     private final JwtProvider jwtProvider;
 
     public String createToken(Subject subject) {
@@ -53,7 +55,7 @@ public class JwtService {
         Subject subject = extractUserInfoFromClaims(claims);
         Collection<GrantedAuthority> authorities = subject.getAuthorities();
 
-        User principal = findUserById(subject.getId());
+        TokenInfo principal = findTokenInfoById(subject.getId());
 
         return new UsernamePasswordAuthenticationToken(principal, null, authorities);
     }
@@ -87,8 +89,8 @@ public class JwtService {
             .build();
     }
 
-    private User findUserById(Long id) {
-        return userRepository.findUserById(id)
+    private TokenInfo findTokenInfoById(Long id) {
+        return tokenInfoRepository.findById(Long.toString(id))
             .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
     }
 
@@ -118,5 +120,9 @@ public class JwtService {
             log.warn(e.toString());
             return false;
         }
+    }
+
+    public Long getTokenLive(TokenType tokenType) {
+        return jwtProvider.getTokenLive(tokenType);
     }
 }

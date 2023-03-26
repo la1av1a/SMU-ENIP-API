@@ -1,9 +1,9 @@
 package com.smu.smuenip.application.auth.controller;
 
+import com.smu.smuenip.Infrastructure.config.redis.TokenInfo;
 import com.smu.smuenip.application.auth.dto.TokenResponse;
 import com.smu.smuenip.application.auth.dto.UserLoginRequestDto;
 import com.smu.smuenip.application.auth.dto.UserRequestDto;
-import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.enums.Messages;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,5 +21,5 @@ public interface LoginControllerSwagger {
     ResponseEntity<TokenResponse> login(@RequestBody UserLoginRequestDto requestDto);
 
     @ApiOperation(value = "로그인 테스트", notes = "로그인된 사용자 정보 리턴되어야함")
-    String loginTest(@AuthenticationPrincipal User user);
+    String loginTest(@AuthenticationPrincipal TokenInfo user);
 }

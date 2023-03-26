@@ -2,6 +2,8 @@ package com.smu.smuenip.domain.auth.service;
 
 import com.smu.smuenip.Infrastructure.config.exception.BadRequestException;
 import com.smu.smuenip.Infrastructure.config.jwt.Subject;
+import com.smu.smuenip.Infrastructure.config.redis.TokenInfo;
+import com.smu.smuenip.Infrastructure.config.redis.TokenInfoRepository;
 import com.smu.smuenip.application.auth.dto.TokenResponse;
 import com.smu.smuenip.application.auth.dto.UserLoginRequestDto;
 import com.smu.smuenip.application.auth.dto.UserRequestDto;
@@ -13,6 +15,7 @@ import com.smu.smuenip.domain.user.repository.UserAuthRepository;
 import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.domain.user.serivce.PasswordEncoderService;
 import com.smu.smuenip.enums.Provider;
+import com.smu.smuenip.enums.TokenType;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
 import java.util.Collection;
 import java.util.NoSuchElementException;
@@ -33,6 +36,7 @@ public class UserAuthService {
     private final JwtService jwtService;
 
     private final RoleRepository roleRepository;
+    private final TokenInfoRepository tokenInfoRepository;
 
     @Transactional
     public void createUser(UserRequestDto requestDto) {
@@ -55,9 +59,24 @@ public class UserAuthService {
             userAuth.getPassword())) {
             throw new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage());
         }
-        
-        return createTokens(user.getId(), user.getLoginId(), user.getEmail(),
+
+        TokenResponse token = createTokens(user.getId(), user.getLoginId(), user.getEmail(),
             user.getAuthorities());
+
+        TokenInfo tokenInfo = TokenInfo.builder()
+            .id(Long.toString(user.getId()))
+            .loginId(user.getLoginId())
+            .email(user.getEmail())
+            .roles(user.getRoles())
+            .accessTokenExpiration(jwtService.getTokenLive(TokenType.ATK))
+            .refreshTokenExpiration(jwtService.getTokenLive(TokenType.RTK))
+            .accessToken(token.getAccessToken())
+            .refreshToken(token.getRefreshToken())
+            .build();
+
+        tokenInfoRepository.save(tokenInfo);
+
+        return token;
     }
 
     private User findUserByUserId(String loginId) {

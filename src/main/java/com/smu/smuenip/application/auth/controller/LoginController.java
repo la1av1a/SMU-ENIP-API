@@ -1,10 +1,10 @@
 package com.smu.smuenip.application.auth.controller;
 
-import com.smu.smuenip.Infrastructure.config.filters.CustomUserDetails;
 import com.smu.smuenip.application.auth.dto.TokenResponse;
 import com.smu.smuenip.application.auth.dto.UserLoginRequestDto;
 import com.smu.smuenip.application.auth.dto.UserRequestDto;
 import com.smu.smuenip.domain.auth.service.UserAuthService;
+import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.enums.Messages;
 import com.smu.smuenip.enums.meesagesDetail.MessagesSuccess;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +44,7 @@ public class LoginController implements LoginControllerSwagger {
 
     @Override
     @GetMapping("/loginTest")
-    public String loginTest(@AuthenticationPrincipal CustomUserDetails user) {
+    public String loginTest(@AuthenticationPrincipal User user) {
         return user.getUserId();
     }
 

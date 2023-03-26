@@ -31,6 +31,7 @@ public class SecurityConfig {
             .formLogin().disable()
             .authorizeRequests()
             .antMatchers(swaggerURL).permitAll()
+            .antMatchers("/user/loginTest").authenticated()
             .anyRequest().permitAll()
             .and()
             .sessionManagement()

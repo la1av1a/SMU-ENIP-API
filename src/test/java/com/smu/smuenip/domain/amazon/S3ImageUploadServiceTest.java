@@ -17,7 +17,5 @@ class S3ImageUploadServiceTest {
         when(s3ClientMock.putObject(any(PutObjectRequest.class))).thenReturn(
             mock(PutObjectResult.class));
 
-        FileUploadSer
-
     }
 }

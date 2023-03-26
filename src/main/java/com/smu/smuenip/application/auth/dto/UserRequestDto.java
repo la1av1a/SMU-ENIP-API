@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserRequestDto {
 
-    private String userId;
+    private String loginId;
     private String password;
     private String phoneNumber;
     private String email;
@@ -18,9 +18,9 @@ public class UserRequestDto {
     private LocalDate birth;
 
     @Builder
-    public UserRequestDto(String userId, String password, String phoneNumber, String email,
+    public UserRequestDto(String loginId, String password, String phoneNumber, String email,
         LocalDate birth) {
-        this.userId = userId;
+        this.loginId = loginId;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.email = email;

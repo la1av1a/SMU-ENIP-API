@@ -17,11 +17,14 @@ import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class UserAuthService {
 
     private final UserRepository userRepository;
@@ -33,7 +36,7 @@ public class UserAuthService {
 
     @Transactional
     public void createUser(UserRequestDto requestDto) {
-        if (userRepository.existsUsersByUserId(requestDto.getUserId())) {
+        if (userRepository.existsUsersByLoginId(requestDto.getLoginId())) {
             throw new BadRequestException(MessagesFail.USER_EXISTS.getMessage());
         }
 
@@ -45,26 +48,30 @@ public class UserAuthService {
 
     @Transactional(readOnly = true)
     public TokenResponse login(UserLoginRequestDto requestDto) {
-        User user = findUserByUserId(requestDto.getUserId());
+
+        User user = findUserByUserId(requestDto.getLoginId());
         UserAuth userAuth = findUserByUser(user);
         if (!passwordEncoderService.matchPassword(requestDto.getPassword(),
             userAuth.getPassword())) {
             throw new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage());
         }
-
+        
         return createTokens(user.getId(), user.getLoginId(), user.getEmail(),
             user.getAuthorities());
     }
 
-    private User findUserByUserId(String userId) {
-        return userRepository.findUserByUserId(userId)
+    private User findUserByUserId(String loginId) {
+        return userRepository.findUserByLoginId(loginId)
             .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
     }
 
     private User createUserEntity(UserRequestDto requestDto) {
+        Role role = findRoleByName("ROLE_USER");
+
         return User.builder()
-            .loginId(requestDto.getUserId())
+            .loginId(requestDto.getLoginId())
             .email(requestDto.getEmail())
+            .role(role)
             .build();
     }
 
@@ -96,7 +103,7 @@ public class UserAuthService {
     }
 
     private TokenResponse createTokens(Long id, String userId, String email,
-        Collection<Role> authorities) {
+        Collection<GrantedAuthority> authorities) {
 
         String atk = jwtService.createToken(Subject.atk(id, userId, email, authorities));
         String rfk = jwtService.createToken(Subject.rtk(id, userId, email, authorities));

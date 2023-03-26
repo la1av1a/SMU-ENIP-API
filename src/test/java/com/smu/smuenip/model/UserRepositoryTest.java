@@ -27,10 +27,10 @@ class UserRepositoryTest {
     void userSaveTest() {
         //given
 
-        String userId = "test1234";
+        String loginId = "test1234";
 
         User user = User.builder()
-            .userId(userId)
+            .loginId(loginId)
             .email("test1234@gmail.com")
 
             .build();
@@ -38,10 +38,10 @@ class UserRepositoryTest {
         //when
         userRepository.save(user);
 
-        User expect = userRepository.findUserByUserId(userId)
+        User expect = userRepository.findUserByLoginId(loginId)
             .orElseThrow(NoSuchElementException::new);
 
         //then
-        Assertions.assertThat(expect.getLoginId()).isEqualTo(userId);
+        Assertions.assertThat(expect.getLoginId()).isEqualTo(loginId);
     }
 }

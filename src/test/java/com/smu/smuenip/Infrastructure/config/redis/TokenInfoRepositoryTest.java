@@ -3,11 +3,15 @@ package com.smu.smuenip.Infrastructure.config.redis;
 import com.smu.smuenip.Infrastructure.config.jwt.Subject;
 import com.smu.smuenip.domain.auth.service.JwtService;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @SpringBootTest
 class TokenInfoRepositoryTest {
@@ -22,7 +26,8 @@ class TokenInfoRepositoryTest {
         //given
         String userId = "test1234";
         String email = "test1234@gmail.com";
-        Role role = Role.ROLE_USER;
+        Collection<GrantedAuthority> role = new ArrayList<>();
+        role.add(new SimpleGrantedAuthority("ROLE_USER"));
         String accessToken = jwtService.createToken(Subject.atk(5L, userId, email, role));
         String refreshToken = jwtService.createToken(Subject.rtk(5L, userId, email, role));
         TokenInfo tokenInfo = TokenInfo.builder()
@@ -47,6 +52,7 @@ class TokenInfoRepositoryTest {
                 TokenInfo getTokenInfo = tokenInfoOpt.get();
                 Assertions.assertThat(getTokenInfo.getEmail()).isEqualTo(email);
                 Assertions.assertThat(getTokenInfo.getAccessToken()).isEqualTo(accessToken);
+                Assertions.assertThat(getTokenInfo.getRoles().get)
             });
     }
 }

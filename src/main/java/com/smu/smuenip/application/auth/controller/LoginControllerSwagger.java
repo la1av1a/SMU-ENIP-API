@@ -1,8 +1,9 @@
-package com.smu.smuenip.application.user;
+package com.smu.smuenip.application.auth.controller;
 
-import com.smu.smuenip.Infrastructure.config.security.filters.CustomUserDetails;
-import com.smu.smuenip.application.user.dto.UserLoginRequestDto;
-import com.smu.smuenip.application.user.dto.UserRequestDto;
+import com.smu.smuenip.Infrastructure.config.filters.CustomUserDetails;
+import com.smu.smuenip.application.auth.dto.TokenResponse;
+import com.smu.smuenip.application.auth.dto.UserLoginRequestDto;
+import com.smu.smuenip.application.auth.dto.UserRequestDto;
 import com.smu.smuenip.enums.Messages;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,7 +18,7 @@ public interface LoginControllerSwagger {
     ResponseEntity<Messages> signUp(@RequestBody UserRequestDto requestDto);
 
     @ApiOperation(value = "로그인", notes = "사용자 ID로 사용자 정보를 조회합니다?")
-    String login(@RequestBody UserLoginRequestDto requestDto);
+    ResponseEntity<TokenResponse> login(@RequestBody UserLoginRequestDto requestDto);
 
     @ApiOperation(value = "로그인 테스트", notes = "로그인된 사용자 정보 리턴되어야함")
     String loginTest(@AuthenticationPrincipal CustomUserDetails user);

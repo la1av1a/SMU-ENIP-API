@@ -1,12 +1,12 @@
-package com.smu.smuenip.application.user;
+package com.smu.smuenip.application.auth.controller;
 
-import com.smu.smuenip.Infrastructure.config.security.filters.CustomUserDetails;
-import com.smu.smuenip.application.user.dto.UserLoginRequestDto;
-import com.smu.smuenip.application.user.dto.UserRequestDto;
+import com.smu.smuenip.Infrastructure.config.filters.CustomUserDetails;
+import com.smu.smuenip.application.auth.dto.TokenResponse;
+import com.smu.smuenip.application.auth.dto.UserLoginRequestDto;
+import com.smu.smuenip.application.auth.dto.UserRequestDto;
+import com.smu.smuenip.domain.auth.service.UserAuthService;
 import com.smu.smuenip.enums.Messages;
-import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
 import com.smu.smuenip.enums.meesagesDetail.MessagesSuccess;
-import com.smu.smuenip.domain.user.serivce.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,26 +23,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LoginController implements LoginControllerSwagger {
 
-    private final UserService userService;
+    private final UserAuthService userAuthService;
 
+    @Override
     @PostMapping("/signUp")
     public ResponseEntity<Messages> signUp(@RequestBody UserRequestDto requestDto) {
-        boolean isSuccess = userService.createUser(requestDto);
+        userAuthService.createUser(requestDto);
 
-        if (isSuccess) {
-            return new ResponseEntity<>(MessagesSuccess.SIGNUP_SUCCESS, HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(MessagesFail.USER_EXISTS, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(MessagesSuccess.SIGNUP_SUCCESS, HttpStatus.OK);
     }
 
 
+    @Override
     @PostMapping("/login")
-    public String login(@RequestBody UserLoginRequestDto requestDto) {
-        return userService.login(requestDto);
+    public ResponseEntity<TokenResponse> login(@RequestBody UserLoginRequestDto requestDto) {
+        TokenResponse tokenResponse = userAuthService.login(requestDto);
+
+        return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
     }
 
-
+    @Override
     @GetMapping("/loginTest")
     public String loginTest(@AuthenticationPrincipal CustomUserDetails user) {
         return user.getUserId();

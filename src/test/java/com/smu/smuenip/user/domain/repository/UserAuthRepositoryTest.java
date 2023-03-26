@@ -1,11 +1,11 @@
 package com.smu.smuenip.user.domain.repository;
 
 import com.smu.smuenip.Infrastructure.config.security.BCryptPasswordEncoderConfig;
-import com.smu.smuenip.enums.Provider;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.model.UserAuth;
-import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.domain.user.repository.UserAuthRepository;
+import com.smu.smuenip.domain.user.repository.UserRepository;
+import com.smu.smuenip.enums.Provider;
 import java.util.NoSuchElementException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,7 +63,7 @@ class UserAuthRepositoryTest {
 
         //then
         Assertions.assertThat(user.getEmail()).isEqualTo(email);
-        Assertions.assertThat(userAuth.getUser().getUserId()).isEqualTo(userId);
+        Assertions.assertThat(userAuth.getUser().getLoginId()).isEqualTo(userId);
         Assertions.assertThat(passwordEncoder.matches(password, userAuth.getPassword())).isTrue();
     }
 }

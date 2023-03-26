@@ -1,9 +1,8 @@
-package com.smu.smuenip.Infrastructure.config.security.filters;
+package com.smu.smuenip.Infrastructure.config.filters;
 
 import java.util.Collection;
 import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class CustomUserDetails implements UserDetails {
@@ -11,7 +10,7 @@ public class CustomUserDetails implements UserDetails {
     private Long id;
     private String userId;
     private String email;
-    private Collection<SimpleGrantedAuthority> authorities;
+    private Collection<GrantedAuthority> authorities;
 
     /**
      * 해당 유저의 권한 목록
@@ -60,7 +59,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Builder
     public CustomUserDetails(Long id, String userId, String email,
-        Collection<SimpleGrantedAuthority> authorities) {
+        Collection<GrantedAuthority> authorities) {
         this.id = id;
         this.userId = userId;
         this.email = email;

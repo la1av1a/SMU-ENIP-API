@@ -3,7 +3,7 @@ package com.smu.smuenip.enums;
 import lombok.Getter;
 
 @Getter
-public enum Role {
+public enum TokenType {
 
-    ROLE_ADMIN, ROLE_USER
+    ATK, RTK
 }

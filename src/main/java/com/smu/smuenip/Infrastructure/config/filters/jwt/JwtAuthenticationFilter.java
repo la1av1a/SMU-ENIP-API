@@ -1,6 +1,6 @@
-package com.smu.smuenip.Infrastructure.config.security.filters;
+package com.smu.smuenip.Infrastructure.config.filters.jwt;
 
-import com.smu.smuenip.Infrastructure.config.jwt.JwtProvider;
+import com.smu.smuenip.domain.auth.service.JwtService;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -19,7 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Configuration
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtProvider jwtProvider;
+    private final JwtService jwtService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -27,8 +27,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String jwt = getJwtFromRequest(request);
-            if (StringUtils.hasText(jwt) && jwtProvider.validateToken(jwt)) {
-                Authentication authentication = jwtProvider.getAuthentication(jwt);
+            if (StringUtils.hasText(jwt) && jwtService.validateToken(jwt)) {
+                Authentication authentication = jwtService.getAuthentication(jwt);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception ex) {

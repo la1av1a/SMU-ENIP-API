@@ -1,16 +1,20 @@
-package com.smu.smuenip.application.user.dto;
+package com.smu.smuenip.application.auth.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class UserRequestDto {
 
     private String userId;
     private String password;
     private String phoneNumber;
     private String email;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birth;
 
     @Builder

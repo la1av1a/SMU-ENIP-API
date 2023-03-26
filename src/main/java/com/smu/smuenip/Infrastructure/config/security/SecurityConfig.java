@@ -1,6 +1,6 @@
 package com.smu.smuenip.Infrastructure.config.security;
 
-import com.smu.smuenip.Infrastructure.config.security.filters.JwtAuthenticationFilter;
+import com.smu.smuenip.Infrastructure.config.filters.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

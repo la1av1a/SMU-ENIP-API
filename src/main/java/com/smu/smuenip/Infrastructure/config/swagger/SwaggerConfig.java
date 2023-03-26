@@ -1,4 +1,4 @@
-package com.smu.smuenip.Infrastructure.config;
+package com.smu.smuenip.Infrastructure.config.swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

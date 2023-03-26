@@ -1,4 +1,4 @@
-package com.smu.smuenip.application.user.dto;
+package com.smu.smuenip.application.auth.dto;
 
 import lombok.Getter;
 import lombok.Setter;

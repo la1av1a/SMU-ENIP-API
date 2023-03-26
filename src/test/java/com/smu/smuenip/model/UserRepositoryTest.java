@@ -42,6 +42,6 @@ class UserRepositoryTest {
             .orElseThrow(NoSuchElementException::new);
 
         //then
-        Assertions.assertThat(expect.getUserId()).isEqualTo(userId);
+        Assertions.assertThat(expect.getLoginId()).isEqualTo(userId);
     }
 }

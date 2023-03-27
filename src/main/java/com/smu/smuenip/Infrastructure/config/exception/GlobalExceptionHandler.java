@@ -17,4 +17,12 @@ public class GlobalExceptionHandler {
         responseHeaders.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(e.getMessage(), responseHeaders, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(UnAuthorizedException.class)
+    public ResponseEntity<String> handleUnAuthorizedException(UnAuthorizedException e) {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>(e.getMessage(), responseHeaders, HttpStatus.UNAUTHORIZED);
+    }
+
 }

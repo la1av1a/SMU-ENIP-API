@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,13 +31,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class UserAuthService {
 
-    private final UserRepository userRepository;
     private final UserAuthRepository userAuthRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoderService passwordEncoderService;
     private final JwtService jwtService;
-
-    private final RoleRepository roleRepository;
     private final TokenInfoRepository tokenInfoRepository;
+    private final RoleRepository roleRepository;
 
     @Transactional
     public void createUser(UserRequestDto requestDto) {
@@ -48,6 +48,20 @@ public class UserAuthService {
         UserAuth userAuth = createUsersAuthEntity(user, requestDto);
         saveUser(user);
         saveUsersAuth(userAuth);
+    }
+
+    public String getAccessToken(TokenInfo tokenInfo) {
+
+        String accessToken = jwtService.createToken(
+            Subject.atk(
+                Long.valueOf(tokenInfo.getId()),
+                tokenInfo.getLoginId(),
+                tokenInfo.getEmail(),
+                tokenInfo.getAuthorities())
+        );
+
+        tokenInfo.setAccessToken(accessToken);
+        return accessToken;
     }
 
     @Transactional(readOnly = true)
@@ -72,6 +86,7 @@ public class UserAuthService {
             .refreshTokenExpiration(jwtService.getTokenLive(TokenType.RTK))
             .accessToken(token.getAccessToken())
             .refreshToken(token.getRefreshToken())
+            .createdAt(DateTime.now())
             .build();
 
         tokenInfoRepository.save(tokenInfo);
@@ -79,20 +94,6 @@ public class UserAuthService {
         return token;
     }
 
-    private User findUserByUserId(String loginId) {
-        return userRepository.findUserByLoginId(loginId)
-            .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
-    }
-
-    private User createUserEntity(UserRequestDto requestDto) {
-        Role role = findRoleByName("ROLE_USER");
-
-        return User.builder()
-            .loginId(requestDto.getLoginId())
-            .email(requestDto.getEmail())
-            .role(role)
-            .build();
-    }
 
     private UserAuth createUsersAuthEntity(User user, UserRequestDto requestDto) {
         return UserAuth.builder()
@@ -105,16 +106,6 @@ public class UserAuthService {
 
     private String removeHyphensFromPhoneNumber(String phoneNumber) {
         return phoneNumber.replaceAll("-", "");
-    }
-
-
-    private UserAuth findUserByUser(User user) {
-        return userAuthRepository.findUsersAuthsByUser(user)
-            .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
-    }
-
-    private void saveUser(User user) {
-        userRepository.save(user);
     }
 
     private void saveUsersAuth(UserAuth userAuth) {
@@ -133,8 +124,33 @@ public class UserAuthService {
             .build();
     }
 
-    private Role findRoleByName(String name) {
-        return roleRepository.findRoleByName(name).orElseThrow(NoSuchElementException::new);
+    private User createUserEntity(UserRequestDto requestDto) {
+        Role role = findRoleByName("ROLE_USER");
+
+        return User.builder()
+            .loginId(requestDto.getLoginId())
+            .email(requestDto.getEmail())
+            .role(role)
+            .build();
     }
 
+
+    private void saveUser(User user) {
+        userRepository.save(user);
+    }
+
+    private UserAuth findUserByUser(User user) {
+        return userAuthRepository.findUsersAuthsByUser(user)
+            .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
+    }
+
+    private User findUserByUserId(String loginId) {
+        return userRepository.findUserByLoginId(loginId)
+            .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
+    }
+
+    private Role findRoleByName(String name) {
+        return roleRepository.findRoleByName(name)
+            .orElseThrow(() -> new NoSuchElementException("없는 역할 입니다"));
+    }
 }

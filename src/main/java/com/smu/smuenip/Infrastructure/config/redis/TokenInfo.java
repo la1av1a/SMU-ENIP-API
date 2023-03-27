@@ -3,6 +3,7 @@ package com.smu.smuenip.Infrastructure.config.redis;
 import com.smu.smuenip.domain.user.model.Role;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Id;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
-@RedisHash("token")
+@RedisHash(value = "token", timeToLive = (3600L * 24 * 7))
 public class TokenInfo implements UserDetails {
 
     @Id
@@ -26,12 +27,14 @@ public class TokenInfo implements UserDetails {
     private Collection<Role> roles = new ArrayList<>();
     private Long accessTokenExpiration;
     private Long refreshTokenExpiration;
+    private Date createdAt;
 
     @Builder
     public TokenInfo(String id, String loginId, String email, String accessToken,
         String refreshToken,
         Long accessTokenExpiration, Long refreshTokenExpiration,
-        Collection<Role> roles
+        Collection<Role> roles,
+        Date createdAt
     ) {
         this.id = id;
         this.loginId = loginId;
@@ -41,6 +44,15 @@ public class TokenInfo implements UserDetails {
         this.accessTokenExpiration = accessTokenExpiration;
         this.refreshTokenExpiration = refreshTokenExpiration;
         this.roles = roles;
+        this.createdAt = createdAt;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     @Override

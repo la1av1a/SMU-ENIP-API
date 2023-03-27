@@ -1,7 +1,7 @@
 package com.smu.smuenip.domain.auth.service;
 
 import com.smu.smuenip.Infrastructure.config.exception.BadRequestException;
-import com.smu.smuenip.Infrastructure.config.exception.UnauthorizedException;
+import com.smu.smuenip.Infrastructure.config.exception.UnAuthorizedException;
 import com.smu.smuenip.Infrastructure.config.jwt.JwtProvider;
 import com.smu.smuenip.Infrastructure.config.jwt.Subject;
 import com.smu.smuenip.Infrastructure.config.redis.TokenInfo;
@@ -9,11 +9,15 @@ import com.smu.smuenip.Infrastructure.config.redis.TokenInfoRepository;
 import com.smu.smuenip.enums.TokenType;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -94,32 +98,34 @@ public class JwtService {
             .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
     }
 
-//    private Collection<GrantedAuthority> createAuthorities(List<String> authoritiesList) {
-//        List<GrantedAuthority> authorities = new ArrayList<>();
-//        for (String authority : authoritiesList) {
-//            authorities.add(new SimpleGrantedAuthority(authority));
-//        }
-//
-//        return authorities;
-//    }
-
     private void checkAuthorities(Claims claims) {
         if (claims.get("authorities") == null) {
-            throw new UnauthorizedException(MessagesFail.UNAUTHORIZED.getMessage());
+            throw new UnAuthorizedException("클레임이 존재하지 않습니다 클레임 : authorities");
         }
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder()
+            Claims claims = (Claims) Jwts.parserBuilder()
                 .setSigningKey(jwtProvider.getSecretKey())
                 .build()
                 .parseClaimsJws(token);
-            return true;
+
+            Optional<TokenInfo> tokenInfo = tokenInfoRepository.findById(claims.getId());
+            if (!tokenInfo.isPresent()) {
+                throw new UnAuthorizedException("만료된 토큰입니다");
+            } else if (tokenInfo.get().getCreatedAt() != claims.getIssuedAt()) {
+                throw new UnAuthorizedException("유효하지 않은 토큰입니다");
+            }
+
+        } catch (SignatureException | MalformedJwtException e) {
+            throw new UnAuthorizedException("유효하지 않은 토큰입니다");
+        } catch (ExpiredJwtException e) {
+            throw new UnAuthorizedException("만료된 토큰입니다");
         } catch (JwtException e) {
-            log.warn(e.toString());
-            return false;
+            throw new UnAuthorizedException("JWT 검증 중 예기치 않은 오류가 발생했습니다");
         }
+        return true;
     }
 
     public Long getTokenLive(TokenType tokenType) {

@@ -10,6 +10,7 @@ import com.smu.smuenip.enums.TokenType;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -106,20 +107,20 @@ public class JwtService {
 
     public boolean validateToken(String token) {
         try {
-            Claims claims = (Claims) Jwts.parserBuilder()
+            Jws<Claims> claims = Jwts.parserBuilder()
                 .setSigningKey(jwtProvider.getSecretKey())
                 .build()
                 .parseClaimsJws(token);
-
-            Optional<TokenInfo> tokenInfo = tokenInfoRepository.findById(claims.getId());
+            System.out.println(claims.getBody().getSubject());
+            System.out.println(claims.getBody().getIssuedAt());
+            Optional<TokenInfo> tokenInfo = tokenInfoRepository.findById(
+                claims.getBody().getSubject());
             if (!tokenInfo.isPresent()) {
                 throw new UnAuthorizedException("만료된 토큰입니다");
-            } else if (tokenInfo.get().getCreatedAt() != claims.getIssuedAt()) {
-                throw new UnAuthorizedException("유효하지 않은 토큰입니다");
             }
 
         } catch (SignatureException | MalformedJwtException e) {
-            throw new UnAuthorizedException("유효하지 않은 토큰입니다");
+            throw new UnAuthorizedException("유효하지 않은 토큰입니다2");
         } catch (ExpiredJwtException e) {
             throw new UnAuthorizedException("만료된 토큰입니다");
         } catch (JwtException e) {

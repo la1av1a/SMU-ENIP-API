@@ -54,9 +54,18 @@ dependencies {
     // java-jwt
     implementation 'com.auth0:java-jwt:4.3.0'
 
-
     //redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    //swagger 3.x
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+    //amazon
+    // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.433'
+// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-cloudfront
+    implementation 'com.amazonaws:aws-java-sdk-cloudfront:1.12.433'
 
 }
 

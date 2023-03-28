@@ -1,6 +1,5 @@
 package com.smu.smuenip.Infrastructure.config.jwt;
 
-import com.smu.smuenip.enums.TokenType;
 import java.util.Collection;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,16 +12,13 @@ public class Subject {
     private final String userId;
     private final String email;
     private final Collection<GrantedAuthority> authorities;
-    private final TokenType type;
 
     @Builder
-    public Subject(Long id, String userId, String email, Collection<GrantedAuthority> authorities,
-        TokenType type) {
+    public Subject(Long id, String userId, String email, Collection<GrantedAuthority> authorities) {
         this.id = id;
         this.userId = userId;
         this.email = email;
         this.authorities = authorities;
-        this.type = type;
     }
 
     public static Subject atk(Long id, String userId, String email,
@@ -32,18 +28,6 @@ public class Subject {
             .userId(userId)
             .email(email)
             .authorities(authorities)
-            .type(TokenType.ATK)
-            .build();
-    }
-
-    public static Subject rtk(Long id, String userId, String email,
-        Collection<GrantedAuthority> authorities) {
-        return Subject.builder()
-            .id(id)
-            .userId(userId)
-            .email(email)
-            .authorities(authorities)
-            .type(TokenType.RTK)
             .build();
     }
 }

@@ -4,7 +4,6 @@ import com.smu.smuenip.Infrastructure.config.exception.BadRequestException;
 import com.smu.smuenip.Infrastructure.config.jwt.Subject;
 import com.smu.smuenip.Infrastructure.config.redis.TokenInfo;
 import com.smu.smuenip.Infrastructure.config.redis.TokenInfoRepository;
-import com.smu.smuenip.application.auth.dto.TokenResponse;
 import com.smu.smuenip.application.auth.dto.UserLoginRequestDto;
 import com.smu.smuenip.application.auth.dto.UserRequestDto;
 import com.smu.smuenip.domain.user.model.Role;
@@ -15,7 +14,6 @@ import com.smu.smuenip.domain.user.repository.UserAuthRepository;
 import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.domain.user.serivce.PasswordEncoderService;
 import com.smu.smuenip.enums.Provider;
-import com.smu.smuenip.enums.TokenType;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
 import java.util.Collection;
 import java.util.Date;
@@ -39,7 +37,7 @@ public class UserAuthService {
     private final RoleRepository roleRepository;
 
     @Transactional
-    public void createUser(UserRequestDto requestDto) {
+    public void createUser(UserRequestDto requestDto) throws BadRequestException {
         if (userRepository.existsUsersByLoginId(requestDto.getLoginId())) {
             throw new BadRequestException(MessagesFail.USER_EXISTS.getMessage());
         }
@@ -50,9 +48,9 @@ public class UserAuthService {
         saveUsersAuth(userAuth);
     }
 
-    public String getAccessToken(TokenInfo tokenInfo) {
+    public java.lang.String getAccessToken(TokenInfo tokenInfo) {
         System.out.println(tokenInfo.getEmail());
-        String accessToken = jwtService.createToken(
+        java.lang.String accessToken = jwtService.createToken(
             Subject.atk(
                 Long.valueOf(tokenInfo.getId()),
                 tokenInfo.getLoginId(),
@@ -65,7 +63,7 @@ public class UserAuthService {
     }
 
     @Transactional(readOnly = true)
-    public TokenResponse login(UserLoginRequestDto requestDto) {
+    public String login(UserLoginRequestDto requestDto) throws BadRequestException {
 
         User user = findUserByUserId(requestDto.getLoginId());
         UserAuth userAuth = findUserByUser(user);
@@ -74,7 +72,7 @@ public class UserAuthService {
             throw new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage());
         }
 
-        TokenResponse token = createTokens(user.getId(), user.getLoginId(), user.getEmail(),
+        String token = createToken(user.getId(), user.getLoginId(), user.getEmail(),
             user.getAuthorities());
 
         TokenInfo tokenInfo = TokenInfo.builder()
@@ -82,10 +80,8 @@ public class UserAuthService {
             .loginId(user.getLoginId())
             .email(user.getEmail())
             .roles(user.getRoles())
-            .accessTokenExpiration(jwtService.getTokenLive(TokenType.ATK))
-            .refreshTokenExpiration(jwtService.getTokenLive(TokenType.RTK))
-            .accessToken(token.getAccessToken())
-            .refreshToken(token.getRefreshToken())
+            .accessTokenExpiration(jwtService.getTokenLive())
+            .accessToken(token)
             .createdAt(new Date())
             .build();
 
@@ -100,27 +96,17 @@ public class UserAuthService {
             .user(user)
             .provider(Provider.LOCAL)
             .password(passwordEncoderService.encodePassword(requestDto.getPassword()))
-            .phoneNumber(removeHyphensFromPhoneNumber(requestDto.getPhoneNumber()))
             .build();
-    }
-
-    private String removeHyphensFromPhoneNumber(String phoneNumber) {
-        return phoneNumber.replaceAll("-", "");
     }
 
     private void saveUsersAuth(UserAuth userAuth) {
         userAuthRepository.save(userAuth);
     }
 
-    private TokenResponse createTokens(Long id, String userId, String email,
+    private String createToken(Long id, java.lang.String userId, java.lang.String email,
         Collection<GrantedAuthority> authorities) {
 
-        String atk = jwtService.createToken(Subject.atk(id, userId, email, authorities));
-        String rfk = jwtService.createToken(Subject.rtk(id, userId, email, authorities));
-        return TokenResponse.builder()
-            .accessToken(atk)
-            .refreshToken(rfk)
-            .build();
+        return jwtService.createToken(Subject.atk(id, userId, email, authorities));
     }
 
     private User createUserEntity(UserRequestDto requestDto) {
@@ -138,17 +124,17 @@ public class UserAuthService {
         userRepository.save(user);
     }
 
-    private UserAuth findUserByUser(User user) {
+    private UserAuth findUserByUser(User user) throws BadRequestException {
         return userAuthRepository.findUsersAuthsByUser(user)
             .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
     }
 
-    private User findUserByUserId(String loginId) {
+    private User findUserByUserId(java.lang.String loginId) throws BadRequestException {
         return userRepository.findUserByLoginId(loginId)
             .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
     }
 
-    private Role findRoleByName(String name) {
+    private Role findRoleByName(java.lang.String name) throws NoSuchElementException {
         return roleRepository.findRoleByName(name)
             .orElseThrow(() -> new NoSuchElementException("없는 역할 입니다"));
     }

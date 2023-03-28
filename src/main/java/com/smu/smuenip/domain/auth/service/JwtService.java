@@ -6,7 +6,6 @@ import com.smu.smuenip.Infrastructure.config.jwt.JwtProvider;
 import com.smu.smuenip.Infrastructure.config.jwt.Subject;
 import com.smu.smuenip.Infrastructure.config.redis.TokenInfo;
 import com.smu.smuenip.Infrastructure.config.redis.TokenInfoRepository;
-import com.smu.smuenip.enums.TokenType;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -28,8 +27,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
-;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -40,14 +37,13 @@ public class JwtService {
 
     public String createToken(Subject subject) {
         Date now = new Date();
-        long tokenValidity = jwtProvider.getTokenLive(subject.getType());
+        long tokenValidity = jwtProvider.getTokenLive();
 
         return Jwts.builder()
             .setIssuedAt(now)
             .setSubject(subject.getId().toString())
             .claim("userId", subject.getUserId())
             .claim("email", subject.getEmail())
-            .claim("type", subject.getType())
             .claim("authorities", subject.getAuthorities())
             .setExpiration(new Date(now.getTime() + tokenValidity))
             .signWith(jwtProvider.getSecretKey())
@@ -77,7 +73,6 @@ public class JwtService {
         Long id = Long.valueOf(claims.getSubject());
         String userId = claims.get("userId", String.class);
         String email = claims.get("email", String.class);
-        TokenType type = TokenType.valueOf(claims.get("type", String.class));
         checkAuthorities(claims);
 
         Collection<GrantedAuthority> authorities = Arrays.stream(
@@ -89,7 +84,6 @@ public class JwtService {
             .id(id)
             .userId(userId)
             .email(email)
-            .type(type)
             .authorities(authorities)
             .build();
     }
@@ -99,7 +93,7 @@ public class JwtService {
             .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
     }
 
-    private void checkAuthorities(Claims claims) {
+    private void checkAuthorities(Claims claims) throws UnAuthorizedException {
         if (claims.get("authorities") == null) {
             throw new UnAuthorizedException("클레임이 존재하지 않습니다 클레임 : authorities");
         }
@@ -129,7 +123,7 @@ public class JwtService {
         return true;
     }
 
-    public Long getTokenLive(TokenType tokenType) {
-        return jwtProvider.getTokenLive(tokenType);
+    public Long getTokenLive() {
+        return jwtProvider.getTokenLive();
     }
 }

@@ -22,17 +22,14 @@ public class TokenInfo implements UserDetails {
     private String loginId;
     private String email;
     private String accessToken;
-    private String refreshToken;
 
     private Collection<Role> roles = new ArrayList<>();
     private Long accessTokenExpiration;
-    private Long refreshTokenExpiration;
     private Date createdAt;
 
     @Builder
     public TokenInfo(String id, String loginId, String email, String accessToken,
-        String refreshToken,
-        Long accessTokenExpiration, Long refreshTokenExpiration,
+        Long accessTokenExpiration,
         Collection<Role> roles,
         Date createdAt
     ) {
@@ -40,19 +37,13 @@ public class TokenInfo implements UserDetails {
         this.loginId = loginId;
         this.email = email;
         this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
         this.accessTokenExpiration = accessTokenExpiration;
-        this.refreshTokenExpiration = refreshTokenExpiration;
         this.roles = roles;
         this.createdAt = createdAt;
     }
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
     }
 
     @Override

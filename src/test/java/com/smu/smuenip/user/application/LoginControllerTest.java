@@ -58,7 +58,7 @@ class LoginControllerTest {
             .id(2L)
             .name("ROLE_ADMIN")
             .build();
-        
+
         roleRepository.save(roleUser);
         roleRepository.save(roleAdmin);
     }
@@ -71,7 +71,6 @@ class LoginControllerTest {
             .loginId("test12a")
             .email("test12a@example.com")
             .password("password")
-            .phoneNumber("010-1234-5678")
             .build();
 
         //when

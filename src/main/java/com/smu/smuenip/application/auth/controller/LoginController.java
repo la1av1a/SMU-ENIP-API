@@ -1,7 +1,6 @@
 package com.smu.smuenip.application.auth.controller;
 
 import com.smu.smuenip.Infrastructure.config.redis.TokenInfo;
-import com.smu.smuenip.application.auth.dto.TokenResponse;
 import com.smu.smuenip.application.auth.dto.UserLoginRequestDto;
 import com.smu.smuenip.application.auth.dto.UserRequestDto;
 import com.smu.smuenip.domain.auth.service.UserAuthService;
@@ -36,10 +35,10 @@ public class LoginController implements LoginControllerSwagger {
 
     @Override
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody UserLoginRequestDto requestDto) {
-        TokenResponse tokenResponse = userAuthService.login(requestDto);
+    public ResponseEntity<String> login(@RequestBody UserLoginRequestDto requestDto) {
+        String token = userAuthService.login(requestDto);
 
-        return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @Override
@@ -50,10 +49,6 @@ public class LoginController implements LoginControllerSwagger {
 
     @GetMapping("/token")
     public String getAccessToken(@AuthenticationPrincipal TokenInfo user) {
-
         return userAuthService.getAccessToken(user);
     }
-//    public ResponseEntity<Object> userInfo(@AuthenticationPrincipal TokenInfo user) {
-//        return user.getId();
-//    }
 }

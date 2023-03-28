@@ -43,8 +43,6 @@ public class UserAuth {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "phone_number")
-    private String phoneNumber;
 
     @CreatedDate
     private Date createdDate;
@@ -53,12 +51,10 @@ public class UserAuth {
     private Date modifiedDate;
 
     @Builder
-    public UserAuth(User user, Provider provider, String providerId, String password,
-        String phoneNumber) {
+    public UserAuth(User user, Provider provider, String providerId, String password) {
         this.user = user;
         this.provider = provider;
         this.providerId = providerId;
         this.password = password;
-        this.phoneNumber = phoneNumber;
     }
 }

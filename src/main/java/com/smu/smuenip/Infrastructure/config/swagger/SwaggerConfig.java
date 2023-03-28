@@ -27,7 +27,7 @@ public class SwaggerConfig {
             .ignoredParameterTypes(AuthenticationPrincipal.class)
             .useDefaultResponseMessages(false)
             .select()
-            .apis(RequestHandlerSelectors.basePackage("com.smu.smuenip.user.application"))
+            .apis(RequestHandlerSelectors.basePackage("com.smu.smuenip.application"))
             .paths(PathSelectors.any())
             .build()
             .apiInfo(apiInfo());

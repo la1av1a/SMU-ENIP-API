@@ -18,10 +18,10 @@ import com.smu.smuenip.enums.Provider;
 import com.smu.smuenip.enums.TokenType;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
 import java.util.Collection;
+import java.util.Date;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +51,7 @@ public class UserAuthService {
     }
 
     public String getAccessToken(TokenInfo tokenInfo) {
-
+        System.out.println(tokenInfo.getEmail());
         String accessToken = jwtService.createToken(
             Subject.atk(
                 Long.valueOf(tokenInfo.getId()),
@@ -86,7 +86,7 @@ public class UserAuthService {
             .refreshTokenExpiration(jwtService.getTokenLive(TokenType.RTK))
             .accessToken(token.getAccessToken())
             .refreshToken(token.getRefreshToken())
-            .createdAt(DateTime.now())
+            .createdAt(new Date())
             .build();
 
         tokenInfoRepository.save(tokenInfo);
@@ -117,7 +117,6 @@ public class UserAuthService {
 
         String atk = jwtService.createToken(Subject.atk(id, userId, email, authorities));
         String rfk = jwtService.createToken(Subject.rtk(id, userId, email, authorities));
-
         return TokenResponse.builder()
             .accessToken(atk)
             .refreshToken(rfk)

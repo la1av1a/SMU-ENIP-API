@@ -105,7 +105,7 @@ public class JwtService {
         }
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token) throws UnAuthorizedException {
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
                 .setSigningKey(jwtProvider.getSecretKey())

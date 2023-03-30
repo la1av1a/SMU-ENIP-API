@@ -6,6 +6,7 @@ import com.smu.smuenip.Infrastructure.config.jwt.JwtProvider;
 import com.smu.smuenip.Infrastructure.config.jwt.Subject;
 import com.smu.smuenip.Infrastructure.config.redis.TokenInfo;
 import com.smu.smuenip.Infrastructure.config.redis.TokenInfoRepository;
+import com.smu.smuenip.enums.Role;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -14,11 +15,10 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,17 +44,18 @@ public class JwtService {
             .setSubject(subject.getId().toString())
             .claim("userId", subject.getUserId())
             .claim("email", subject.getEmail())
-            .claim("authorities", subject.getAuthorities())
+            .claim("role", subject.getRole())
             .setExpiration(new Date(now.getTime() + tokenValidity))
             .signWith(jwtProvider.getSecretKey())
             .compact();
     }
 
-    public Authentication getAuthentication(String token) {
+    public Authentication getAuthenticationFromToken(String token) {
         Claims claims = extractClaimsFromToken(token);
 
-        Subject subject = extractUserInfoFromClaims(claims);
-        Collection<GrantedAuthority> authorities = subject.getAuthorities();
+        Subject subject = extractSubjectFromClaims(claims);
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(subject.getRole().toString()));
 
         TokenInfo principal = findTokenInfoById(subject.getId());
 
@@ -69,22 +70,19 @@ public class JwtService {
             .getBody();
     }
 
-    private Subject extractUserInfoFromClaims(Claims claims) {
+    private Subject extractSubjectFromClaims(Claims claims) {
         Long id = Long.valueOf(claims.getSubject());
         String userId = claims.get("userId", String.class);
         String email = claims.get("email", String.class);
+        String role = claims.get("role", String.class);
+        log.info("role : {}", role);
         checkAuthorities(claims);
-
-        Collection<GrantedAuthority> authorities = Arrays.stream(
-                claims.get("authorities").toString().split(","))
-            .map(SimpleGrantedAuthority::new)
-            .collect(Collectors.toList());
 
         return Subject.builder()
             .id(id)
             .userId(userId)
             .email(email)
-            .authorities(authorities)
+            .role(Role.valueOf(role))
             .build();
     }
 
@@ -94,8 +92,8 @@ public class JwtService {
     }
 
     private void checkAuthorities(Claims claims) throws UnAuthorizedException {
-        if (claims.get("authorities") == null) {
-            throw new UnAuthorizedException("클레임이 존재하지 않습니다 클레임 : authorities");
+        if (claims.get("role") == null) {
+            throw new UnAuthorizedException("클레임이 존재하지 않습니다 클레임 : role");
         }
     }
 
@@ -105,8 +103,6 @@ public class JwtService {
                 .setSigningKey(jwtProvider.getSecretKey())
                 .build()
                 .parseClaimsJws(token);
-            System.out.println(claims.getBody().getSubject());
-            System.out.println(claims.getBody().getIssuedAt());
             Optional<TokenInfo> tokenInfo = tokenInfoRepository.findById(
                 claims.getBody().getSubject());
             if (!tokenInfo.isPresent()) {

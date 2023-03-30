@@ -1,10 +1,9 @@
 package com.smu.smuenip.Infrastructure.config.redis;
 
-import com.smu.smuenip.domain.user.model.Role;
+import com.smu.smuenip.enums.Role;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,14 +22,16 @@ public class TokenInfo implements UserDetails {
     private String email;
     private String accessToken;
 
-    private Collection<Role> roles = new ArrayList<>();
+    private Role role;
+
+    private Collection<GrantedAuthority> authorities = new ArrayList<>();
     private Long accessTokenExpiration;
     private Date createdAt;
 
     @Builder
     public TokenInfo(String id, String loginId, String email, String accessToken,
         Long accessTokenExpiration,
-        Collection<Role> roles,
+        Role role,
         Date createdAt
     ) {
         this.id = id;
@@ -38,7 +39,8 @@ public class TokenInfo implements UserDetails {
         this.email = email;
         this.accessToken = accessToken;
         this.accessTokenExpiration = accessTokenExpiration;
-        this.roles = roles;
+        this.role = role;
+        this.authorities.add(new SimpleGrantedAuthority(role.toString()));
         this.createdAt = createdAt;
     }
 
@@ -48,11 +50,8 @@ public class TokenInfo implements UserDetails {
 
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        for (Role role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getAuthority()));
-        }
-        return authorities;
+
+        return this.authorities;
     }
 
     @Override

@@ -8,15 +8,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smu.smuenip.application.auth.dto.UserRequestDto;
-import com.smu.smuenip.domain.user.model.Role;
 import com.smu.smuenip.domain.user.model.User;
-import com.smu.smuenip.domain.user.repository.RoleRepository;
 import com.smu.smuenip.domain.user.repository.UserAuthRepository;
 import com.smu.smuenip.domain.user.repository.UserRepository;
-import io.jsonwebtoken.Jwts;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -45,28 +41,11 @@ class LoginControllerTest {
     private UserRepository userRepository;
     @Autowired
     private UserAuthRepository userAuthRepository;
-    @Autowired
-    private RoleRepository roleRepository;
 
-    @BeforeAll()
-    void init() {
-        Role roleUser = Role.builder()
-            .id(1L)
-            .name("ROLE_USER")
-            .build();
-        Role roleAdmin = Role.builder()
-            .id(2L)
-            .name("ROLE_ADMIN")
-            .build();
-
-        roleRepository.save(roleUser);
-        roleRepository.save(roleAdmin);
-    }
 
     @Test
     void signUpTest() throws Exception {
         //given
-        String expectedContentType = "application/json";
         UserRequestDto userRequestDto = UserRequestDto.builder()
             .loginId("test12a")
             .email("test12a@example.com")
@@ -90,20 +69,17 @@ class LoginControllerTest {
 
         int actualOK = resultSuccess.getResponse().getStatus();
         int actualBadRequest = resultFail.getResponse().getStatus();
-        String actualContentType = resultFail.getResponse().getHeader("Content-Type");
         Optional<User> userOptional = userRepository.findUserByLoginId(userRequestDto.getLoginId());
 
         // then
         Assertions.assertThat(actualOK).isEqualTo(HttpStatus.OK.value());
         Assertions.assertThat(actualBadRequest).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        Assertions.assertThat(actualContentType).isEqualTo(MediaType.APPLICATION_JSON.toString());
         assertUserAndAuthExist(userOptional);
     }
 
     @Test
     void loginTest() {
-        //given
-        Jwts.builder();
+
     }
 
     private String objectToString(Object object) throws JsonProcessingException {

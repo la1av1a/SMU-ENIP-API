@@ -48,7 +48,7 @@ public class LoginController implements LoginControllerSwagger {
     }
 
     @GetMapping("/token")
-    public String getAccessToken(@AuthenticationPrincipal TokenInfo user) {
-        return userAuthService.getAccessToken(user);
+    public String getAccessToken(@AuthenticationPrincipal TokenInfo tokenInfo) {
+        return tokenInfo.getAccessToken();
     }
 }

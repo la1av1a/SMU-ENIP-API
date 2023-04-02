@@ -1,4 +1,4 @@
-package com.smu.smuenip.domain.auth.service;
+package com.smu.smuenip.domain.user.serivce;
 
 import com.smu.smuenip.Infrastructure.config.exception.BadRequestException;
 import com.smu.smuenip.Infrastructure.config.jwt.Subject;
@@ -10,7 +10,6 @@ import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.model.UserAuth;
 import com.smu.smuenip.domain.user.repository.UserAuthRepository;
 import com.smu.smuenip.domain.user.repository.UserRepository;
-import com.smu.smuenip.domain.user.serivce.PasswordEncoderService;
 import com.smu.smuenip.enums.Provider;
 import com.smu.smuenip.enums.Role;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
@@ -109,7 +108,8 @@ public class UserAuthService {
             .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
     }
 
-    private User findUserByUserId(String loginId) throws BadRequestException {
+    @Transactional(readOnly = true)
+    User findUserByUserId(String loginId) throws BadRequestException {
         return userRepository.findUserByLoginId(loginId)
             .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
     }

@@ -1,10 +1,10 @@
 package com.smu.smuenip.application.auth.controller;
 
 import com.smu.smuenip.Infrastructure.config.redis.TokenInfo;
+import com.smu.smuenip.application.auth.dto.ResponseDto;
 import com.smu.smuenip.application.auth.dto.UserLoginRequestDto;
 import com.smu.smuenip.application.auth.dto.UserRequestDto;
-import com.smu.smuenip.domain.auth.service.UserAuthService;
-import com.smu.smuenip.enums.Messages;
+import com.smu.smuenip.domain.user.serivce.UserAuthService;
 import com.smu.smuenip.enums.meesagesDetail.MessagesSuccess;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,10 +26,11 @@ public class LoginController implements LoginControllerSwagger {
 
     @Override
     @PostMapping("/signUp")
-    public ResponseEntity<Messages> signUp(@RequestBody UserRequestDto requestDto) {
+    public ResponseEntity<ResponseDto> signUp(@RequestBody UserRequestDto requestDto) {
         userAuthService.createUser(requestDto);
 
-        return new ResponseEntity<>(MessagesSuccess.SIGNUP_SUCCESS, HttpStatus.OK);
+        return new ResponseEntity<>(
+            new ResponseDto(true, MessagesSuccess.SIGNUP_SUCCESS.getMessage()), HttpStatus.OK);
     }
 
 
@@ -39,12 +40,6 @@ public class LoginController implements LoginControllerSwagger {
         String token = userAuthService.login(requestDto);
 
         return new ResponseEntity<>(token, HttpStatus.OK);
-    }
-
-    @Override
-    @GetMapping("/loginTest")
-    public String loginTest(@AuthenticationPrincipal TokenInfo user) {
-        return user.getId();
     }
 
     @GetMapping("/token")

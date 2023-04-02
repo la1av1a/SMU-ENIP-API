@@ -1,4 +1,4 @@
-package com.smu.smuenip.domain.auth.service;
+package com.smu.smuenip.domain.user.serivce;
 
 import com.smu.smuenip.Infrastructure.config.exception.BadRequestException;
 import com.smu.smuenip.Infrastructure.config.exception.UnAuthorizedException;
@@ -45,6 +45,7 @@ public class JwtService {
             .claim("userId", subject.getUserId())
             .claim("email", subject.getEmail())
             .claim("role", subject.getRole())
+            .setIssuedAt(new Date())
             .setExpiration(new Date(now.getTime() + tokenValidity))
             .signWith(jwtProvider.getSecretKey())
             .compact();
@@ -106,11 +107,11 @@ public class JwtService {
             Optional<TokenInfo> tokenInfo = tokenInfoRepository.findById(
                 claims.getBody().getSubject());
             if (!tokenInfo.isPresent()) {
-                throw new UnAuthorizedException("만료된 토큰입니다");
+                throw new UnAuthorizedException("유효하지 않은 토큰입니다");
             }
 
         } catch (SignatureException | MalformedJwtException e) {
-            throw new UnAuthorizedException("유효하지 않은 토큰입니다2");
+            throw new UnAuthorizedException("유효하지 않은 토큰입니다");
         } catch (ExpiredJwtException e) {
             throw new UnAuthorizedException("만료된 토큰입니다");
         } catch (JwtException e) {

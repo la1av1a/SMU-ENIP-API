@@ -13,8 +13,9 @@ public class SmuEnipApplication {
             .properties(
                 "spring.config.location=" +
                     "classpath:/application.properties" +
-                    ", file:/etc/config/application-database.properties" +
-                    ", file:/etc/config/application-amazon.properties"
+                    ", file:/etc/config/application-database.yml" +
+                    ", file:/etc/config/application-amazon.yml" +
+                    ", file:/etc/config/application-naver.yml"
             )
             .run(args);
     }

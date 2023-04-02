@@ -17,11 +17,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class S3ImageUploadService {
+public class S3Service {
 
     private final S3Vo s3Vo;
 
-    public void uploadImageToS3(String filePath, String fileName) {
+    public String uploadImageToS3(String filePath, String fileName) {
 
         String accessKey = s3Vo.getAccessKey();
         String secretKey = s3Vo.getSecretKey();
@@ -46,15 +46,14 @@ public class S3ImageUploadService {
         // Upload file to S3 bucket
         PutObjectResult result = s3Client.putObject(new PutObjectRequest(bucketName, s3Key, file));
 
-        // Generate signed URL (valid for 1 year)
+        // Generate signed URL
         java.util.Date expiration = new java.util.Date();
         long expTimeMillis = expiration.getTime();
-//        expTimeMillis += 1000 * 60 * 60 * 24 * 365; // 1 year
         expTimeMillis += 1000 * 60 * 60;
         expiration.setTime(expTimeMillis);
 
         String distributionDomain = s3Vo.getDistributionDomain();
-        String privateKeyFilePath = "./pk-APKA5SBL6IKZWKYOKC5N.pem";
+        String privateKeyFilePath = s3Vo.getPrivateKeyFilePath();
         String keyPairId = s3Vo.getKeyPairId();
 
         String signedUrl = null;
@@ -70,5 +69,7 @@ public class S3ImageUploadService {
         //saveImageURL to <Image> Table
         //TODO
 //        save(imageUrl, User);
+
+        return signedUrl;
     }
 }

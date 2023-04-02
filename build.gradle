@@ -68,6 +68,8 @@ dependencies {
     //cloudFront
     implementation 'com.amazonaws:aws-java-sdk-cloudfront:1.12.433'
 
+    // webFlux
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 }
 

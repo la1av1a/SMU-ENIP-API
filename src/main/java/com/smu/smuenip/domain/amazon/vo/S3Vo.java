@@ -25,5 +25,8 @@ public class S3Vo {
 
     @Value("${amazon.keyPairId}")
     private String keyPairId;
-    
+
+    @Value("${amazon.privateKeyFilePath}")
+    private String privateKeyFilePath;
+
 }

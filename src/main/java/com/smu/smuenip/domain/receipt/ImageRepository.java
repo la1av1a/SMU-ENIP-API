@@ -1,6 +1,5 @@
-package com.smu.smuenip.domain.user.repository;
+package com.smu.smuenip.domain.receipt;
 
-import com.smu.smuenip.domain.user.model.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {

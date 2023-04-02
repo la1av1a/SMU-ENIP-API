@@ -1,6 +1,9 @@
 package com.smu.smuenip.Infrastructure.config.filters.jwt;
 
-import com.smu.smuenip.domain.auth.service.JwtService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smu.smuenip.Infrastructure.config.exception.UnAuthorizedException;
+import com.smu.smuenip.application.auth.dto.ResponseDto;
+import com.smu.smuenip.domain.user.serivce.JwtService;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -32,18 +35,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception ex) {
-            //TODO 에러 처리
-            log.warn(ex.toString());
+            ex.printStackTrace();
+            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            ResponseDto responseDto = new ResponseDto(false, ex.getMessage());
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writer().writeValue(response.getWriter(), responseDto);
+            return;
         }
         filterChain.doFilter(request, response);
     }
 
-    private String getJwtFromRequest(HttpServletRequest request) {
+    private String getJwtFromRequest(HttpServletRequest request) throws UnAuthorizedException {
         String bearerToken = request.getHeader("Authorization");
 
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
+
         return null;
     }
 }

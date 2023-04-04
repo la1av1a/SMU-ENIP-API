@@ -1,5 +1,7 @@
 package com.smu.smuenip.domain.receipt;
 
+import com.smu.smuenip.domain.receipt.model.Receipt;
+import com.smu.smuenip.domain.receipt.repository.ReceiptRepository;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.enums.Role;

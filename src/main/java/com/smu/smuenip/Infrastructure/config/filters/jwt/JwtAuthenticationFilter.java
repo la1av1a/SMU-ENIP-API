@@ -2,13 +2,8 @@ package com.smu.smuenip.Infrastructure.config.filters.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smu.smuenip.Infrastructure.config.exception.UnAuthorizedException;
-import com.smu.smuenip.application.auth.dto.ResponseDto;
+import com.smu.smuenip.application.login.dto.ResponseDto;
 import com.smu.smuenip.domain.user.serivce.JwtService;
-import java.io.IOException;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +11,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-        FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain) throws ServletException, IOException {
 
         try {
             String jwt = getJwtFromRequest(request);

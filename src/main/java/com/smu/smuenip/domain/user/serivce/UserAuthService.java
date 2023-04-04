@@ -4,8 +4,8 @@ import com.smu.smuenip.Infrastructure.config.exception.BadRequestException;
 import com.smu.smuenip.Infrastructure.config.jwt.Subject;
 import com.smu.smuenip.Infrastructure.config.redis.TokenInfo;
 import com.smu.smuenip.Infrastructure.config.redis.TokenInfoRepository;
-import com.smu.smuenip.application.auth.dto.UserLoginRequestDto;
-import com.smu.smuenip.application.auth.dto.UserRequestDto;
+import com.smu.smuenip.application.login.dto.UserLoginRequestDto;
+import com.smu.smuenip.application.login.dto.UserRequestDto;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.model.UserAuth;
 import com.smu.smuenip.domain.user.repository.UserAuthRepository;
@@ -79,7 +79,8 @@ public class UserAuthService {
             .build();
     }
 
-    private void saveUsersAuth(UserAuth userAuth) {
+    @Transactional
+    public void saveUsersAuth(UserAuth userAuth) {
         userAuthRepository.save(userAuth);
     }
 
@@ -103,13 +104,14 @@ public class UserAuthService {
         userRepository.save(user);
     }
 
-    private UserAuth findUserByUser(User user) throws BadRequestException {
+    @Transactional(readOnly = true)
+    public UserAuth findUserByUser(User user) throws BadRequestException {
         return userAuthRepository.findUsersAuthsByUser(user)
             .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
     }
 
     @Transactional(readOnly = true)
-    User findUserByUserId(String loginId) throws BadRequestException {
+    public User findUserByUserId(String loginId) throws BadRequestException {
         return userRepository.findUserByLoginId(loginId)
             .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
     }

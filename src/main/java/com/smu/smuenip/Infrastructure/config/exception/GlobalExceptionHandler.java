@@ -1,6 +1,6 @@
 package com.smu.smuenip.Infrastructure.config.exception;
 
-import com.smu.smuenip.application.auth.dto.ResponseDto;
+import com.smu.smuenip.application.login.dto.ResponseDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,6 +14,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ResponseDto> handleBadRequestException(BadRequestException e) {
+        e.printStackTrace();
+
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setContentType(MediaType.APPLICATION_JSON);
         ResponseDto responseDto = new ResponseDto(false, e.getMessage());
@@ -23,6 +25,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnAuthorizedException.class)
     public ResponseEntity<ResponseDto> handleUnAuthorizedException(UnAuthorizedException e) {
+        e.printStackTrace();
+
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setContentType(MediaType.APPLICATION_JSON);
         ResponseDto responseDto = new ResponseDto(false, e.getMessage());
@@ -32,6 +36,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnExpectedErrorException.class)
     public ResponseEntity<ResponseDto> handleUnExpectedErrorException(UnExpectedErrorException e) {
+        e.printStackTrace();
+        
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setContentType(MediaType.APPLICATION_JSON);
         ResponseDto responseDto = new ResponseDto(false, e.getMessage());

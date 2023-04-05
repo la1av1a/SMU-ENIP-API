@@ -49,8 +49,9 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           envs: GITHUB_SHA
           script: |
+            docker stop server
+            docker rm express-cicd
+            docker rmi la1av1a/express-cicd:${GITHUB_SHA::7}
             docker pull la1av1a/express-cicd:${GITHUB_SHA::7}
             docker tag la1av1a/express-cicd:${GITHUB_SHA::7} express-cicd
-            docker stop server
             docker run -d --rm -v /etc/config/application-database.yml:/etc/config/application-database.yml -v /etc/config/application-amazon.yml:/etc/config/application-amazon.yml -v /etc/config/application-naver.yml:/etc/config/application-naver.yml --name server -p 8080:8080 express-cicd
-            docker rmi la1av1a/express-cicd:${GITHUB_SHA::7}

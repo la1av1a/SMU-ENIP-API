@@ -1,15 +1,13 @@
 package com.smu.smuenip.Infrastructure.util.naver.search;
 
-import com.smu.smuenip.Infrastructure.util.naver.ItemDTO;
+import com.smu.smuenip.Infrastructure.util.naver.ItemVO;
 import com.smu.smuenip.Infrastructure.util.naver.NaverVO;
-import com.smu.smuenip.domain.user.repository.UserRepository;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -18,15 +16,11 @@ import reactor.core.scheduler.Schedulers;
 @Component
 @RequiredArgsConstructor
 public class ClovaShoppingSearchingAPI {
-
-
-    private final UserRepository userRepository;
+    
     private final NaverVO naverVo;
 
-
-    MultiValueMap<String, String> headers = new HttpHeaders();
-
-    public ItemDTO callShoppingApi(String item) {
+    @Cacheable(value = "shoppingCache", key = "#item")
+    public ItemVO callShoppingApi(String item) {
         String decodedItem = URLDecoder.decode(item, StandardCharsets.UTF_8);
 
         WebClient client = WebClient.builder()
@@ -38,20 +32,16 @@ public class ClovaShoppingSearchingAPI {
             .defaultHeader("X-Naver-Client-Secret", naverVo.getSecretKey())
             .build();
 
-        Mono<ItemDTO> result = client.get().uri(uriBuilder -> uriBuilder
+        Mono<ItemVO> result = client.get().uri(uriBuilder -> uriBuilder
                 .path("/v1/search/shop.json")
                 .queryParam("query", decodedItem)
                 .build()
             )
             .headers(headers -> headers.addAll(headers))
             .retrieve()
-            .bodyToMono(ItemDTO.class)
+            .bodyToMono(ItemVO.class)
             .publishOn(Schedulers.boundedElastic())
-            .doOnSuccess(itemDTO -> {
-                log.info(itemDTO.getItems().get(0).getTitle());
-                log.info(itemDTO.getItems().get(1).getTitle());
-            });
-
+            .doOnSuccess(itemVO -> log.info("쇼핑 api 호출 -완료-"));
         return result.block();
     }
 }

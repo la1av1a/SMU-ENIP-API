@@ -52,5 +52,5 @@ jobs:
             docker pull la1av1a/express-cicd:${GITHUB_SHA::7}
             docker tag la1av1a/express-cicd:${GITHUB_SHA::7} express-cicd
             docker stop server
-            docker run -d --rm -v /etc/config/application-database.properties:/etc/config/application-database.properties -v /etc/config/application-amazon.properties:/etc/config/application-amazon.properties --name server -p 8080:8080 express-cicd
+            docker run -d --rm -v /etc/config/application-database.yml:/etc/config/application-database.properties -v /etc/config/application-amazon.yml:/etc/config/application-amazon.yml -v /etc/config/application-naver.yml:/etc/config/application-naver.yml --name server -p 8080:8080 express-cicd
             docker rmi la1av1a/express-cicd:${GITHUB_SHA::7}

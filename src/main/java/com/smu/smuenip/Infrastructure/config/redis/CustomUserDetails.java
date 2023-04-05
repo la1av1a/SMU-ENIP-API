@@ -7,14 +7,12 @@ import java.util.Date;
 import javax.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.redis.core.RedisHash;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
-@RedisHash(value = "token", timeToLive = (3600L * 24 * 7))
-public class TokenInfo implements UserDetails {
+public class CustomUserDetails implements UserDetails {
 
     @Id
     private String id;
@@ -29,7 +27,7 @@ public class TokenInfo implements UserDetails {
     private Date createdAt;
 
     @Builder
-    public TokenInfo(String id, String loginId, String email, String accessToken,
+    public CustomUserDetails(String id, String loginId, String email, String accessToken,
         Long accessTokenExpiration,
         Role role,
         Date createdAt

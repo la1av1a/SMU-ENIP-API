@@ -35,7 +35,6 @@ public class ClovaOCRAPI {
 
         try {
             jsonContent2 = new String(Files.readAllBytes(Paths.get("json/ocr.json")));
-            log.info("json : {}", jsonContent2);
             ocrResult = objectMapper.readValue(jsonContent2, OcrResultDTO.class);
         } catch (IOException e) {
             e.printStackTrace();

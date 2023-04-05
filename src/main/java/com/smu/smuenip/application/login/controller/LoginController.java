@@ -1,6 +1,6 @@
 package com.smu.smuenip.application.login.controller;
 
-import com.smu.smuenip.Infrastructure.config.redis.TokenInfo;
+import com.smu.smuenip.Infrastructure.config.redis.CustomUserDetails;
 import com.smu.smuenip.application.login.dto.ResponseDto;
 import com.smu.smuenip.application.login.dto.UserLoginRequestDto;
 import com.smu.smuenip.application.login.dto.UserRequestDto;
@@ -43,7 +43,7 @@ public class LoginController implements LoginControllerSwagger {
     }
 
     @GetMapping("/token")
-    public String getAccessToken(@AuthenticationPrincipal TokenInfo tokenInfo) {
-        return tokenInfo.getAccessToken();
+    public String getAccessToken(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return customUserDetails.getAccessToken();
     }
 }

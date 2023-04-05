@@ -1,8 +1,8 @@
 package com.smu.smuenip.domain.PurchasedItem.service;
 
 import com.smu.smuenip.Infrastructure.config.exception.UnExpectedErrorException;
-import com.smu.smuenip.Infrastructure.config.redis.TokenInfo;
-import com.smu.smuenip.Infrastructure.util.naver.ItemDTO;
+import com.smu.smuenip.Infrastructure.config.redis.CustomUserDetails;
+import com.smu.smuenip.Infrastructure.util.naver.ItemVO;
 import com.smu.smuenip.Infrastructure.util.naver.PurchasedItemDTO;
 import com.smu.smuenip.Infrastructure.util.naver.search.ClovaShoppingSearchingAPI;
 import com.smu.smuenip.domain.Category.model.Category;
@@ -13,11 +13,10 @@ import com.smu.smuenip.domain.receipt.model.Receipt;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 
 @Slf4j
 @Service
@@ -29,22 +28,22 @@ public class PurchasedItemService {
 
     @Transactional
     public void savePurchasedItem(PurchasedItemDTO purchasedItemDTO, Receipt receipt,
-                                  ClovaShoppingSearchingAPI clovaShoppingSearchingAPI,
-                                  CategoryService categoryService, TokenInfo tokenInfo) {
+        ClovaShoppingSearchingAPI clovaShoppingSearchingAPI,
+        CategoryService categoryService, CustomUserDetails customUserDetails) {
 
-        ItemDTO itemDTO = clovaShoppingSearchingAPI.callShoppingApi(purchasedItemDTO.getName());
-        Category category = categoryService.getCategory(itemDTO);
+        ItemVO itemVO = clovaShoppingSearchingAPI.callShoppingApi(purchasedItemDTO.getName());
+        Category category = categoryService.getCategory(itemVO);
 
-        User user = getUser(Long.valueOf(tokenInfo.getId()));
+        User user = getUser(Long.valueOf(customUserDetails.getId()));
 
         PurchasedItem purchasedItem = PurchasedItem.builder()
-                .receipt(receipt)
-                .itemName(purchasedItemDTO.getName())
-                .user(user)
-                .itemPrice(Integer.parseInt(purchasedItemDTO.getPrice()))
-                .itemCount(Integer.parseInt(purchasedItemDTO.getCount()))
-                .category(category)
-                .build();
+            .receipt(receipt)
+            .itemName(purchasedItemDTO.getName())
+            .user(user)
+            .itemPrice(Integer.parseInt(purchasedItemDTO.getPrice()))
+            .itemCount(Integer.parseInt(purchasedItemDTO.getCount()))
+            .category(category)
+            .build();
 
         log.info(purchasedItem.getItemName());
         purchasedItemRepository.save(purchasedItem);
@@ -52,6 +51,6 @@ public class PurchasedItemService {
 
     private User getUser(Long id) {
         return userRepository.findUserById(id).orElseThrow(
-                () -> new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage()));
+            () -> new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage()));
     }
 }

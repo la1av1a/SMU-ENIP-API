@@ -1,18 +1,16 @@
 package com.smu.smuenip.domain.user.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import com.smu.smuenip.enums.Role;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Builder;
@@ -20,8 +18,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Getter
 @Entity
@@ -38,28 +34,24 @@ public class User {
     private String loginId;
 
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<UserAuth> userAuths;
 
     @Column
     private String email;
 
     @Column
+    @Enumerated(EnumType.STRING)
+    private Role role;
+    @Column
     private int score;
+
 
     @CreatedDate
     private Date createdDate;
 
     @LastModifiedDate
     private Date modifiedDate;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "user_role",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Collection<Role> roles = new ArrayList<>();
 
     @Builder
     public User(String loginId, List<UserAuth> userAuths, String email, int score,
@@ -68,14 +60,6 @@ public class User {
         this.userAuths = userAuths;
         this.email = email;
         this.score = score;
-        this.roles.add(role);
-    }
-
-    public Collection<GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        for (Role role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getAuthority()));
-        }
-        return authorities;
+        this.role = role;
     }
 }

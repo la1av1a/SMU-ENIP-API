@@ -1,8 +1,18 @@
+// Querydsl 버전 plugins 위에 추가
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.9'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    //querydsl 추가
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
+
 
 jar {
     enabled = false
@@ -16,6 +26,7 @@ sourceCompatibility = '11'
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
+        querydsl.extendsFrom compileClasspath
     }
 }
 
@@ -64,10 +75,46 @@ dependencies {
     //amazon
     // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.433'
-// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-cloudfront
+
+    //cloudFront
     implementation 'com.amazonaws:aws-java-sdk-cloudfront:1.12.433'
 
+    // webFlux
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // query dsl
+    def queryDSL = '5.0.0'
+
+    //querydsl 추가
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+    
+    // testContainers
+    testImplementation 'org.testcontainers:testcontainers:1.17.6'
+
 }
+
+
+//querydsl 추가 시작
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+sourceSets {
+    main.java.srcDir querydslDir
+}
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
+}
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
+}
+//querydsl 추가 끝
 
 tasks.named('test') {
     useJUnitPlatform()

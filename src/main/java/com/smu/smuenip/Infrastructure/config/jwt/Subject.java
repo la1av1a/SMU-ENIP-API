@@ -1,9 +1,8 @@
 package com.smu.smuenip.Infrastructure.config.jwt;
 
-import java.util.Collection;
+import com.smu.smuenip.enums.Role;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.security.core.GrantedAuthority;
 
 @Getter
 public class Subject {
@@ -11,23 +10,23 @@ public class Subject {
     private final Long id;
     private final String userId;
     private final String email;
-    private final Collection<GrantedAuthority> authorities;
+    private final Role role;
 
     @Builder
-    public Subject(Long id, String userId, String email, Collection<GrantedAuthority> authorities) {
+    public Subject(Long id, String userId, String email, Role role) {
         this.id = id;
         this.userId = userId;
         this.email = email;
-        this.authorities = authorities;
+        this.role = role;
     }
 
     public static Subject atk(Long id, String userId, String email,
-        Collection<GrantedAuthority> authorities) {
+        Role role) {
         return Subject.builder()
             .id(id)
             .userId(userId)
             .email(email)
-            .authorities(authorities)
+            .role(role)
             .build();
     }
 }

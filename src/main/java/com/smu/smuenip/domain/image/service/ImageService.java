@@ -4,9 +4,7 @@ import com.smu.smuenip.Infrastructure.config.exception.UnExpectedErrorException;
 import com.smu.smuenip.Infrastructure.util.naver.PurchasedItemDTO;
 import com.smu.smuenip.Infrastructure.util.naver.ocr.ocrResult.OcrResultDTO;
 import com.smu.smuenip.Infrastructure.util.s3.S3API;
-import com.smu.smuenip.domain.image.Receipt;
 import com.smu.smuenip.domain.image.ReceiptRepository;
-import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
 import java.awt.image.BufferedImage;
@@ -85,21 +83,6 @@ public class ImageService {
         String fileName = file.getName();
         int index = fileName.lastIndexOf('.');
         return index > 0 ? fileName.substring(index + 1) : "";
-    }
-
-    public void saveProductInfo(String imageUrl, Long userId) {
-        User user = findUserByUserId(userId);
-
-        Receipt receipt = Receipt.builder()
-            .imageUrl(imageUrl)
-            .user(user)
-            .build();
-        receiptRepository.save(receipt);
-    }
-
-    private User findUserByUserId(Long userId) {
-        return userRepository.findUserById(userId).orElseThrow(
-            () -> new UnExpectedErrorException(MessagesFail.USER_NOT_FOUND.getMessage()));
     }
 
     public MultipartFile base64ToMultipartFile(String base64) {

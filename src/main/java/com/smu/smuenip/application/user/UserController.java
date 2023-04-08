@@ -32,8 +32,7 @@ public class UserController implements UserControllerSwagger {
         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         receiptProcessingService.processReceipt(requestDTO,
             Long.valueOf(customUserDetails.getId()));
-
-        System.out.println(requestDTO.getLocalDate());
+        
         return new ResponseEntity<>(
             new ResponseDto(true, MessagesSuccess.UPLOAD_SUCCESS.getMessage()),
             HttpStatus.OK);

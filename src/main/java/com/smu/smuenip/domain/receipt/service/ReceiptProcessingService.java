@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 public class ReceiptProcessingService {
 
     private final ClovaShoppingSearchingAPI clovaShoppingSearchingAPI;
-    private final ReceiptService receiptService;
     private final PurchasedItemService purchasedItemService;
     private final CategoryService categoryService;
     private final ImageProcessingService imageProcessingService;
@@ -34,9 +33,6 @@ public class ReceiptProcessingService {
             requestDTO.getImage(), userId);
         List<PurchasedItemDTO> purchasedItemDTOList = apiService.callAPI(
             imageURLDTO.getLocalFilePath());
-//
-//        Receipt receipt = receiptService.saveReceiptAndPurchasedItems(imageURLDTO.getImageURL(),
-//            userId);
 
         for (PurchasedItemDTO purchasedItemDTO : purchasedItemDTOList) {
             purchasedItemService.savePurchasedItem(purchasedItemDTO, imageURLDTO.getReceipt(),

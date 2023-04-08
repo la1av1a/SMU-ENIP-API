@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smu.smuenip.Infrastructure.config.security.BCryptPasswordEncoderConfig;
-import com.smu.smuenip.application.login.dto.UserLoginRequestDto;
+import com.smu.smuenip.application.login.dto.LoginRequestDto;
 import com.smu.smuenip.application.login.dto.UserRequestDto;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.model.UserAuth;
@@ -110,12 +110,12 @@ class LoginControllerTest {
 
     @Test
     void loginTest() throws Exception {
-        UserLoginRequestDto userLoginRequestDto =
-            new UserLoginRequestDto("test1234", "test1234");
+        LoginRequestDto loginRequestDto =
+            new LoginRequestDto("test1234", "test1234");
 
         MvcResult mvcResult = mockMvc.perform(post("/user/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectToString(userLoginRequestDto)))
+                .content(objectToString(loginRequestDto)))
             .andExpect(status().isOk())
             .andReturn();
 

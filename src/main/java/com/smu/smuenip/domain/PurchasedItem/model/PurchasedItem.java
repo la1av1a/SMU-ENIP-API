@@ -1,7 +1,7 @@
 package com.smu.smuenip.domain.PurchasedItem.model;
 
 import com.smu.smuenip.domain.Category.model.Category;
-import com.smu.smuenip.domain.receipt.model.Receipt;
+import com.smu.smuenip.domain.image.Receipt;
 import com.smu.smuenip.domain.user.model.User;
 import javax.persistence.Column;
 import javax.persistence.Entity;

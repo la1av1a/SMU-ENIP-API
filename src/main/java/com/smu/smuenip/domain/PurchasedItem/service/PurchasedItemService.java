@@ -1,7 +1,6 @@
 package com.smu.smuenip.domain.PurchasedItem.service;
 
 import com.smu.smuenip.Infrastructure.config.exception.UnExpectedErrorException;
-import com.smu.smuenip.Infrastructure.config.redis.CustomUserDetails;
 import com.smu.smuenip.Infrastructure.util.naver.ItemVO;
 import com.smu.smuenip.Infrastructure.util.naver.PurchasedItemDTO;
 import com.smu.smuenip.Infrastructure.util.naver.search.ClovaShoppingSearchingAPI;
@@ -9,7 +8,7 @@ import com.smu.smuenip.domain.Category.model.Category;
 import com.smu.smuenip.domain.Category.service.CategoryService;
 import com.smu.smuenip.domain.PurchasedItem.model.PurchasedItem;
 import com.smu.smuenip.domain.PurchasedItem.model.PurchasedItemRepository;
-import com.smu.smuenip.domain.receipt.model.Receipt;
+import com.smu.smuenip.domain.image.Receipt;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
@@ -29,12 +28,12 @@ public class PurchasedItemService {
     @Transactional
     public void savePurchasedItem(PurchasedItemDTO purchasedItemDTO, Receipt receipt,
         ClovaShoppingSearchingAPI clovaShoppingSearchingAPI,
-        CategoryService categoryService, CustomUserDetails customUserDetails) {
+        CategoryService categoryService, Long userId) {
 
         ItemVO itemVO = clovaShoppingSearchingAPI.callShoppingApi(purchasedItemDTO.getName());
         Category category = categoryService.getCategory(itemVO);
 
-        User user = getUser(Long.valueOf(customUserDetails.getId()));
+        User user = getUser(userId);
 
         PurchasedItem purchasedItem = PurchasedItem.builder()
             .receipt(receipt)
@@ -45,7 +44,6 @@ public class PurchasedItemService {
             .category(category)
             .build();
 
-        log.info(purchasedItem.getItemName());
         purchasedItemRepository.save(purchasedItem);
     }
 

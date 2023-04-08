@@ -1,10 +1,13 @@
 package com.smu.smuenip.application.login.controller;
 
 import com.smu.smuenip.Infrastructure.config.redis.CustomUserDetails;
+import com.smu.smuenip.application.login.dto.LoginRequestDto;
+import com.smu.smuenip.application.login.dto.LoginResponseDto;
+import com.smu.smuenip.application.login.dto.LoginResult;
 import com.smu.smuenip.application.login.dto.ResponseDto;
-import com.smu.smuenip.application.login.dto.UserLoginRequestDto;
 import com.smu.smuenip.application.login.dto.UserRequestDto;
 import com.smu.smuenip.domain.user.serivce.UserAuthService;
+import com.smu.smuenip.enums.Role;
 import com.smu.smuenip.enums.meesagesDetail.MessagesSuccess;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,10 +39,17 @@ public class LoginController implements LoginControllerSwagger {
 
     @Override
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginRequestDto requestDto) {
-        String token = userAuthService.login(requestDto);
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto) {
+        LoginResult loginResult = userAuthService.login(requestDto);
 
-        return new ResponseEntity<>(token, HttpStatus.OK);
+        LoginResponseDto loginResponseDto = new LoginResponseDto(
+            true,
+            loginResult.getRole() == Role.ROLE_USER ? MessagesSuccess.LOGIN_USER_SUCCESS
+                : MessagesSuccess.LOGIN_ADMIN_SUCCESS,
+            loginResult.getToken()
+        );
+
+        return new ResponseEntity<>(loginResponseDto, HttpStatus.OK);
     }
 
     @GetMapping("/token")

@@ -1,6 +1,5 @@
 package com.smu.smuenip.domain.receipt;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.smu.smuenip.domain.Category.model.Category;
 import com.smu.smuenip.domain.Category.model.CategoryRepository;
 import javax.persistence.EntityManager;
@@ -14,7 +13,6 @@ class CategoryRepositoryTest {
 
     @Autowired
     EntityManager em;
-    JPAQueryFactory jpaQueryFactory;
 
     @Autowired
     CategoryRepository categoryRepository;
@@ -29,6 +27,6 @@ class CategoryRepositoryTest {
 
         Assertions.assertThat(category.getLargeCategory()).isEqualTo("짜장");
     }
-    
+
 
 }

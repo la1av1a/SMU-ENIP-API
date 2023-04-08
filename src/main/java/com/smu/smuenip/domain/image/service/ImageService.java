@@ -87,7 +87,7 @@ public class ImageService {
 
     public MultipartFile base64ToMultipartFile(String base64) {
         String data = base64.split(",")[1];
-        byte[] decoded = Base64.getDecoder().decode(data);
+        byte[] decoded = Base64.getMimeDecoder().decode(data);
         String contentType = extractContentType(base64);
         String generatedImageName = generateUUID();
         return new MockMultipartFile(generatedImageName,

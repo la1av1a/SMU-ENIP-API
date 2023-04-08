@@ -30,4 +30,8 @@ public class ReceiptService {
         return userRepository.findUserById(userId).orElseThrow(
             () -> new UnExpectedErrorException(MessagesFail.USER_NOT_FOUND.getMessage()));
     }
+
+//    public void findReceiptsByDate(){
+//        List<Receipt> receipts receiptRepository
+//    }
 }

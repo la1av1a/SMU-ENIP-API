@@ -46,6 +46,9 @@ public class PurchasedItem {
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
+    @Column
+    private boolean isRecycled;
+
     @Builder
     public PurchasedItem(User user, Receipt receipt, String itemName, int itemCount, int itemPrice,
         Category category) {

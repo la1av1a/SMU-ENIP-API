@@ -2,7 +2,7 @@ package com.smu.smuenip.domain.receipt.service;
 
 import com.smu.smuenip.Infrastructure.util.naver.PurchasedItemDTO;
 import com.smu.smuenip.Infrastructure.util.naver.search.ClovaShoppingSearchingAPI;
-import com.smu.smuenip.application.user.dto.UserReceiptUploadRequestDTO;
+import com.smu.smuenip.application.user.dto.UserReceiptUploadRequestDto;
 import com.smu.smuenip.domain.Category.service.CategoryService;
 import com.smu.smuenip.domain.PurchasedItem.service.PurchasedItemService;
 import com.smu.smuenip.domain.dto.ImageURLDTO;
@@ -26,9 +26,7 @@ public class ReceiptProcessingService {
     private final APIService apiService;
 
     @Transactional
-    public void processReceipt(UserReceiptUploadRequestDTO requestDTO,
-        Long userId) {
-
+    public void processReceipt(UserReceiptUploadRequestDto requestDTO, Long userId) {
         ImageURLDTO imageURLDTO = imageProcessingService.uploadImage(
             requestDTO.getImage(), userId);
         List<PurchasedItemDTO> purchasedItemDTOList = apiService.callAPI(

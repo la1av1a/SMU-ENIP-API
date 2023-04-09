@@ -26,14 +26,14 @@ public class Receipt {
     private Long id;
 
     @JoinColumn(name = "user_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
     @Column
     private String imageUrl;
 
-    @Column(name = "is_recycled")
-    private boolean isRecycled;
+    @Column
+    private String comment;
 
     @CreatedDate
     private LocalDate createdDate = LocalDate.now();
@@ -42,9 +42,12 @@ public class Receipt {
     private LocalDate modifiedDate = LocalDate.now();
 
     @Builder
-    public Receipt(String imageUrl, User user, boolean isRecycled) {
+    public Receipt(String imageUrl, User user) {
         this.imageUrl = imageUrl;
         this.user = user;
-        this.isRecycled = isRecycled;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

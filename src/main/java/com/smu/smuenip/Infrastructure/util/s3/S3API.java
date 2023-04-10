@@ -6,6 +6,7 @@ import com.amazonaws.services.cloudfront.CloudFrontUrlSigner;
 import com.amazonaws.services.cloudfront.util.SignerUtils.Protocol;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.smu.smuenip.domain.image.service.S3VO;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.security.spec.InvalidKeySpecException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 @Component
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ public class S3API {
 
     private final S3VO s3VO;
 
-    public String uploadImageToS3(String filePath, String fileName) {
+    public String uploadImageToS3(MultipartFile multipartFile, String fileName) {
 
         String accessKey = s3VO.getAccessKey();
         String secretKey = s3VO.getSecretKey();
@@ -38,14 +40,22 @@ public class S3API {
             .withRegion(region)
             .build();
 
-        // File to upload
-        File file = new File(filePath);
-
         // S3 Key (file name)
         String s3Key = fileName;
 
         // Upload file to S3 bucket
-        PutObjectResult result = s3Client.putObject(new PutObjectRequest(bucketName, s3Key, file));
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(multipartFile.getSize());
+        metadata.setContentType(multipartFile.getContentType());
+
+        try {
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, s3Key,
+                multipartFile.getInputStream(), metadata);
+            PutObjectResult result = s3Client.putObject(putObjectRequest);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("MultipartFile 업로드 중 문제가 발생했습니다.", e);
+        }
 
         // Generate signed URL
         java.util.Date expiration = new java.util.Date();
@@ -68,5 +78,6 @@ public class S3API {
         }
         return signedUrl;
     }
+
 
 }

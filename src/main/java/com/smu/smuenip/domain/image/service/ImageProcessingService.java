@@ -2,7 +2,6 @@ package com.smu.smuenip.domain.image.service;
 
 
 import com.smu.smuenip.Infrastructure.util.Image.ImageUtils;
-import com.smu.smuenip.application.user.dto.UserImageUploadRequestDto;
 import com.smu.smuenip.domain.dto.ImageURLDTO;
 import com.smu.smuenip.domain.image.Receipt;
 import com.smu.smuenip.domain.receipt.service.ReceiptService;
@@ -24,31 +23,16 @@ public class ImageProcessingService {
     public ImageURLDTO uploadImage(String encodedImage, Long userId) {
 
         String localFilePath = null;
-        String imageUrl = null;
-        Receipt receipt = null;
-        try {
-            MultipartFile image = imageService.base64ToMultipartFile(encodedImage);
-            MultipartFile resizedImage = imageUtils.resizeImage(image);
-            localFilePath = imageService.saveImageInLocal(resizedImage);
-            imageUrl = imageService.uploadImageToS3(localFilePath,
-                image.getOriginalFilename());
-            receipt = receiptService.saveProductInfo(imageUrl, userId);
-        } finally {
-            imageUtils.deleteLocalSavedImage(localFilePath);
-        }
+        MultipartFile image = imageService.base64ToMultipartFile(encodedImage);
+        MultipartFile resizedImage = imageUtils.resizeImage(image);
+        String imageUrl = imageService.uploadImageToS3(resizedImage,
+            image.getOriginalFilename());
+        Receipt receipt = receiptService.saveProductInfo(imageUrl, userId);
 
         return ImageURLDTO.builder()
             .imageURL(imageUrl)
             .localFilePath(localFilePath)
             .receipt(receipt)
             .build();
-    }
-
-    public void uploadRecycledImage(UserImageUploadRequestDto requestDto) {
-        MultipartFile image = imageService.base64ToMultipartFile(requestDto.getImage());
-        MultipartFile resizedImage = imageUtils.resizeImage(image);
-        String localFilePath = imageService.saveImageInLocal(resizedImage);
-        String uploadedImageUrl = imageService.uploadImageToS3(localFilePath,
-            image.getOriginalFilename());
     }
 }

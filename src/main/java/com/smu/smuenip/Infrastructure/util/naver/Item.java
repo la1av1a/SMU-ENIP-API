@@ -1,10 +1,11 @@
 package com.smu.smuenip.Infrastructure.util.naver;
 
+import java.io.Serializable;
 import lombok.Getter;
 
 
 @Getter
-public class Item {
+public class Item implements Serializable {
 
     private String title;
     private String link;

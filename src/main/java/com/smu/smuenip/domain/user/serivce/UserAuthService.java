@@ -4,7 +4,8 @@ import com.smu.smuenip.Infrastructure.config.exception.BadRequestException;
 import com.smu.smuenip.Infrastructure.config.jwt.Subject;
 import com.smu.smuenip.Infrastructure.config.redis.TokenInfo;
 import com.smu.smuenip.Infrastructure.config.redis.TokenInfoRepository;
-import com.smu.smuenip.application.login.dto.UserLoginRequestDto;
+import com.smu.smuenip.application.login.dto.LoginRequestDto;
+import com.smu.smuenip.application.login.dto.LoginResult;
 import com.smu.smuenip.application.login.dto.UserRequestDto;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.model.UserAuth;
@@ -43,7 +44,7 @@ public class UserAuthService {
     }
 
     @Transactional(readOnly = true)
-    public String login(UserLoginRequestDto requestDto) throws BadRequestException {
+    public LoginResult login(LoginRequestDto requestDto) throws BadRequestException {
 
         User user = findUserByUserId(requestDto.getLoginId());
         UserAuth userAuth = findUserByUser(user);
@@ -55,11 +56,13 @@ public class UserAuthService {
         String token = createToken(user.getId(), user.getLoginId(), user.getEmail(),
             user.getRole());
 
+        Role role = user.getRole();
+
         TokenInfo tokenInfo = TokenInfo.builder()
             .id(Long.toString(user.getId()))
             .loginId(user.getLoginId())
             .email(user.getEmail())
-            .role(user.getRole())
+            .role(role)
             .accessTokenExpiration(jwtService.getTokenLive())
             .accessToken(token)
             .createdAt(new Date())
@@ -67,7 +70,7 @@ public class UserAuthService {
 
         tokenInfoRepository.save(tokenInfo);
 
-        return token;
+        return new LoginResult(token, role);
     }
 
 

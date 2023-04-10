@@ -3,7 +3,7 @@ package com.smu.smuenip.domain.user.serivce;
 import com.smu.smuenip.Infrastructure.config.exception.UnAuthorizedException;
 import com.smu.smuenip.Infrastructure.config.jwt.JwtProvider;
 import com.smu.smuenip.Infrastructure.config.jwt.Subject;
-import com.smu.smuenip.Infrastructure.config.redis.TokenInfo;
+import com.smu.smuenip.Infrastructure.config.redis.CustomUserDetails;
 import com.smu.smuenip.enums.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -52,7 +52,7 @@ public class JwtService {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(subject.getRole().toString()));
 
-        TokenInfo principal = TokenInfo.builder()
+        CustomUserDetails principal = CustomUserDetails.builder()
             .accessToken(token)
             .id(String.valueOf(subject.getId()))
             .loginId(subject.getUserId())

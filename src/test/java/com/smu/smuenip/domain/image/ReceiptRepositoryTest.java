@@ -1,16 +1,16 @@
-package com.smu.smuenip.domain.receipt;
+package com.smu.smuenip.domain.image;
 
-import com.smu.smuenip.domain.receipt.model.Receipt;
-import com.smu.smuenip.domain.receipt.repository.ReceiptRepository;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.enums.Role;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
 class ReceiptRepositoryTest {
 
@@ -21,28 +21,25 @@ class ReceiptRepositoryTest {
     UserRepository userRepository;
 
     @Test
-    void 저장_테스트() {
+    void findReceiptsByCreatedDate() {
 
         //given
         User user = User.builder()
-            .loginId("test")
-            .email("test@example.com")
+            .loginId("test1234")
             .role(Role.ROLE_USER)
+            .email("test1234@gmail.com")
             .score(0)
             .build();
 
-        User savedUser = userRepository.save(user); // User 저장
-
         Receipt receipt = Receipt.builder()
-            .user(savedUser) // 저장된 User 객체 사용
-            .receipt_url("test_url")
+            .imageUrl("Dadadsfasghdfegewsdwdwq")
+            .user(user)
             .build();
 
         //when
+
         Receipt savedReceipt = receiptRepository.save(receipt);
 
-        //then
-        Assertions.assertThat(savedReceipt.getReceipt_url()).isEqualTo("test_url");
-        Assertions.assertThat(savedReceipt.getUploadedDate()).isNotNull();
+        Assertions.assertThat(savedReceipt.getImageUrl()).isEqualTo("Dadadsfasghdfegewsdwdwq");
     }
 }

@@ -27,12 +27,6 @@ public class ImageUtils {
         }
     }
 
-    private BufferedImage multipartFileToBufferedImage(MultipartFile file)
-        throws IOException {
-
-        return ImageIO.read(file.getInputStream());
-    }
-
     public MultipartFile resizeImage(MultipartFile originalImage) {
         int targetWidth = 300;
         String fileName = originalImage.getOriginalFilename();

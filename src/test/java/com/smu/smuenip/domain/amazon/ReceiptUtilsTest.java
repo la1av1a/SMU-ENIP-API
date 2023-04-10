@@ -9,7 +9,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import org.junit.jupiter.api.Test;
 
-class ImageUtilsTest {
+class ReceiptUtilsTest {
 
     @Test
     void upload() {

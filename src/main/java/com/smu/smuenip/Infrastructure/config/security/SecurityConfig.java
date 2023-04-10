@@ -36,7 +36,7 @@ public class SecurityConfig {
             .formLogin().disable()
             .authorizeRequests()
             .antMatchers(swaggerURL).permitAll()
-            .antMatchers("/user/loginTest").authenticated()
+            .antMatchers("/user/loginTest", "/upload/list").authenticated()
             .antMatchers("/test").hasRole("ADMIN")
             .anyRequest().permitAll()
             .and()

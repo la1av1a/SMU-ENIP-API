@@ -1,4 +1,4 @@
-package com.smu.smuenip.domain.receipt.model;
+package com.smu.smuenip.domain.image;
 
 import com.smu.smuenip.domain.user.model.User;
 import java.time.LocalDate;
@@ -14,29 +14,40 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
-@NoArgsConstructor
 @Getter
 @Entity
+@NoArgsConstructor
 public class Receipt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long receipt_id;
+    private Long id;
 
-    @JoinColumn(name = "users_id")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
     @Column
-    private String receipt_url;
+    private String imageUrl;
+
+    @Column
+    private String comment;
 
     @CreatedDate
-    private LocalDate uploadedDate = LocalDate.now();
+    private LocalDate createdDate = LocalDate.now();
+
+    @LastModifiedDate
+    private LocalDate modifiedDate = LocalDate.now();
 
     @Builder
-    public Receipt(User user, String receipt_url) {
+    public Receipt(String imageUrl, User user) {
+        this.imageUrl = imageUrl;
         this.user = user;
-        this.receipt_url = receipt_url;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

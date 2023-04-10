@@ -2,8 +2,8 @@ package com.smu.smuenip.application.user;
 
 import com.smu.smuenip.Infrastructure.config.redis.CustomUserDetails;
 import com.smu.smuenip.application.login.dto.ResponseDto;
+import com.smu.smuenip.application.user.dto.UserImageUploadRequestDto;
 import com.smu.smuenip.application.user.dto.UserReceiptResponseDto;
-import com.smu.smuenip.application.user.dto.UserReceiptUploadRequestDto;
 import com.smu.smuenip.application.user.dto.UserSetCommentRequestDto;
 import com.smu.smuenip.domain.receipt.service.ReceiptProcessingService;
 import com.smu.smuenip.domain.receipt.service.ReceiptService;
@@ -39,7 +39,7 @@ public class UserController implements UserControllerSwagger {
     @Override
     @PostMapping("/receipt")
     public ResponseEntity<ResponseDto> uploadImage(
-        @RequestBody UserReceiptUploadRequestDto requestDTO,
+        @RequestBody UserImageUploadRequestDto requestDTO,
         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         receiptProcessingService.processReceipt(requestDTO,
             Long.valueOf(customUserDetails.getId()));
@@ -61,8 +61,7 @@ public class UserController implements UserControllerSwagger {
 
     @PutMapping("/receipt")
     public ResponseEntity<Messages> setComment(@RequestBody UserSetCommentRequestDto requestDto,
-        @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
+        @AuthenticationPrincipal CustomUserDetails userDetails) {
         receiptService.setComment(requestDto, Long.valueOf(userDetails.getId()));
         return new ResponseEntity<>(MessagesSuccess.COMMENT_SUCCESS, HttpStatus.OK);
     }

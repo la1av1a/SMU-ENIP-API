@@ -3,6 +3,7 @@ package com.smu.smuenip.domain.PurchasedItem.model;
 import com.smu.smuenip.domain.Category.model.Category;
 import com.smu.smuenip.domain.image.Receipt;
 import com.smu.smuenip.domain.user.model.User;
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,11 +31,14 @@ public class PurchasedItem {
     private User user;
 
     @JoinColumn(name = "receipt_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Receipt receipt;
 
     @Column
     private String itemName;
+
+    @Column
+    private String imageUrl;
 
     @Column
     private int itemCount;
@@ -49,14 +53,20 @@ public class PurchasedItem {
     @Column
     private boolean isRecycled;
 
+    @Column
+    private LocalDate uploadedDate;
+
     @Builder
-    public PurchasedItem(User user, Receipt receipt, String itemName, int itemCount, int itemPrice,
-        Category category) {
+    public PurchasedItem(User user, Receipt receipt, String itemName, String imageUrl,
+        int itemCount, int itemPrice,
+        Category category, LocalDate uploadedDate) {
         this.user = user;
         this.receipt = receipt;
         this.itemName = itemName;
+        this.imageUrl = imageUrl;
         this.itemCount = itemCount;
         this.itemPrice = itemPrice;
         this.category = category;
+        this.uploadedDate = uploadedDate;
     }
 }

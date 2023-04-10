@@ -25,7 +25,7 @@ public class ReceiptService {
     private final ReceiptRepository receiptRepository;
     private final UserRepository userRepository;
 
-    public void saveProductInfo(String imageUrl, Long userId) {
+    public Receipt saveProductInfo(String imageUrl, Long userId) {
         User user = findUserByUserId(userId);
 
         Receipt receipt = Receipt.builder()
@@ -33,7 +33,7 @@ public class ReceiptService {
             .user(user)
             .build();
 
-        receiptRepository.save(receipt);
+        return receiptRepository.save(receipt);
     }
 
     private User findUserByUserId(Long userId) {
@@ -73,7 +73,7 @@ public class ReceiptService {
                 .id(receipt.getId())
                 .imageUrl(receipt.getImageUrl())
                 .comment(receipt.getComment())
-                .createdDate(receipt.getCreatedDate())
+                .createdDate(receipt.getPurchasedDate())
                 .build())
             .collect(Collectors.toList());
     }

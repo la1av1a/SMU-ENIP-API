@@ -28,8 +28,8 @@ public class ImageService {
 
     private final S3API s3API;
 
-    public String uploadImageToS3(String filePath, String fileName) {
-        return s3API.uploadImageToS3(filePath, fileName);
+    public String uploadImageToS3(MultipartFile multipartFile, String fileName) {
+        return s3API.uploadImageToS3(multipartFile, fileName);
     }
 
     public List<PurchasedItemVO> extractPurchasedInfo(OcrResultDTO ocrResult) {

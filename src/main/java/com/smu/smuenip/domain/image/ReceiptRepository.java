@@ -12,9 +12,9 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
 
     @Query("SELECT r "
         + "FROM Receipt r "
-        + "WHERE (YEAR(r.createdDate) = :year "
-        + "AND MONTH(r.createdDate) = :month "
-        + "AND DAY(r.createdDate) = :day)"
+        + "WHERE (YEAR(r.purchasedDate) = :year "
+        + "AND MONTH(r.purchasedDate) = :month "
+        + "AND DAY(r.purchasedDate) = :day)"
         + "AND r.user = :user"
     )
     Page<Receipt> findReceiptsByCreatedDate(@Param("year") int year,

@@ -1,11 +1,9 @@
 package com.smu.smuenip.domain.image.service;
 
 import com.smu.smuenip.Infrastructure.config.exception.UnExpectedErrorException;
-import com.smu.smuenip.Infrastructure.util.naver.PurchasedItemDTO;
+import com.smu.smuenip.Infrastructure.util.naver.PurchasedItemVO;
 import com.smu.smuenip.Infrastructure.util.naver.ocr.ocrResult.OcrResultDTO;
 import com.smu.smuenip.Infrastructure.util.s3.S3API;
-import com.smu.smuenip.domain.image.ReceiptRepository;
-import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -29,16 +27,14 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageService {
 
     private final S3API s3API;
-    private final ReceiptRepository receiptRepository;
-    private final UserRepository userRepository;
 
     public String uploadImageToS3(String filePath, String fileName) {
         return s3API.uploadImageToS3(filePath, fileName);
     }
 
-    public List<PurchasedItemDTO> extractPurchasedInfo(OcrResultDTO ocrResult) {
+    public List<PurchasedItemVO> extractPurchasedInfo(OcrResultDTO ocrResult) {
         List<OcrResultDTO.Item> items = ocrResult.getResult().getSubResults().get(0).getItems();
-        List<PurchasedItemDTO> list = new ArrayList<>();
+        List<PurchasedItemVO> list = new ArrayList<>();
         for (OcrResultDTO.Item item : items) {
             if (item.getName().formatted == null) {
                 continue;
@@ -49,7 +45,7 @@ public class ImageService {
             String price = item.getPriceInfo().price.formatted == null ? null
                 : item.getPriceInfo().price.formatted.value;
 
-            list.add(new PurchasedItemDTO(name, count, price));
+            list.add(new PurchasedItemVO(name, count, price));
         }
 
         return list;

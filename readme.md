@@ -1,5 +1,6 @@
 ## 시스템 구성도
-![제목 없는 다이어그램-3 drawio-6](https://user-images.githubusercontent.com/81461486/232362465-e583f0ce-2c5d-4352-82cd-cea514f40107.png)
+![제목 없는 다이어그램-3-4 drawio](https://user-images.githubusercontent.com/81461486/232366263-52953a5b-8f60-463f-9894-f6bf3d39562c.png)
+
 
 
 

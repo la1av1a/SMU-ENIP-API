@@ -1,3 +1,8 @@
+## 시스템 구성도
+![제목 없는 다이어그램-3 drawio-6](https://user-images.githubusercontent.com/81461486/232362465-e583f0ce-2c5d-4352-82cd-cea514f40107.png)
+
+
+
 - [x] CI CD
     - [x] GithubActions를 이용한 CI 환경 구축
     - [x] GithubActions, dockerhub를 이용한 CD 환경 구축

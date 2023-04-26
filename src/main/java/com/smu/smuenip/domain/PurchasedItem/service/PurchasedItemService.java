@@ -10,19 +10,19 @@ import com.smu.smuenip.domain.Category.service.CategoryService;
 import com.smu.smuenip.domain.PurchasedItem.model.PurchasedItem;
 import com.smu.smuenip.domain.PurchasedItem.model.PurchasedItemRepository;
 import com.smu.smuenip.domain.image.Receipt;
-import com.smu.smuenip.domain.image.service.ImageService;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -31,12 +31,11 @@ public class PurchasedItemService {
 
     private final PurchasedItemRepository purchasedItemRepository;
     private final UserRepository userRepository;
-    private final ImageService imageService;
 
     @Transactional
     public void savePurchasedItem(PurchasedItemVO purchasedItemDTO, Receipt receipt,
-        ClovaShoppingSearchingAPI clovaShoppingSearchingAPI,
-        CategoryService categoryService, Long userId) {
+                                  ClovaShoppingSearchingAPI clovaShoppingSearchingAPI,
+                                  CategoryService categoryService, Long userId) {
 
         ItemVO itemVO = clovaShoppingSearchingAPI.callShoppingApi(purchasedItemDTO.getName());
         Category category = categoryService.getCategory(itemVO);
@@ -44,47 +43,45 @@ public class PurchasedItemService {
         User user = getUser(userId);
 
         PurchasedItem purchasedItem = PurchasedItem.builder()
-            .receipt(receipt)
-            .itemName(purchasedItemDTO.getName())
-            .imageUrl(imageUrl)
-            .user(user)
-            .itemPrice(Integer.parseInt(purchasedItemDTO.getPrice()))
-            .itemCount(Integer.parseInt(purchasedItemDTO.getCount()))
-            .category(category)
-            .build();
+                .receipt(receipt)
+                .itemName(purchasedItemDTO.getName())
+                .imageUrl(imageUrl)
+                .user(user)
+                .itemPrice(Integer.parseInt(purchasedItemDTO.getPrice()))
+                .itemCount(Integer.parseInt(purchasedItemDTO.getCount()))
+                .category(category)
+                .build();
 
         purchasedItemRepository.save(purchasedItem);
     }
 
     public List<PurchasedItemResponseDto> getPurchasedItems(LocalDate date, Long userId,
-        Pageable pageable) {
+                                                            Pageable pageable) {
 
         int year = date.getYear();
         int month = date.getMonthValue();
         int day = date.getDayOfMonth();
 
         Page<PurchasedItem> purchasedItemPage = purchasedItemRepository.findPurchasedItemsByCreatedDate(
-            year, month, day, userId, pageable);
+                year, month, day, userId, pageable);
 
         return entityPageToDto(purchasedItemPage);
     }
 
     private User getUser(Long id) {
         return userRepository.findUserById(id).orElseThrow(
-            () -> new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage()));
+                () -> new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage()));
     }
 
     private List<PurchasedItemResponseDto> entityPageToDto(Page<PurchasedItem> purchasedItemPage) {
         return purchasedItemPage.getContent().stream()
-            .map(purchasedItem -> PurchasedItemResponseDto.builder()
-                .itemId(purchasedItem.getPurchasedItemId())
-                .itemName(purchasedItem.getItemName())
-                .userId(purchasedItem.getUser().getId())
-                .imageUrl(purchasedItem.getImageUrl())
-                .itemPrice(purchasedItem.getItemPrice())
-                .itemCount(purchasedItem.getItemCount())
-                .isRecycled(purchasedItem.isRecycled())
-                .build()
-            ).collect(Collectors.toList());
+                .map(purchasedItem -> PurchasedItemResponseDto.builder()
+                        .purchasedItemId(purchasedItem.getPurchasedItemId())
+                        .receiptId(purchasedItem.getReceipt().getId())
+                        .trashAmount(0) // TODO 추후 구현
+                        .expenditureCost(purchasedItem.getItemPrice() + "원")
+                        .date(purchasedItem.getReceipt().getPurchasedDate())
+                        .build()
+                ).collect(Collectors.toList());
     }
 }

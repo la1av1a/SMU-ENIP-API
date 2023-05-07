@@ -9,6 +9,7 @@ import com.smu.smuenip.application.login.dto.UserRequestDto;
 import com.smu.smuenip.domain.user.serivce.UserAuthService;
 import com.smu.smuenip.enums.Role;
 import com.smu.smuenip.enums.meesagesDetail.MessagesSuccess;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,17 +30,16 @@ public class LoginController implements LoginControllerSwagger {
 
     @Override
     @PostMapping("/signUp")
-    public ResponseEntity<ResponseDto> signUp(@RequestBody UserRequestDto requestDto) {
+    public ResponseEntity<ResponseDto> signUp(@RequestBody @Valid UserRequestDto requestDto) {
         userAuthService.createUser(requestDto);
 
         return new ResponseEntity<>(
             new ResponseDto(true, MessagesSuccess.SIGNUP_SUCCESS.getMessage()), HttpStatus.OK);
     }
 
-
     @Override
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto) {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto requestDto) {
         LoginResult loginResult = userAuthService.login(requestDto);
 
         LoginResponseDto loginResponseDto = new LoginResponseDto(

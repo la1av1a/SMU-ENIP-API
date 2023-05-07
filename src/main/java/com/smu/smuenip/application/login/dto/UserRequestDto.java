@@ -1,5 +1,6 @@
 package com.smu.smuenip.application.login.dto;
 
+import javax.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,8 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserRequestDto {
 
+    @NotEmpty
     private String loginId;
+    @NotEmpty
     private String password;
+    @NotEmpty
     private String email;
 
     @Builder

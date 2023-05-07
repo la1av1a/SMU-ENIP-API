@@ -1,13 +1,14 @@
 package com.smu.smuenip.Infrastructure.util.naver.ocr;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smu.smuenip.Infrastructure.util.naver.ocr.ocrResult.OcrResultDTO;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import com.smu.smuenip.Infrastructure.util.naver.ocr.ocrResult.OcrResultDto2;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 
 /**
@@ -21,7 +22,7 @@ public class ClovaOCRAPI {
     private final ObjectMapper objectMapper;
     private final String API_URL = "https://openapi.naver.com/v1/vision/ocr";
 
-    public OcrResultDTO callOcrApi(String filePath) {
+    public OcrResultDto2 callOcrApi(String filePath) {
 
 //        WebClient webClient = WebClient.create(API_URL);
 //
@@ -31,11 +32,11 @@ public class ClovaOCRAPI {
 //            .bodyToMono(OcrResult.class);
 
         String jsonContent2 = null;
-        OcrResultDTO ocrResult = null;
+        OcrResultDto2 ocrResult = null;
 
         try {
             jsonContent2 = new String(Files.readAllBytes(Paths.get("json/ocr.json")));
-            ocrResult = objectMapper.readValue(jsonContent2, OcrResultDTO.class);
+            ocrResult = objectMapper.readValue(jsonContent2, OcrResultDto2.class);
         } catch (IOException e) {
             e.printStackTrace();
         }

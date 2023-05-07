@@ -3,19 +3,12 @@ package com.smu.smuenip.domain.PurchasedItem.model;
 import com.smu.smuenip.domain.Category.model.Category;
 import com.smu.smuenip.domain.image.Receipt;
 import com.smu.smuenip.domain.user.model.User;
-import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.time.LocalDate;
 
 @Getter
 @Entity
@@ -58,8 +51,8 @@ public class PurchasedItem {
 
     @Builder
     public PurchasedItem(User user, Receipt receipt, String itemName, String imageUrl,
-        int itemCount, int itemPrice,
-        Category category, LocalDate uploadedDate) {
+                         int itemCount, int itemPrice,
+                         Category category, LocalDate uploadedDate) {
         this.user = user;
         this.receipt = receipt;
         this.itemName = itemName;

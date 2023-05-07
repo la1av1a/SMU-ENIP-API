@@ -2,8 +2,9 @@ package com.smu.smuenip.application.purchasedItem;
 
 import com.smu.smuenip.Infrastructure.config.redis.CustomUserDetails;
 import com.smu.smuenip.application.purchasedItem.dto.PurchasedItemResponseDto;
-import com.smu.smuenip.application.user.dto.UserImageUploadRequestDto;
+import com.smu.smuenip.application.user.dto.RecycledImageUploadRequestDto;
 import com.smu.smuenip.domain.PurchasedItem.service.PurchasedItemService;
+import com.smu.smuenip.domain.recycledImage.service.RecycledImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,6 +21,7 @@ import java.util.List;
 public class PurchasedItemController implements PurchasedItemControllerSwagger {
 
     private final PurchasedItemService purchasedItemService;
+    private final RecycledImageService recycledImageService;
 
     @Override
     @GetMapping("/list")
@@ -32,7 +34,8 @@ public class PurchasedItemController implements PurchasedItemControllerSwagger {
     }
 
     @PostMapping("/upload")
-    public void uploadRecycledItem(@RequestBody UserImageUploadRequestDto requestDto) {
+    public void uploadRecycledItem(@RequestBody RecycledImageUploadRequestDto requestDto) {
+
 
     }
 

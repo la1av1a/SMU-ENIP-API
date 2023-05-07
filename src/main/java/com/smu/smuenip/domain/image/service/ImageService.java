@@ -2,9 +2,16 @@ package com.smu.smuenip.domain.image.service;
 
 import com.smu.smuenip.Infrastructure.config.exception.UnExpectedErrorException;
 import com.smu.smuenip.Infrastructure.util.naver.PurchasedItemVO;
-import com.smu.smuenip.Infrastructure.util.naver.ocr.ocrResult.OcrResultDTO;
+import com.smu.smuenip.Infrastructure.util.naver.ocr.ocrResult.OcrResultDto2;
 import com.smu.smuenip.Infrastructure.util.s3.S3API;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,12 +21,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.imageio.ImageIO;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -32,18 +33,18 @@ public class ImageService {
         return s3API.uploadImageToS3(multipartFile, fileName);
     }
 
-    public List<PurchasedItemVO> extractPurchasedInfo(OcrResultDTO ocrResult) {
-        List<OcrResultDTO.Item> items = ocrResult.getResult().getSubResults().get(0).getItems();
+    public List<PurchasedItemVO> extractPurchasedInfo(OcrResultDto2 ocrResult) {
+        List<OcrResultDto2.Item> items = ocrResult.getResult().getSubResults().get(0).getItems();
         List<PurchasedItemVO> list = new ArrayList<>();
-        for (OcrResultDTO.Item item : items) {
+        for (OcrResultDto2.Item item : items) {
             if (item.getName().formatted == null) {
                 continue;
             }
             String name = item.getName().formatted.value;
             String count =
-                item.getCount().formatted == null ? null : item.getCount().formatted.value;
+                    item.getCount().formatted == null ? null : item.getCount().formatted.value;
             String price = item.getPriceInfo().price.formatted == null ? null
-                : item.getPriceInfo().price.formatted.value;
+                    : item.getPriceInfo().price.formatted.value;
 
             list.add(new PurchasedItemVO(name, count, price));
         }
@@ -87,7 +88,7 @@ public class ImageService {
         String contentType = extractContentType(base64);
         String generatedImageName = generateUUID();
         return new MockMultipartFile(generatedImageName,
-            generatedImageName + "." + contentType, contentType, decoded);
+                generatedImageName + "." + contentType, contentType, decoded);
     }
 
     private String extractContentType(String base64) {

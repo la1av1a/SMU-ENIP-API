@@ -10,6 +10,6 @@ public class SwaggerController {
 
     @GetMapping("/")
     public String redirectToSwagger() {
-        return "redirect:/swagger-ui/";
+        return "redirect:https://www.smu-enip.site/swagger-ui/";
     }
 }

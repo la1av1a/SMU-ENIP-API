@@ -7,16 +7,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smu.smuenip.application.auth.dto.UserRequestDto;
-import com.smu.smuenip.domain.user.model.Role;
+import com.smu.smuenip.Infrastructure.config.security.BCryptPasswordEncoderConfig;
+import com.smu.smuenip.application.login.dto.LoginRequestDto;
+import com.smu.smuenip.application.login.dto.UserRequestDto;
 import com.smu.smuenip.domain.user.model.User;
-import com.smu.smuenip.domain.user.repository.RoleRepository;
+import com.smu.smuenip.domain.user.model.UserAuth;
 import com.smu.smuenip.domain.user.repository.UserAuthRepository;
 import com.smu.smuenip.domain.user.repository.UserRepository;
-import io.jsonwebtoken.Jwts;
+import com.smu.smuenip.enums.Provider;
+import com.smu.smuenip.enums.Role;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -24,14 +26,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Import(BCryptPasswordEncoderConfig.class)
 @TestInstance(Lifecycle.PER_CLASS)
 class LoginControllerTest {
 
@@ -45,33 +50,37 @@ class LoginControllerTest {
     private UserRepository userRepository;
     @Autowired
     private UserAuthRepository userAuthRepository;
-    @Autowired
-    private RoleRepository roleRepository;
 
-    @BeforeAll()
-    void init() {
-        Role roleUser = Role.builder()
-            .id(1L)
-            .name("ROLE_USER")
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @BeforeEach
+    void setup() {
+        User user = User.builder()
+            .loginId("test1234")
+            .email("test1234@gmail.com")
+            .score(111)
+            .role(Role.ROLE_USER)
             .build();
-        Role roleAdmin = Role.builder()
-            .id(2L)
-            .name("ROLE_ADMIN")
+
+        userRepository.save(user);
+
+        UserAuth userAuth = UserAuth.builder()
+            .user(user)
+            .password(passwordEncoder.encode("test1234"))
+            .provider(Provider.LOCAL)
             .build();
-        
-        roleRepository.save(roleUser);
-        roleRepository.save(roleAdmin);
+
+        userAuthRepository.save(userAuth);
     }
 
     @Test
     void signUpTest() throws Exception {
         //given
-        String expectedContentType = "application/json";
         UserRequestDto userRequestDto = UserRequestDto.builder()
-            .loginId("test12a")
+            .loginId("c")
             .email("test12a@example.com")
             .password("password")
-            .phoneNumber("010-1234-5678")
             .build();
 
         //when
@@ -91,20 +100,26 @@ class LoginControllerTest {
 
         int actualOK = resultSuccess.getResponse().getStatus();
         int actualBadRequest = resultFail.getResponse().getStatus();
-        String actualContentType = resultFail.getResponse().getHeader("Content-Type");
         Optional<User> userOptional = userRepository.findUserByLoginId(userRequestDto.getLoginId());
 
         // then
         Assertions.assertThat(actualOK).isEqualTo(HttpStatus.OK.value());
         Assertions.assertThat(actualBadRequest).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        Assertions.assertThat(actualContentType).isEqualTo(MediaType.APPLICATION_JSON.toString());
         assertUserAndAuthExist(userOptional);
     }
 
     @Test
-    void loginTest() {
-        //given
-        Jwts.builder();
+    void loginTest() throws Exception {
+        LoginRequestDto loginRequestDto =
+            new LoginRequestDto("test1234", "test1234");
+
+        MvcResult mvcResult = mockMvc.perform(post("/user/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectToString(loginRequestDto)))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        Assertions.assertThat(mvcResult.getResponse().getStatus()).isEqualTo(200);
     }
 
     private String objectToString(Object object) throws JsonProcessingException {

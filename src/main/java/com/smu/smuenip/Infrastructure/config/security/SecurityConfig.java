@@ -1,5 +1,6 @@
 package com.smu.smuenip.Infrastructure.config.security;
 
+import com.smu.smuenip.Infrastructure.config.exception.CustomAuthenticationEntryPoint;
 import com.smu.smuenip.Infrastructure.config.filters.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CorsConfigurationSource corsConfigurationSource;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     private final String[] swaggerURL = {
         "/v3/api-docs", "/configuration/ui",
@@ -34,11 +36,14 @@ public class SecurityConfig {
             .formLogin().disable()
             .authorizeRequests()
             .antMatchers(swaggerURL).permitAll()
-            .antMatchers("/user/loginTest").authenticated()
+            .antMatchers("/user/loginTest", "/upload/list").authenticated()
+            .antMatchers("/test").hasRole("ADMIN")
             .anyRequest().permitAll()
             .and()
             .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and().exceptionHandling()
+            .authenticationEntryPoint(authenticationEntryPoint);
 
         http.addFilterBefore(
             jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class

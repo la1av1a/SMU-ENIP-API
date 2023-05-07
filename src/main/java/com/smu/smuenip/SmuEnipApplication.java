@@ -3,8 +3,10 @@ package com.smu.smuenip;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EntityScan
+@EnableJpaAuditing
 @SpringBootApplication
 public class SmuEnipApplication {
 
@@ -13,8 +15,9 @@ public class SmuEnipApplication {
             .properties(
                 "spring.config.location=" +
                     "classpath:/application.properties" +
-                    ", file:/etc/config/application-database.properties" +
-                    ", file:/etc/config/application-amazon.properties"
+                    ", file:/etc/config/application-database.yml" +
+                    ", file:/etc/config/application-amazon.yml" +
+                    ", file:/etc/config/application-naver.yml"
             )
             .run(args);
     }

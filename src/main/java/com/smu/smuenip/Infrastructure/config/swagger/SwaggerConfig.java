@@ -2,6 +2,7 @@ package com.smu.smuenip.Infrastructure.config.swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -24,10 +25,10 @@ public class SwaggerConfig {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.OAS_30)
-            .ignoredParameterTypes(AuthenticationPrincipal.class)
+            .ignoredParameterTypes(AuthenticationPrincipal.class, Pageable.class)
             .useDefaultResponseMessages(false)
             .select()
-            .apis(RequestHandlerSelectors.basePackage("com.smu.smuenip.user.application"))
+            .apis(RequestHandlerSelectors.basePackage("com.smu.smuenip.application"))
             .paths(PathSelectors.any())
             .build()
             .apiInfo(apiInfo());

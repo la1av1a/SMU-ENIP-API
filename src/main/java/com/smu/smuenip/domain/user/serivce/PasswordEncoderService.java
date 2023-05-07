@@ -13,7 +13,6 @@ public class PasswordEncoderService {
     private final PasswordEncoder passwordEncoder;
 
     public String encodePassword(String rawPassword) {
-        log.info("dd");
         return passwordEncoder.encode(rawPassword);
     }
 

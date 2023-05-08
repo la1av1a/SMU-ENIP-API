@@ -54,4 +54,4 @@ jobs:
             docker rmi la1av1a/express-cicd:${GITHUB_SHA::7}
             docker pull la1av1a/express-cicd:${GITHUB_SHA::7}
             docker tag la1av1a/express-cicd:${GITHUB_SHA::7} express-cicd
-            docker run -d  --rm -v /home/ec2-user/pinpoint-agent-2.5.1:/pinpoint-agent-2.5.1 -v /etc/config/application-database.yml:/etc/config/application-database.yml -v /etc/config/application-amazon.yml:/etc/config/application-amazon.yml -v /etc/config/application-naver.yml:/etc/config/application-naver.yml --name server -p 8080:8080 express-cicd
+            docker run -d  --rm -v /home/ec2-user/pinpoint-agent-2.5.1:/pinpoint-agent-2.5.1 -v /etc/config/application-database.yml:/etc/config/application-database.yml -v /etc/config/application-amazon.yml:/etc/config/application-amazon.yml -v /etc/config/application-naver.yml:/etc/config/application-naver.yml -v /etc/config/pk-APKA5SBL6IKZWKYOKC5N.pem:/etc/config/pk-APKA5SBL6IKZWKYOKC5N.pem --name server -p 8080:8080 express-cicd

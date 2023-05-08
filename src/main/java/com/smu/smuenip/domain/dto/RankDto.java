@@ -5,13 +5,13 @@ import lombok.Getter;
 @Getter
 public class RankDto {
 
-  private Long id;
-  private String login_id;
-  private Long rank;
+    private String login_id;
+    private int score;
+    private Long rank;
 
-  public RankDto(Long id, String login_id, Long rank) {
-    this.id = id;
-    this.login_id = login_id;
-    this.rank = rank;
-  }
+    public RankDto(String login_id, int score, Long rank) {
+        this.login_id = login_id;
+        this.score = score;
+        this.rank = rank;
+    }
 }

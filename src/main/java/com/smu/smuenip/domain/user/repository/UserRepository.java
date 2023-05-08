@@ -16,7 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsUsersByLoginId(String loginId);
 
-    @Query(value = "SELECT u.users_id, u.login_id, RANK() OVER (ORDER BY score DESC) AS ranking "
+    @Query(value = "SELECT u.login_id, u.score, RANK() OVER (ORDER BY score DESC) AS ranking "
         + "FROM users u "
         + "ORDER BY ranking ASC "
         + "LIMIT :size OFFSET :offset", nativeQuery = true)

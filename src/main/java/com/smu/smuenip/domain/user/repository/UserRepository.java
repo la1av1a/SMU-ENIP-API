@@ -12,13 +12,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findUserByLoginId(String loginId);
 
-    Optional<User> findUserById(Long id);
+    Optional<User> findUserByUserId(Long id);
 
     boolean existsUsersByLoginId(String loginId);
 
     @Query(value = "SELECT u.login_id, u.score, RANK() OVER (ORDER BY score DESC) AS ranking "
         + "FROM users u "
-        + "ORDER BY ranking ASC "
+        + "ORDER BY ranking "
         + "LIMIT :size OFFSET :offset", nativeQuery = true)
     List<Object[]> findUserScore(@Param("size") int size, @Param("offset") int offset);
 }

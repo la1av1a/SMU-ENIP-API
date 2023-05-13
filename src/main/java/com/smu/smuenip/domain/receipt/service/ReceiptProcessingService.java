@@ -28,13 +28,13 @@ public class ReceiptProcessingService {
     @Transactional
     public void processReceipt(UserImageUploadRequestDto requestDTO, Long userId) {
         ImageURLDTO imageURLDTO = imageProcessingService.uploadImage(
-            requestDTO.getImage(), userId);
+            requestDTO.getImage(), userId, requestDTO.getLocalDate());
         List<PurchasedItemVO> purchasedItemDTOList = apiService.callAPI(
             imageURLDTO.getLocalFilePath());
 
         for (PurchasedItemVO purchasedItemDTO : purchasedItemDTOList) {
             purchasedItemService.savePurchasedItem(purchasedItemDTO, imageURLDTO.getReceipt(),
-                clovaShoppingSearchingAPI, categoryService, userId);
+                clovaShoppingSearchingAPI, categoryService, userId, requestDTO.getLocalDate());
         }
     }
 }

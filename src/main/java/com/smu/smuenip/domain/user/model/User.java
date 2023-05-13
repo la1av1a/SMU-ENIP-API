@@ -1,7 +1,7 @@
 package com.smu.smuenip.domain.user.model;
 
 import com.smu.smuenip.enums.Role;
-import java.util.Date;
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,22 +14,20 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Getter
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 @NoArgsConstructor
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "users_id")
-    private Long id;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column
     private String loginId;
-
 
     @Column
     private String email;
@@ -37,15 +35,12 @@ public class User {
     @Column
     @Enumerated(EnumType.STRING)
     private Role role;
+
     @Column
     private int score;
 
-
     @CreatedDate
-    private Date createdDate;
-
-    @LastModifiedDate
-    private Date modifiedDate;
+    private LocalDate createdDate = LocalDate.now();
 
     @Builder
     public User(String loginId, String email, int score,

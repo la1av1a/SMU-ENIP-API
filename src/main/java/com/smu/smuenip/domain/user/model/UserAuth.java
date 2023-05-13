@@ -1,7 +1,7 @@
 package com.smu.smuenip.domain.user.model;
 
 import com.smu.smuenip.enums.Provider;
-import java.util.Date;
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,16 +17,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Getter
-@Table(name = "users_auth")
+@Table(name = "user_auth")
 @Entity
 @NoArgsConstructor
 public class UserAuth {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_auth_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -43,12 +43,8 @@ public class UserAuth {
     @Column(name = "password")
     private String password;
 
-
     @CreatedDate
-    private Date createdDate;
-
-    @LastModifiedDate
-    private Date modifiedDate;
+    private LocalDate createdDate = LocalDate.now();
 
     @Builder
     public UserAuth(User user, Provider provider, String providerId, String password) {

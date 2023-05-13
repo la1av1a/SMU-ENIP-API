@@ -51,15 +51,12 @@ public class PurchasedItem {
     private Category category;
 
     @Column
-    private boolean isRecycled;
-
-    @Column
-    private LocalDate uploadedDate;
+    private LocalDate purchasedDate;
 
     @Builder
     public PurchasedItem(User user, Receipt receipt, String itemName, String imageUrl,
         int itemCount, int itemPrice,
-        Category category, LocalDate uploadedDate) {
+        Category category, LocalDate purchasedDate) {
         this.user = user;
         this.receipt = receipt;
         this.itemName = itemName;
@@ -67,6 +64,6 @@ public class PurchasedItem {
         this.itemCount = itemCount;
         this.itemPrice = itemPrice;
         this.category = category;
-        this.uploadedDate = uploadedDate;
+        this.purchasedDate = purchasedDate;
     }
 }

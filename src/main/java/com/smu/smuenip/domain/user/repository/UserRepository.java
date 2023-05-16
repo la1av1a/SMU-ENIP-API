@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsUsersByLoginId(String loginId);
 
     @Query(value = "SELECT u.login_id, u.score, RANK() OVER (ORDER BY score DESC) AS ranking "
-        + "FROM users u "
+        + "FROM user u "
         + "ORDER BY ranking "
         + "LIMIT :size OFFSET :offset", nativeQuery = true)
     List<Object[]> findUserScore(@Param("size") int size, @Param("offset") int offset);

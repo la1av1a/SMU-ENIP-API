@@ -53,9 +53,6 @@ dependencies {
     //MySQL
     implementation 'com.mysql:mysql-connector-j:8.0.32'
 
-    // H2
-    testImplementation 'com.h2database:h2:2.1.214'
-
     // jjwt-api
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 

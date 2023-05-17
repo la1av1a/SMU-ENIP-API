@@ -82,6 +82,9 @@ dependencies {
     // webFlux
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+    //fixture monkey
+    testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:0.5.6")
+
     // query dsl
     def queryDSL = '5.0.0'
 

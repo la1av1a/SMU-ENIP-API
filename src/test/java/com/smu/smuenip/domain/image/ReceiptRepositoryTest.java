@@ -3,6 +3,7 @@ package com.smu.smuenip.domain.image;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.enums.Role;
+import java.time.LocalDate;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,15 +26,16 @@ class ReceiptRepositoryTest {
 
         //given
         User user = User.builder()
-            .loginId("test1234")
+            .loginId("test12345")
             .role(Role.ROLE_USER)
-            .email("test1234@gmail.com")
+            .email("test12345@gmail.com")
             .score(0)
             .build();
 
         Receipt receipt = Receipt.builder()
             .imageUrl("Dadadsfasghdfegewsdwdwq")
             .user(user)
+            .purchasedDate(LocalDate.now())
             .build();
 
         //when

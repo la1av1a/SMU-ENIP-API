@@ -22,6 +22,7 @@ public class Receipt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "receipt_id")
     private Long id;
 
     @JoinColumn(name = "user_id")

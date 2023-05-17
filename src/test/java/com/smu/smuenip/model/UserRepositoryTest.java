@@ -75,7 +75,8 @@ class UserRepositoryTest {
         List<Object[]> userScoreList = userRepository.findUserScore(10, 0);
 
         List<RankDto> rankDtoList = userScoreList.stream()
-            .map(o -> new RankDto(Long.parseLong(String.valueOf(o[0])), String.valueOf(o[1]),
+            .map(o -> new RankDto(String.valueOf(o[0]),
+                Integer.parseInt(String.valueOf(o[1])),
                 Long.parseLong(String.valueOf(o[2]))))
             .collect(Collectors.toList());
 

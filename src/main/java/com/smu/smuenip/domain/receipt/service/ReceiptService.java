@@ -25,19 +25,20 @@ public class ReceiptService {
     private final ReceiptRepository receiptRepository;
     private final UserRepository userRepository;
 
-    public Receipt saveProductInfo(String imageUrl, Long userId) {
+    public Receipt saveProductInfo(String imageUrl, Long userId, LocalDate purchasedDate) {
         User user = findUserByUserId(userId);
 
         Receipt receipt = Receipt.builder()
             .imageUrl(imageUrl)
             .user(user)
+            .purchasedDate(purchasedDate)
             .build();
 
         return receiptRepository.save(receipt);
     }
 
     private User findUserByUserId(Long userId) {
-        return userRepository.findUserById(userId).orElseThrow(
+        return userRepository.findUserByUserId(userId).orElseThrow(
             () -> new UnExpectedErrorException(MessagesFail.USER_NOT_FOUND.getMessage()));
     }
 
@@ -56,7 +57,7 @@ public class ReceiptService {
 
     @Transactional
     public void setComment(UserSetCommentRequestDto requestDto, Long userId) {
-        Receipt receipt = receiptRepository.findReceiptByIdAndUserId(requestDto.getReceiptId(),
+        Receipt receipt = receiptRepository.findReceiptByIdAndUserUserId(requestDto.getReceiptId(),
                 userId)
             .orElseThrow(
                 () -> new BadRequestException(MessagesFail.RECEIPT_NOT_FOUND.getMessage()));
@@ -64,7 +65,7 @@ public class ReceiptService {
     }
 
     private User findUserById(Long userId) {
-        return userRepository.findUserById(userId)
+        return userRepository.findUserByUserId(userId)
             .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
     }
 

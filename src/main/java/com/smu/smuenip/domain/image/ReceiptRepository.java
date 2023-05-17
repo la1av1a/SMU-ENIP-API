@@ -21,6 +21,6 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
         @Param("month") int month, @Param("day") int day, @Param("user") User user,
         Pageable pageable);
 
-    Optional<Receipt> findReceiptByIdAndUserId(Long receiptId,
+    Optional<Receipt> findReceiptByIdAndUserUserId(Long receiptId,
         Long userId);
 }

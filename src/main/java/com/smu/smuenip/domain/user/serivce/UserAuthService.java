@@ -53,13 +53,13 @@ public class UserAuthService {
             throw new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage());
         }
 
-        String token = createToken(user.getId(), user.getLoginId(), user.getEmail(),
+        String token = createToken(user.getUserId(), user.getLoginId(), user.getEmail(),
             user.getRole());
 
         Role role = user.getRole();
 
         TokenInfo tokenInfo = TokenInfo.builder()
-            .id(Long.toString(user.getId()))
+            .id(Long.toString(user.getUserId()))
             .loginId(user.getLoginId())
             .email(user.getEmail())
             .role(role)

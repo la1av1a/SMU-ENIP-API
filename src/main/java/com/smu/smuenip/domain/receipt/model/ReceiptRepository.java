@@ -1,4 +1,4 @@
-package com.smu.smuenip.domain.image;
+package com.smu.smuenip.domain.receipt.model;
 
 import com.smu.smuenip.domain.user.model.User;
 import java.util.Optional;

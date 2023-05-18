@@ -1,6 +1,6 @@
 package com.smu.smuenip.domain.dto;
 
-import com.smu.smuenip.domain.image.Receipt;
+import com.smu.smuenip.domain.receipt.model.Receipt;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -3,7 +3,7 @@ package com.smu.smuenip.domain.image.service;
 
 import com.smu.smuenip.Infrastructure.util.Image.ImageUtils;
 import com.smu.smuenip.domain.dto.ImageURLDTO;
-import com.smu.smuenip.domain.image.Receipt;
+import com.smu.smuenip.domain.receipt.model.Receipt;
 import com.smu.smuenip.domain.receipt.service.ReceiptService;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;

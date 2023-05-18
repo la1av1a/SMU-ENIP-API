@@ -9,7 +9,7 @@ import com.smu.smuenip.domain.Category.model.Category;
 import com.smu.smuenip.domain.Category.service.CategoryService;
 import com.smu.smuenip.domain.PurchasedItem.model.PurchasedItem;
 import com.smu.smuenip.domain.PurchasedItem.model.PurchasedItemRepository;
-import com.smu.smuenip.domain.image.Receipt;
+import com.smu.smuenip.domain.receipt.model.Receipt;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.enums.meesagesDetail.MessagesFail;

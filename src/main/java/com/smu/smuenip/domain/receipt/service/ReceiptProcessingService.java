@@ -1,7 +1,6 @@
 package com.smu.smuenip.domain.receipt.service;
 
 import com.smu.smuenip.Infrastructure.util.naver.PurchasedItemVO;
-import com.smu.smuenip.Infrastructure.util.naver.search.ClovaShoppingSearchingAPI;
 import com.smu.smuenip.application.user.dto.UserImageUploadRequestDto;
 import com.smu.smuenip.domain.Category.service.CategoryService;
 import com.smu.smuenip.domain.PurchasedItem.service.PurchasedItemService;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReceiptProcessingService {
 
-    private final ClovaShoppingSearchingAPI clovaShoppingSearchingAPI;
     private final PurchasedItemService purchasedItemService;
     private final CategoryService categoryService;
     private final ImageProcessingService imageProcessingService;
@@ -34,7 +32,7 @@ public class ReceiptProcessingService {
 
         for (PurchasedItemVO purchasedItemDTO : purchasedItemDTOList) {
             purchasedItemService.savePurchasedItem(purchasedItemDTO, imageURLDTO.getReceipt(),
-                clovaShoppingSearchingAPI, categoryService, userId, requestDTO.getLocalDate());
+                categoryService, userId, requestDTO.getLocalDate());
         }
     }
 }

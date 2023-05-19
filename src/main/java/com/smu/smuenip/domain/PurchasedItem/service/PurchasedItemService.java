@@ -30,10 +30,10 @@ public class PurchasedItemService {
 
     private final PurchasedItemRepository purchasedItemRepository;
     private final UserRepository userRepository;
+    private final ClovaShoppingSearchingAPI clovaShoppingSearchingAPI;
 
     @Transactional
     public void savePurchasedItem(PurchasedItemVO purchasedItemDTO, Receipt receipt,
-        ClovaShoppingSearchingAPI clovaShoppingSearchingAPI,
         CategoryService categoryService, Long userId, LocalDate purchased_date) {
 
         ItemVO itemVO = clovaShoppingSearchingAPI.callShoppingApi(purchasedItemDTO.getName());

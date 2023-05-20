@@ -1,4 +1,4 @@
-package com.smu.smuenip.domain.image.service;
+package com.smu.smuenip.Infrastructure.util.s3.vo;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Getter
 @Component
-public class S3VO {
+public class S3Vo {
 
     @Value("${amazon.accessKey}")
     private String accessKey;

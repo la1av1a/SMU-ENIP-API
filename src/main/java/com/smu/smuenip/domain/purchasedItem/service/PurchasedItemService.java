@@ -1,18 +1,18 @@
-package com.smu.smuenip.domain.PurchasedItem.service;
+package com.smu.smuenip.domain.purchasedItem.service;
 
 import com.smu.smuenip.Infrastructure.config.exception.UnExpectedErrorException;
-import com.smu.smuenip.Infrastructure.util.naver.ItemVO;
-import com.smu.smuenip.Infrastructure.util.naver.PurchasedItemVO;
+import com.smu.smuenip.Infrastructure.util.naver.ItemDto;
+import com.smu.smuenip.Infrastructure.util.naver.PurchasedItemDto;
 import com.smu.smuenip.Infrastructure.util.naver.search.ClovaShoppingSearchingAPI;
 import com.smu.smuenip.application.purchasedItem.dto.PurchasedItemResponseDto;
-import com.smu.smuenip.domain.Category.model.Category;
-import com.smu.smuenip.domain.Category.service.CategoryService;
-import com.smu.smuenip.domain.PurchasedItem.model.PurchasedItem;
-import com.smu.smuenip.domain.PurchasedItem.model.PurchasedItemRepository;
+import com.smu.smuenip.domain.category.model.Category;
+import com.smu.smuenip.domain.category.service.CategoryService;
+import com.smu.smuenip.domain.purchasedItem.model.PurchasedItem;
+import com.smu.smuenip.domain.purchasedItem.model.PurchasedItemRepository;
 import com.smu.smuenip.domain.receipt.model.Receipt;
 import com.smu.smuenip.domain.user.model.User;
-import com.smu.smuenip.domain.user.repository.UserRepository;
-import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
+import com.smu.smuenip.domain.user.serivce.UserService;
+import com.smu.smuenip.enums.message.meesagesDetail.MessagesFail;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,30 +29,43 @@ import org.springframework.stereotype.Service;
 public class PurchasedItemService {
 
     private final PurchasedItemRepository purchasedItemRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
+    private final CategoryService categoryService;
     private final ClovaShoppingSearchingAPI clovaShoppingSearchingAPI;
 
     @Transactional
-    public void savePurchasedItem(PurchasedItemVO purchasedItemDTO, Receipt receipt,
-        CategoryService categoryService, Long userId, LocalDate purchased_date) {
+    public void savePurchasedItem(PurchasedItemDto purchasedItemDTO, Receipt receipt, Long userId,
+        LocalDate purchased_date) {
 
-        ItemVO itemVO = clovaShoppingSearchingAPI.callShoppingApi(purchasedItemDTO.getName());
-        Category category = categoryService.getCategory(itemVO);
-        String imageUrl = itemVO.getItems().get(0).getImage();
-        User user = getUser(userId);
+        ItemDto itemDto = clovaShoppingSearchingAPI.callShoppingApi(purchasedItemDTO.getName());
+        Category category = categoryService.findCategory(itemDto);
+        String imageUrl = itemDto.getItems().get(0).getImage();
+        User user = userService.findUserById(userId);
 
-        PurchasedItem purchasedItem = PurchasedItem.builder()
-            .receipt(receipt)
-            .itemName(purchasedItemDTO.getName())
-            .imageUrl(imageUrl)
-            .user(user)
-            .itemPrice(Integer.parseInt(purchasedItemDTO.getPrice()))
-            .itemCount(Integer.parseInt(purchasedItemDTO.getCount()))
-            .category(category)
-            .purchasedDate(purchased_date)
-            .build();
+        PurchasedItem purchasedItem = createPurchasedItem(receipt, purchasedItemDTO.getName(),
+            imageUrl,
+            user,
+            Integer.parseInt(purchasedItemDTO.getPrice()),
+            Integer.parseInt(purchasedItemDTO.getCount()),
+            category,
+            purchased_date);
 
         purchasedItemRepository.save(purchasedItem);
+    }
+
+    private PurchasedItem createPurchasedItem(Receipt receipt, String itemName, String imageUrl,
+        User user, int itemPrice, int itemCount, Category category, LocalDate purchasedDate) {
+
+        return PurchasedItem.builder()
+            .receipt(receipt)
+            .itemName(itemName)
+            .imageUrl(imageUrl)
+            .user(user)
+            .itemPrice(itemPrice)
+            .itemCount(itemCount)
+            .category(category)
+            .purchasedDate(purchasedDate)
+            .build();
     }
 
     public List<PurchasedItemResponseDto> getPurchasedItems(LocalDate date, Long userId,
@@ -68,8 +81,8 @@ public class PurchasedItemService {
         return entityPageToDto(purchasedItemPage);
     }
 
-    private User getUser(Long id) {
-        return userRepository.findUserByUserId(id).orElseThrow(
+    public PurchasedItem findPurchasedItemById(Long purchasedItemId) {
+        return purchasedItemRepository.findById(purchasedItemId).orElseThrow(
             () -> new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage()));
     }
 

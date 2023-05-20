@@ -1,8 +1,8 @@
-package com.smu.smuenip.domain.Category.service;
+package com.smu.smuenip.domain.category.service;
 
-import com.smu.smuenip.Infrastructure.util.naver.ItemVO;
-import com.smu.smuenip.domain.Category.model.Category;
-import com.smu.smuenip.domain.Category.model.CategoryRepositorySupport;
+import com.smu.smuenip.Infrastructure.util.naver.ItemDto;
+import com.smu.smuenip.domain.category.model.Category;
+import com.smu.smuenip.domain.category.model.CategoryRepositorySupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,11 +14,11 @@ public class CategoryService {
     private final CategoryRepositorySupport categoryRepository;
 
     @Transactional(readOnly = true)
-    public Category getCategory(ItemVO itemVO) {
+    public Category findCategory(ItemDto itemDto) {
 
         return categoryRepository.findCategoryByDetailCategoryOrSubCategory(
-            itemVO.getItems().get(0).getCategory4(),
-            itemVO.getItems().get(0).getCategory3()
+            itemDto.getItems().get(0).getCategory4(),
+            itemDto.getItems().get(0).getCategory3()
         );
     }
 }

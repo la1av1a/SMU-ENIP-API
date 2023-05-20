@@ -1,4 +1,4 @@
-package com.smu.smuenip.domain.Category.model;
+package com.smu.smuenip.domain.category.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

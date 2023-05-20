@@ -7,7 +7,7 @@ import java.util.List;
 import lombok.Getter;
 
 @Getter
-public class ItemVO implements Serializable {
+public class ItemDto implements Serializable {
 
     private String lastBuildDate;
     private int total;

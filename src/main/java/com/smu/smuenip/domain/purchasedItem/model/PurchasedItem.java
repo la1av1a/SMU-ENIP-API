@@ -1,6 +1,6 @@
-package com.smu.smuenip.domain.PurchasedItem.model;
+package com.smu.smuenip.domain.purchasedItem.model;
 
-import com.smu.smuenip.domain.Category.model.Category;
+import com.smu.smuenip.domain.category.model.Category;
 import com.smu.smuenip.domain.receipt.model.Receipt;
 import com.smu.smuenip.domain.user.model.User;
 import java.time.LocalDate;

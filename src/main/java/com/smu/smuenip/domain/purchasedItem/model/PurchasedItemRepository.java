@@ -1,4 +1,4 @@
-package com.smu.smuenip.domain.PurchasedItem.model;
+package com.smu.smuenip.domain.purchasedItem.model;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,14 +14,14 @@ public interface PurchasedItemRepository extends JpaRepository<PurchasedItem, Lo
         + "WHERE YEAR(r.purchasedDate) = :year "
         + "AND MONTH(r.purchasedDate) = :month "
         + "AND DAY(r.purchasedDate) = :day "
-        + "AND r.user.id = :userId",
+        + "AND r.user.userId = :userId",
         countQuery = "SELECT COUNT(p) "
             + "FROM PurchasedItem p "
             + "JOIN p.receipt r "
             + "WHERE YEAR(r.purchasedDate) = :year "
             + "AND MONTH(r.purchasedDate) = :month "
             + "AND DAY(r.purchasedDate) = :day "
-            + "AND r.user.id = :userId"
+            + "AND r.user.userId = :userId"
     )
     Page<PurchasedItem> findPurchasedItemsByCreatedDate(@Param("year") int year,
         @Param("month") int month, @Param("day") int day, @Param("userId") Long userId,

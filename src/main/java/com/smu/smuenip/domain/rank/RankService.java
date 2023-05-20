@@ -1,4 +1,4 @@
-package com.smu.smuenip.domain.Rank;
+package com.smu.smuenip.domain.rank;
 
 import com.smu.smuenip.domain.dto.RankDto;
 import com.smu.smuenip.domain.user.repository.UserRepository;

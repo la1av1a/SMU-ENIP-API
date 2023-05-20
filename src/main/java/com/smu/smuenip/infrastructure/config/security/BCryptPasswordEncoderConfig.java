@@ -1,4 +1,4 @@
-package com.smu.smuenip.Infrastructure.config.security;
+package com.smu.smuenip.infrastructure.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

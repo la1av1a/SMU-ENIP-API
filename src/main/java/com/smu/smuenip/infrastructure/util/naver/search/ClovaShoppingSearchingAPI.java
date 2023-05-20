@@ -1,7 +1,7 @@
-package com.smu.smuenip.Infrastructure.util.naver.search;
+package com.smu.smuenip.infrastructure.util.naver.search;
 
-import com.smu.smuenip.Infrastructure.util.naver.ItemVO;
-import com.smu.smuenip.Infrastructure.util.naver.NaverVO;
+import com.smu.smuenip.infrastructure.util.naver.ItemDto;
+import com.smu.smuenip.infrastructure.util.naver.NaverVO;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +16,11 @@ import reactor.core.scheduler.Schedulers;
 @Component
 @RequiredArgsConstructor
 public class ClovaShoppingSearchingAPI {
-    
+
     private final NaverVO naverVo;
 
     @Cacheable(value = "shoppingCache", key = "#item")
-    public ItemVO callShoppingApi(String item) {
+    public ItemDto callShoppingApi(String item) {
         String decodedItem = URLDecoder.decode(item, StandardCharsets.UTF_8);
 
         WebClient client = WebClient.builder()
@@ -32,16 +32,16 @@ public class ClovaShoppingSearchingAPI {
             .defaultHeader("X-Naver-Client-Secret", naverVo.getSecretKey())
             .build();
 
-        Mono<ItemVO> result = client.get().uri(uriBuilder -> uriBuilder
+        Mono<ItemDto> result = client.get().uri(uriBuilder -> uriBuilder
                 .path("/v1/search/shop.json")
                 .queryParam("query", decodedItem)
                 .build()
             )
             .headers(headers -> headers.addAll(headers))
             .retrieve()
-            .bodyToMono(ItemVO.class)
+            .bodyToMono(ItemDto.class)
             .publishOn(Schedulers.boundedElastic())
-            .doOnSuccess(itemVO -> log.info("쇼핑 api 호출 -완료-"));
+            .doOnSuccess(itemDto -> log.info("쇼핑 api 호출 -완료-"));
         return result.block();
     }
 }

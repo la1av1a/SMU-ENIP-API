@@ -1,31 +1,26 @@
-package com.smu.smuenip.domain.user.serivce;
+package com.smu.smuenip.infrastructure.util.jwt;
 
-import com.smu.smuenip.Infrastructure.config.exception.UnAuthorizedException;
-import com.smu.smuenip.Infrastructure.config.jwt.JwtProvider;
-import com.smu.smuenip.Infrastructure.config.jwt.Subject;
-import com.smu.smuenip.Infrastructure.config.redis.CustomUserDetails;
 import com.smu.smuenip.enums.Role;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
+import com.smu.smuenip.infrastructure.config.CustomUserDetails;
+import com.smu.smuenip.infrastructure.config.exception.UnAuthorizedException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+
+@Component
 @RequiredArgsConstructor
 @Slf4j
-public class JwtService {
+public class JwtUtil {
 
     private final JwtProvider jwtProvider;
 
@@ -34,15 +29,15 @@ public class JwtService {
         long tokenValidity = jwtProvider.getTokenLive();
 
         return Jwts.builder()
-            .setIssuedAt(now)
-            .setSubject(subject.getId().toString())
-            .claim("userId", subject.getUserId())
-            .claim("email", subject.getEmail())
-            .claim("role", subject.getRole())
-            .setIssuedAt(new Date())
-            .setExpiration(new Date(now.getTime() + tokenValidity))
-            .signWith(jwtProvider.getSecretKey())
-            .compact();
+                .setIssuedAt(now)
+                .setSubject(subject.getId().toString())
+                .claim("userId", subject.getUserId())
+                .claim("email", subject.getEmail())
+                .claim("role", subject.getRole())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(now.getTime() + tokenValidity))
+                .signWith(jwtProvider.getSecretKey())
+                .compact();
     }
 
     public Authentication getAuthenticationFromToken(String token) {
@@ -53,24 +48,24 @@ public class JwtService {
         authorities.add(new SimpleGrantedAuthority(subject.getRole().toString()));
 
         CustomUserDetails principal = CustomUserDetails.builder()
-            .accessToken(token)
-            .id(String.valueOf(subject.getId()))
-            .loginId(subject.getUserId())
-            .role(subject.getRole())
-            .accessTokenExpiration(claims.getExpiration().getTime())
-            .createdAt(claims.getIssuedAt())
-            .role(subject.getRole())
-            .build();
+                .accessToken(token)
+                .id(String.valueOf(subject.getId()))
+                .loginId(subject.getUserId())
+                .role(subject.getRole())
+                .accessTokenExpiration(claims.getExpiration().getTime())
+                .createdAt(claims.getIssuedAt())
+                .role(subject.getRole())
+                .build();
 
         return new UsernamePasswordAuthenticationToken(principal, null, authorities);
     }
 
-    private Claims extractClaimsFromToken(String token) {
+    public Claims extractClaimsFromToken(String token) {
         return Jwts.parserBuilder()
-            .setSigningKey(jwtProvider.getSecretKey())
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
+                .setSigningKey(jwtProvider.getSecretKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private Subject extractSubjectFromClaims(Claims claims) {
@@ -81,11 +76,11 @@ public class JwtService {
         checkAuthorities(claims);
 
         return Subject.builder()
-            .id(id)
-            .userId(userId)
-            .email(email)
-            .role(Role.valueOf(role))
-            .build();
+                .id(id)
+                .userId(userId)
+                .email(email)
+                .role(Role.valueOf(role))
+                .build();
     }
 
     private void checkAuthorities(Claims claims) throws UnAuthorizedException {
@@ -97,9 +92,9 @@ public class JwtService {
     public boolean validateToken(String token) throws UnAuthorizedException {
         try {
             Jwts.parserBuilder()
-                .setSigningKey(jwtProvider.getSecretKey())
-                .build()
-                .parseClaimsJws(token);
+                    .setSigningKey(jwtProvider.getSecretKey())
+                    .build()
+                    .parseClaimsJws(token);
 
         } catch (SignatureException | MalformedJwtException e) {
             e.printStackTrace();

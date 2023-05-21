@@ -1,8 +1,8 @@
 package com.smu.smuenip.domain.category.service;
 
-import com.smu.smuenip.Infrastructure.util.naver.ItemDto;
 import com.smu.smuenip.domain.category.model.Category;
 import com.smu.smuenip.domain.category.model.CategoryRepositorySupport;
+import com.smu.smuenip.infrastructure.util.naver.ItemDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +16,12 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public Category findCategory(ItemDto itemDto) {
 
+        if (itemDto == null)
+            return null;
+
         return categoryRepository.findCategoryByDetailCategoryOrSubCategory(
-            itemDto.getItems().get(0).getCategory4(),
-            itemDto.getItems().get(0).getCategory3()
-        );
+                itemDto.getItems().get(0).getCategory4(),
+                itemDto.getItems().get(0).getCategory3());
+
     }
 }

@@ -6,8 +6,7 @@ import com.smu.smuenip.enums.message.meesagesDetail.MessagesFail;
 import com.smu.smuenip.infrastructure.config.exception.UnExpectedErrorException;
 import com.smu.smuenip.infrastructure.util.naver.ocr.OcrRequestDto.Images;
 import com.smu.smuenip.infrastructure.util.naver.ocr.VO.ClovaOcrVo;
-import com.smu.smuenip.infrastructure.util.naver.ocr.ocrResult.OcrResultDto2;
-import javax.annotation.PostConstruct;
+import com.smu.smuenip.infrastructure.util.naver.ocr.dto.OcrResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.PostConstruct;
+
 
 /**
  * 추후 구현 예정
@@ -23,7 +24,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ClovaOCRAPI {
+public class ClovaOcrApi {
 
     private final ClovaOcrVo clovaOcrVo;
     private final ObjectMapper objectMapper;
@@ -36,15 +37,15 @@ public class ClovaOCRAPI {
         header.add("Content-Type", "application/json");
     }
 
-    public void callNaverOcr(Images images) {
+    public OcrResponseDto callNaverOcr(Images images) {
 
         OcrRequestDto ocrRequestDto = OcrRequestDto.builder()
-            .requestId(clovaOcrVo.getRequestId())
-            .timestamp(clovaOcrVo.getTimestamp())
-            .version(clovaOcrVo.getVersion())
-            .timestamp(clovaOcrVo.getTimestamp())
-            .images(new Images[]{images})
-            .build();
+                .requestId(clovaOcrVo.getRequestId())
+                .timestamp(clovaOcrVo.getTimestamp())
+                .version(clovaOcrVo.getVersion())
+                .timestamp(clovaOcrVo.getTimestamp())
+                .images(new Images[]{images})
+                .build();
 
         String json = null;
 
@@ -56,18 +57,20 @@ public class ClovaOCRAPI {
             throw new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage());
         }
 
-        Mono<OcrResultDto2> result = WebClient.create()
-            .post()
-            .uri(uriBuilder -> uriBuilder
-                .scheme("https")
-                .host(clovaOcrVo.getHost())
-                .build())
-            .bodyValue(json)
-            .retrieve()
-            .bodyToMono(OcrResultDto2.class).doOnSuccess(ocrResultDto2 -> {
-                log.info("ocrResultDto2 = {}",
-                    ocrResultDto2.getImages()[0].receipt.result.subResults.get(0).items.get(
-                        0).name.formatted.value);
-            });
+        Mono<OcrResponseDto> result = WebClient.create()
+                .post()
+                .uri(uriBuilder -> uriBuilder
+                        .scheme("https")
+                        .host(clovaOcrVo.getHost())
+                        .build())
+                .bodyValue(json)
+                .retrieve()
+                .bodyToMono(OcrResponseDto.class).doOnSuccess(ocrResponseDto -> {
+                    log.info("ocrResultDto2 = {}",
+                            ocrResponseDto.getImages()[0].receipt.result.subResults.get(0).items.get(
+                                    0).name.formatted.value);
+                });
+
+        return new OcrResponseDto();
     }
 }

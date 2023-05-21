@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smu.smuenip.Infrastructure.config.security.BCryptPasswordEncoderConfig;
 import com.smu.smuenip.application.login.dto.LoginRequestDto;
 import com.smu.smuenip.application.login.dto.UserRequestDto;
 import com.smu.smuenip.domain.user.model.User;
@@ -16,6 +15,7 @@ import com.smu.smuenip.domain.user.repository.UserAuthRepository;
 import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.enums.Provider;
 import com.smu.smuenip.enums.Role;
+import com.smu.smuenip.infrastructure.config.security.BCryptPasswordEncoderConfig;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

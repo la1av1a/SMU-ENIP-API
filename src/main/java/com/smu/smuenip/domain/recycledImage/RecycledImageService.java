@@ -1,12 +1,10 @@
 package com.smu.smuenip.domain.recycledImage;
 
-import com.smu.smuenip.Infrastructure.config.exception.BadRequestException;
-import com.smu.smuenip.Infrastructure.util.Image.ImageUtils;
 import com.smu.smuenip.application.purchasedItem.dto.RecycledImageUploadRequestDto;
-import com.smu.smuenip.domain.PurchasedItem.model.PurchasedItem;
-import com.smu.smuenip.domain.PurchasedItem.model.PurchasedItemRepository;
-import com.smu.smuenip.domain.image.service.ImageService;
-import com.smu.smuenip.enums.meesagesDetail.MessagesFail;
+import com.smu.smuenip.domain.purchasedItem.model.PurchasedItem;
+import com.smu.smuenip.domain.purchasedItem.service.PurchasedItemService;
+import com.smu.smuenip.infrastructure.util.Image.ImageUtils;
+import com.smu.smuenip.infrastructure.util.s3.S3API;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,30 +16,32 @@ import org.springframework.web.multipart.MultipartFile;
 public class RecycledImageService {
 
     private final RecycledImageRepository recycledImageRepository;
-    private final PurchasedItemRepository purchasedItemRepository;
-    private final ImageUtils imageUtils;
-    private final ImageService imageService;
+    private final PurchasedItemService purchasedItemService;
+    private final S3API s3Api;
 
     @Transactional
     public void RecycledImageUpload(RecycledImageUploadRequestDto requestDto) {
 
-        MultipartFile imageMultiPartFile = imageService.base64ToMultipartFile(
+        MultipartFile imageMultiPartFile = ImageUtils.base64ToMultipartFile(
             requestDto.getImage());
-        MultipartFile resizedImage = imageUtils.resizeImage(imageMultiPartFile);
-        String imageUrl = imageService.uploadImageToS3(resizedImage,
+        MultipartFile resizedImage = ImageUtils.resizeImage(imageMultiPartFile);
+        String imageUrl = s3Api.uploadImageToS3(resizedImage,
             imageMultiPartFile.getOriginalFilename());
 
-        PurchasedItem purchasedItem = purchasedItemRepository.findById(requestDto.getItemId())
-            .orElseThrow(() -> new BadRequestException(MessagesFail.UNEXPECTED_ERROR.getMessage()));
+        PurchasedItem purchasedItem = purchasedItemService.findPurchasedItemById(
+            requestDto.getItemId());
 
-        RecycledImage recycledImage = RecycledImage.builder()
+        RecycledImage recycledImage = createRecycledImage(imageUrl, purchasedItem);
+        recycledImageRepository.save(recycledImage);
+    }
+
+    private RecycledImage createRecycledImage(String imageUrl, PurchasedItem purchasedItem) {
+        return RecycledImage.builder()
             .recycledImageUrl(imageUrl)
             .uploadDate(LocalDate.now())
             .purchasedItem(purchasedItem)
             .isApproved(false)
             .isChecked(false)
             .build();
-
-        recycledImageRepository.save(recycledImage);
     }
 }

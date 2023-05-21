@@ -1,7 +1,7 @@
 package com.smu.smuenip.application.purchasedItem;
 
-import com.smu.smuenip.Infrastructure.config.redis.CustomUserDetails;
 import com.smu.smuenip.application.purchasedItem.dto.PurchasedItemResponseDto;
+import com.smu.smuenip.infrastructure.config.CustomUserDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

@@ -1,6 +1,6 @@
 package com.smu.smuenip.application.login.dto;
 
-import com.smu.smuenip.enums.Messages;
+import com.smu.smuenip.enums.message.Messages;
 import lombok.Getter;
 import lombok.Setter;
 

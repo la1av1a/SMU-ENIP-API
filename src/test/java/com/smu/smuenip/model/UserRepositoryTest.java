@@ -1,9 +1,9 @@
 package com.smu.smuenip.model;
 
-import com.smu.smuenip.Infrastructure.config.security.BCryptPasswordEncoderConfig;
 import com.smu.smuenip.domain.dto.RankDto;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.repository.UserRepository;
+import com.smu.smuenip.infrastructure.config.security.BCryptPasswordEncoderConfig;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;

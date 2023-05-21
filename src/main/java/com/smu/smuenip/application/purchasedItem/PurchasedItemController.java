@@ -1,8 +1,8 @@
 package com.smu.smuenip.application.purchasedItem;
 
-import com.smu.smuenip.Infrastructure.config.redis.CustomUserDetails;
 import com.smu.smuenip.application.purchasedItem.dto.PurchasedItemResponseDto;
-import com.smu.smuenip.domain.PurchasedItem.service.PurchasedItemService;
+import com.smu.smuenip.domain.purchasedItem.service.PurchasedItemService;
+import com.smu.smuenip.infrastructure.config.CustomUserDetails;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

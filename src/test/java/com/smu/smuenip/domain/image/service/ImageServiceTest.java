@@ -1,5 +1,6 @@
 package com.smu.smuenip.domain.image.service;
 
+import com.smu.smuenip.infrastructure.util.Image.ImageUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -7,15 +8,11 @@ import java.util.Base64;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(SpringExtension.class)
 class ImageServiceTest {
-
-    @InjectMocks
-    ImageService imageService;
 
     @Test
     void testBase64ToMultipartFile() throws IOException {
@@ -24,7 +21,7 @@ class ImageServiceTest {
             Files.readAllBytes(Paths.get("src/test/resources/base64/base64Test.txt")));
 
         // when
-        MultipartFile multipartFile = imageService.base64ToMultipartFile(base64Image);
+        MultipartFile multipartFile = ImageUtils.base64ToMultipartFile(base64Image);
 
         // then
         Assertions.assertThat(multipartFile).isNotNull();

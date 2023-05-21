@@ -1,4 +1,4 @@
-package com.smu.smuenip.infrastructure.config.jwt;
+package com.smu.smuenip.infrastructure.util.jwt;
 
 import com.smu.smuenip.enums.Role;
 import lombok.Builder;
@@ -21,12 +21,12 @@ public class Subject {
     }
 
     public static Subject atk(Long id, String userId, String email,
-        Role role) {
+                              Role role) {
         return Subject.builder()
-            .id(id)
-            .userId(userId)
-            .email(email)
-            .role(role)
-            .build();
+                .id(id)
+                .userId(userId)
+                .email(email)
+                .role(role)
+                .build();
     }
 }

@@ -1,6 +1,6 @@
-package com.smu.smuenip.enums.meesagesDetail;
+package com.smu.smuenip.enums.message.meesagesDetail;
 
-import com.smu.smuenip.enums.Messages;
+import com.smu.smuenip.enums.message.Messages;
 
 public enum MessagesFail implements Messages {
 

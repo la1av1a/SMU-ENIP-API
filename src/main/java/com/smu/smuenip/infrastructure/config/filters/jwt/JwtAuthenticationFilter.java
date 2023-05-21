@@ -3,12 +3,7 @@ package com.smu.smuenip.infrastructure.config.filters.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smu.smuenip.application.login.dto.ResponseDto;
 import com.smu.smuenip.infrastructure.config.exception.UnAuthorizedException;
-import com.smu.smuenip.infrastructure.config.jwt.JwtUtil;
-import java.io.IOException;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.smu.smuenip.infrastructure.util.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +11,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-        FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain) throws ServletException, IOException {
 
         try {
             String jwt = getJwtFromRequest(request);
@@ -38,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             ex.printStackTrace();
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            ResponseDto responseDto = new ResponseDto(false, ex.getMessage());
+            ResponseDto responseDto = new ResponseDto(null, false, ex.getMessage());
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.writer().writeValue(response.getWriter(), responseDto);
             return;

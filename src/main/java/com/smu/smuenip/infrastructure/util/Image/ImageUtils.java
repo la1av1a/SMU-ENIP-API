@@ -1,7 +1,13 @@
 package com.smu.smuenip.infrastructure.util.Image;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,12 +15,6 @@ import java.util.Base64;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.imageio.ImageIO;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -40,12 +40,12 @@ public class ImageUtils {
 
             // Create a new BufferedImage with the target dimensions
             BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight,
-                BufferedImage.TYPE_INT_RGB);
+                    BufferedImage.TYPE_INT_RGB);
 
             // Draw the original image onto the resized image using Graphics2D
             Graphics2D g = resizedImage.createGraphics();
             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                    RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             g.drawImage(image, 0, 0, targetWidth, targetHeight, null);
             g.dispose();
 
@@ -58,7 +58,7 @@ public class ImageUtils {
             baos.flush();
 
             return new MockMultipartFile(fileName, originalImage.getOriginalFilename(),
-                originalImage.getContentType(), baos.toByteArray());
+                    originalImage.getContentType(), baos.toByteArray());
 
         } catch (IOException e) {
             throw new RuntimeException("파일 리사이즈에 실패했습니다.", e);
@@ -71,7 +71,7 @@ public class ImageUtils {
         String contentType = extractContentType(base64);
         String generatedImageName = generateUUID();
         return new MockMultipartFile(generatedImageName,
-            generatedImageName + "." + contentType, contentType, decoded);
+                generatedImageName + "." + contentType, contentType, decoded);
     }
 
     private static String extractContentType(String base64) {
@@ -88,6 +88,5 @@ public class ImageUtils {
     public static String generateUUID() {
         return UUID.randomUUID().toString();
     }
-
 
 }

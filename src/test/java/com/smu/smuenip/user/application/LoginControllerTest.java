@@ -1,10 +1,5 @@
 package com.smu.smuenip.user.application;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.util.AssertionErrors.fail;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smu.smuenip.application.login.dto.LoginRequestDto;
@@ -16,7 +11,6 @@ import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.enums.Provider;
 import com.smu.smuenip.enums.Role;
 import com.smu.smuenip.infrastructure.config.security.BCryptPasswordEncoderConfig;
-import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +27,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.util.AssertionErrors.fail;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @AutoConfigureMockMvc
@@ -56,19 +58,19 @@ class LoginControllerTest {
     @BeforeEach
     void setup() {
         User user = User.builder()
-            .loginId("test1234")
-            .email("test1234@gmail.com")
-            .score(111)
-            .role(Role.ROLE_USER)
-            .build();
+                .loginId("test1234")
+                .email("test1234@gmail.com")
+                .score(111)
+                .role(Role.ROLE_USER)
+                .build();
 
         userRepository.save(user);
 
         UserAuth userAuth = UserAuth.builder()
-            .user(user)
-            .password(passwordEncoder.encode("test1234"))
-            .provider(Provider.LOCAL)
-            .build();
+                .user(user)
+                .password(passwordEncoder.encode("test1234"))
+                .provider(Provider.LOCAL)
+                .build();
 
         userAuthRepository.save(userAuth);
     }
@@ -77,46 +79,46 @@ class LoginControllerTest {
     void signUpTest() throws Exception {
         //given
         UserRequestDto userRequestDto = UserRequestDto.builder()
-            .loginId("c")
-            .email("test12a@example.com")
-            .password("password")
-            .build();
+                .loginId("c")
+                .email("test12a@example.com")
+                .password("password")
+                .build();
 
         //when
         MvcResult resultSuccess = mockMvc.perform(post("/user/signUp")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectToString(userRequestDto))
-            )
-            .andExpect(status().isOk())
-            .andReturn();
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectToString(userRequestDto))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
 
         //중복 회원가입
         MvcResult resultFail = mockMvc.perform(post("/user/signUp")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectToString(userRequestDto)))
-            .andExpect(status().isBadRequest())
-            .andReturn();
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectToString(userRequestDto)))
+                .andExpect(status().isOk())
+                .andReturn();
 
         int actualOK = resultSuccess.getResponse().getStatus();
-        int actualBadRequest = resultFail.getResponse().getStatus();
         Optional<User> userOptional = userRepository.findUserByLoginId(userRequestDto.getLoginId());
 
         // then
         Assertions.assertThat(actualOK).isEqualTo(HttpStatus.OK.value());
-        Assertions.assertThat(actualBadRequest).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        String responseBody = resultFail.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        Assertions.assertThat(responseBody).contains("유저가 이미 존재합니다");
         assertUserAndAuthExist(userOptional);
     }
 
     @Test
     void loginTest() throws Exception {
         LoginRequestDto loginRequestDto =
-            new LoginRequestDto("test1234", "test1234");
+                new LoginRequestDto("test1234", "test1234");
 
         MvcResult mvcResult = mockMvc.perform(post("/user/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectToString(loginRequestDto)))
-            .andExpect(status().isOk())
-            .andReturn();
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectToString(loginRequestDto)))
+                .andExpect(status().isOk())
+                .andReturn();
 
         Assertions.assertThat(mvcResult.getResponse().getStatus()).isEqualTo(200);
     }
@@ -128,11 +130,11 @@ class LoginControllerTest {
 
     private void assertUserAndAuthExist(Optional<User> userOptional) {
         userOptional.map(user -> userAuthRepository.findUsersAuthsByUser(user))
-            .ifPresentOrElse(
-                usersAuthOptional -> usersAuthOptional.ifPresentOrElse(
-                    usersAuth -> assertTrue(true),
-                    () -> fail("UsersAuth not found")),
-                () -> fail("User not found")
-            );
+                .ifPresentOrElse(
+                        usersAuthOptional -> usersAuthOptional.ifPresentOrElse(
+                                usersAuth -> assertTrue(true),
+                                () -> fail("UsersAuth not found")),
+                        () -> fail("User not found")
+                );
     }
 }

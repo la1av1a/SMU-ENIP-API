@@ -1,6 +1,6 @@
 package com.smu.smuenip.domain.recycledImage;
 
-import com.smu.smuenip.domain.PurchasedItem.model.PurchasedItem;
+import com.smu.smuenip.domain.purchasedItem.model.PurchasedItem;
 import com.smu.smuenip.domain.user.model.User;
 import java.time.LocalDate;
 import javax.persistence.Column;

@@ -9,6 +9,7 @@ import com.smu.smuenip.infrastructure.util.naver.ocr.VO.ClovaOcrVo;
 import com.smu.smuenip.infrastructure.util.naver.ocr.dto.OcrResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -28,7 +29,7 @@ public class ClovaOcrApi {
 
     private final ClovaOcrVo clovaOcrVo;
     private final ObjectMapper objectMapper;
-    private MultiValueMap<String, Object> header;
+    private MultiValueMap<String, String> header;
 
     @PostConstruct
     public void setHeader() {
@@ -46,6 +47,8 @@ public class ClovaOcrApi {
                 .timestamp(clovaOcrVo.getTimestamp())
                 .images(new Images[]{images})
                 .build();
+        log.info("ocrRequestDto: {}", ocrRequestDto.getRequestId());
+        log.info("ocrRequestDto: {}", ocrRequestDto.getImages()[0].getFormat());
 
         String json = null;
 
@@ -57,20 +60,27 @@ public class ClovaOcrApi {
             throw new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage());
         }
 
-        Mono<OcrResponseDto> result = WebClient.create()
+        Mono<OcrResponseDto> result = WebClient.create(clovaOcrVo.getBaseUrl())
                 .post()
                 .uri(uriBuilder -> uriBuilder
-                        .scheme("https")
-                        .host(clovaOcrVo.getHost())
+                        .path(clovaOcrVo.getPath())
                         .build())
+                .headers(httpHeaders -> httpHeaders.addAll(header))
                 .bodyValue(json)
-                .retrieve()
-                .bodyToMono(OcrResponseDto.class).doOnSuccess(ocrResponseDto -> {
-                    log.info("ocrResultDto2 = {}",
-                            ocrResponseDto.getImages()[0].receipt.result.subResults.get(0).items.get(
-                                    0).name.formatted.value);
+                .retrieve() // response 받아오기
+                .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
+                    log.info("4xx error");
+                    return Mono.error(new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage()));
+                })
+                .onStatus(HttpStatus::is5xxServerError, clientResponse -> {
+                    log.info("5xx error");
+                    return Mono.error(new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage()));
+                })
+                .bodyToMono(OcrResponseDto.class)
+                .doOnSuccess(ocrResponseDto -> {
+                    log.info("ocr 종료");
                 });
 
-        return new OcrResponseDto();
+        return result.block();
     }
 }

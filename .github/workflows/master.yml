@@ -27,7 +27,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew clean build
       - name: Docker Login
         run:
           echo ${{ secrets.PASSWORD }} | docker login --username ${{ secrets.USERNAME }} --password-stdin

@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +31,7 @@ public class UserController implements UserControllerSwagger {
 
     @Override
     @PostMapping("/receipt")
-    public ResponseDto<Void> uploadImage(
+    public ResponseEntity<ResponseDto<Void>> uploadImage(
             @RequestBody UserImageUploadRequestDto requestDTO,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
@@ -38,7 +40,7 @@ public class UserController implements UserControllerSwagger {
         receiptService.uploadReceipt(requestDTO.getImage(), date,
                 Long.valueOf(customUserDetails.getId()));
 
-        return new ResponseDto<>(null, true, MessagesSuccess.UPLOAD_SUCCESS.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(null, MessagesSuccess.UPLOAD_SUCCESS.getMessage()), HttpStatus.OK);
     }
 
 
@@ -54,9 +56,9 @@ public class UserController implements UserControllerSwagger {
 
     @Override
     @PutMapping("/receipt")
-    public ResponseDto<Void> setComment(@RequestBody UserSetCommentRequestDto requestDto,
-                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<ResponseDto<Void>> setComment(@RequestBody UserSetCommentRequestDto requestDto,
+                                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
         receiptService.setComment(requestDto, Long.valueOf(userDetails.getId()));
-        return new ResponseDto<>(null, true, MessagesSuccess.COMMENT_SUCCESS.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(null, MessagesSuccess.COMMENT_SUCCESS.getMessage()), HttpStatus.OK);
     }
 }

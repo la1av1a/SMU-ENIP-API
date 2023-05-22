@@ -14,7 +14,7 @@ import com.smu.smuenip.infrastructure.util.naver.ocr.ClovaOcrApi;
 import com.smu.smuenip.infrastructure.util.naver.ocr.OcrRequestDto;
 import com.smu.smuenip.infrastructure.util.naver.ocr.dto.OcrResponseDto;
 import com.smu.smuenip.infrastructure.util.naver.search.ClovaShoppingSearchingAPI;
-import com.smu.smuenip.infrastructure.util.s3.S3API;
+import com.smu.smuenip.infrastructure.util.s3.S3Api;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -56,7 +56,7 @@ class UserControllerTest {
     @MockBean
     ClovaOcrApi clovaOcrApi;
     @MockBean
-    S3API s3Api;
+    S3Api s3Api;
     @MockBean
     ClovaShoppingSearchingAPI clovaShoppingSearchingApi;
 
@@ -64,6 +64,7 @@ class UserControllerTest {
     @InjectMocks
     ObjectMapper objectMapper;
     User savedUser;
+    UserAuth savedUserAuth;
     @Autowired
     private MockMvc mockMvc;
 
@@ -76,13 +77,13 @@ class UserControllerTest {
         savedUser = userRepository.save(user);
 
         UserAuth userAuth = new UserAuth(user, Provider.LOCAL, password, loginId);
-        userAuthRepository.save(userAuth);
+        savedUserAuth = userAuthRepository.save(userAuth);
     }
 
     @Test
     void uploadImage() throws Exception {
 
-        String token = JwtTokenUtil.createToken(savedUser.getUserId(), savedUser.getEmail(), savedUser.getLoginId(), savedUser.getRole());
+        String token = JwtTokenUtil.createToken(savedUser.getUserId(), savedUser.getEmail(), savedUserAuth.getProviderId(), savedUser.getRole());
 
         File jsonFile = new File("src/test/resources/json/ocr.json");
         OcrResponseDto ocrResponseDto = objectMapper.readValue(jsonFile, OcrResponseDto.class);

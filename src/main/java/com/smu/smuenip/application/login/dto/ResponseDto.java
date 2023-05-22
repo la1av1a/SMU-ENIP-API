@@ -8,9 +8,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseDto<T> {
-    
+
     private final T data;
-    private final boolean success;
     private final String message;
 }
 

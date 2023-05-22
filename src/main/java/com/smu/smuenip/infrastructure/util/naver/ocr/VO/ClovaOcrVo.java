@@ -8,8 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ClovaOcrVo {
 
-    @Value("${naver.ocr.host}")
-    private String host;
+    @Value("${naver.ocr.baseUrl}")
+    private String baseUrl;
+    @Value("${naver.ocr.path}")
+    private String path;
     @Value("${naver.ocr.secret}")
     private String secret;
     @Value("${naver.ocr.version}")

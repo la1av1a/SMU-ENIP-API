@@ -121,6 +121,7 @@ public class ReceiptService {
         return receipts.getContent().stream().map(receipt -> UserReceiptResponseDto.builder()
                         .id(receipt.getId())
                         .imageUrl(receipt.getImageUrl())
+                        .originalImageUrl(receipt.getOriginalImageUrl())
                         .comment(receipt.getComment())
                         .createdDate(receipt.getPurchasedDate())
                         .build())

@@ -116,7 +116,7 @@ public class UserAuthService {
         return UserAuth.builder()
                 .user(user)
                 .providerId(providerId)
-                .provider(Provider.LOCAL)
+                .provider(provider)
                 .password(password)
                 .build();
     }

@@ -20,7 +20,7 @@ public class KakaoApiCall {
     public KakaoApiCall() {
         params.add("grant_type", "authorization_code");
         params.add("client_id", KAKAO_API_KEY);
-        params.add("redirect_uri", "http://localhost:8080/user/oauth/login/kakao");
+        params.add("redirect_uri", "https://www.smu-enip.site/user/oauth/login/kakao");
     }
 
     public KakaoLoginDto callKakaoLogin(String code) {

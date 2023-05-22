@@ -2,17 +2,11 @@ package com.smu.smuenip.domain.recycledImage;
 
 import com.smu.smuenip.domain.purchasedItem.model.PurchasedItem;
 import com.smu.smuenip.domain.user.model.User;
-import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor
@@ -30,6 +24,9 @@ public class RecycledImage {
     @Column
     private String recycledImageUrl;
 
+    @Column(name = "original_image_url")
+    private String originalImageUrl;
+
     @Column
     private LocalDate uploadDate;
 
@@ -44,11 +41,12 @@ public class RecycledImage {
     private User approvedBy;
 
     @Builder
-    public RecycledImage(Long id, PurchasedItem purchasedItem, String recycledImageUrl,
-        LocalDate uploadDate, boolean isChecked, boolean isApproved, User approvedBy) {
+    public RecycledImage(Long id, PurchasedItem purchasedItem, String recycledImageUrl, String originalImageUrl,
+                         LocalDate uploadDate, boolean isChecked, boolean isApproved, User approvedBy) {
         this.id = id;
         this.purchasedItem = purchasedItem;
         this.recycledImageUrl = recycledImageUrl;
+        this.originalImageUrl = originalImageUrl;
         this.uploadDate = uploadDate;
         this.isChecked = isChecked;
         this.isApproved = isApproved;

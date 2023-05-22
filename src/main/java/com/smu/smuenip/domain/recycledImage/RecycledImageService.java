@@ -3,6 +3,7 @@ package com.smu.smuenip.domain.recycledImage;
 import com.smu.smuenip.application.purchasedItem.dto.RecycledImageUploadRequestDto;
 import com.smu.smuenip.domain.purchasedItem.model.PurchasedItem;
 import com.smu.smuenip.domain.purchasedItem.service.PurchasedItemService;
+import com.smu.smuenip.infrastructure.config.exception.UnExpectedErrorException;
 import com.smu.smuenip.infrastructure.util.Image.ImageUtils;
 import com.smu.smuenip.infrastructure.util.s3.S3Api;
 import lombok.RequiredArgsConstructor;
@@ -23,22 +24,34 @@ public class RecycledImageService {
     @Transactional
     public void RecycledImageUpload(RecycledImageUploadRequestDto requestDto) {
 
-        MultipartFile imageMultiPartFile = ImageUtils.base64ToMultipartFile(
-                requestDto.getImage());
-        MultipartFile resizedImage = ImageUtils.resizeImage(imageMultiPartFile);
-        String imageUrl = s3Api.uploadImageToS3(resizedImage,
-                imageMultiPartFile.getOriginalFilename());
+        String resizedImageUrl = null;
+        String originalImageUrl = null;
 
-        PurchasedItem purchasedItem = purchasedItemService.findPurchasedItemById(
-                requestDto.getItemId());
+        try {
+            MultipartFile imageMultiPartFile = ImageUtils.base64ToMultipartFile(
+                    requestDto.getImage());
+            MultipartFile resizedImage = ImageUtils.resizeImage(imageMultiPartFile);
+            resizedImageUrl = s3Api.uploadImageToS3(resizedImage,
+                    imageMultiPartFile.getOriginalFilename());
+            originalImageUrl = s3Api.uploadImageToS3(imageMultiPartFile,
+                    imageMultiPartFile.getOriginalFilename() + "-origin");
 
-        RecycledImage recycledImage = createRecycledImage(imageUrl, purchasedItem);
-        recycledImageRepository.save(recycledImage);
+            PurchasedItem purchasedItem = purchasedItemService.findPurchasedItemById(
+                    requestDto.getItemId());
+
+            RecycledImage recycledImage = createRecycledImage(resizedImageUrl, originalImageUrl, purchasedItem);
+            recycledImageRepository.save(recycledImage);
+        } catch (Exception e) {
+            s3Api.deleteImageFromS3(resizedImageUrl);
+            s3Api.deleteImageFromS3(originalImageUrl);
+            throw new UnExpectedErrorException((e.getMessage()));
+        }
     }
 
-    private RecycledImage createRecycledImage(String imageUrl, PurchasedItem purchasedItem) {
+    private RecycledImage createRecycledImage(String imageUrl, String originalImageUrl, PurchasedItem purchasedItem) {
         return RecycledImage.builder()
                 .recycledImageUrl(imageUrl)
+                .originalImageUrl(originalImageUrl)
                 .uploadDate(LocalDate.now())
                 .purchasedItem(purchasedItem)
                 .isApproved(false)

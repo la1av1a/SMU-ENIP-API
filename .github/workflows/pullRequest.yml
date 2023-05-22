@@ -14,6 +14,7 @@ on:
     branches:
       - '!main' # main 브랜치 제외
       - 'feature/*'
+      - 'develop'
 
 jobs:
   build:

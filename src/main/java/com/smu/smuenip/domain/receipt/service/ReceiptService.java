@@ -72,6 +72,11 @@ public class ReceiptService {
     @Transactional(readOnly = true)
     public List<UserReceiptResponseDto> findReceiptsByDate(LocalDate date, Long userId,
                                                            Pageable pageable) {
+
+        if (date == null) {
+            return entityToDto(receiptRepository.findReceiptsByUserUserIdOrderByPurchasedDateDesc(userId, pageable));
+        }
+
         int year = date.getYear();
         int month = date.getMonthValue();
         int day = date.getDayOfMonth();

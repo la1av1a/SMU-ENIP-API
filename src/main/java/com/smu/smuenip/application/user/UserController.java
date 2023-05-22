@@ -47,7 +47,7 @@ public class UserController implements UserControllerSwagger {
     @Override
     @GetMapping("/receipt/list")
     public List<UserReceiptResponseDto> getUploadedItems(
-            @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+            @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PageableDefault(sort = "id") Pageable pageable) {
 

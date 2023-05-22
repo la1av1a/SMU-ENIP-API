@@ -64,6 +64,7 @@ class LoginControllerTest {
 
         UserAuth userAuth = UserAuth.builder()
                 .user(user)
+                .providerId("test1234")
                 .password(passwordEncoder.encode("test1234"))
                 .provider(Provider.LOCAL)
                 .build();

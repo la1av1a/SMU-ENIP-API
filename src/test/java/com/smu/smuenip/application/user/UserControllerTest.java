@@ -64,6 +64,7 @@ class UserControllerTest {
     @InjectMocks
     ObjectMapper objectMapper;
     User savedUser;
+    UserAuth savedUserAuth;
     @Autowired
     private MockMvc mockMvc;
 
@@ -76,13 +77,13 @@ class UserControllerTest {
         savedUser = userRepository.save(user);
 
         UserAuth userAuth = new UserAuth(user, Provider.LOCAL, password, loginId);
-        userAuthRepository.save(userAuth);
+        savedUserAuth = userAuthRepository.save(userAuth);
     }
 
     @Test
     void uploadImage() throws Exception {
 
-        String token = JwtTokenUtil.createToken(savedUser.getUserId(), savedUser.getEmail(), savedUser.getLoginId(), savedUser.getRole());
+        String token = JwtTokenUtil.createToken(savedUser.getUserId(), savedUser.getEmail(), savedUserAuth.getProviderId(), savedUser.getRole());
 
         File jsonFile = new File("src/test/resources/json/ocr.json");
         OcrResponseDto ocrResponseDto = objectMapper.readValue(jsonFile, OcrResponseDto.class);

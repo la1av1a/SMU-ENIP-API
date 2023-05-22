@@ -19,6 +19,7 @@ public class OcrRequestDto {
         this.images = images;
     }
 
+    @Getter
     public static class Images {
 
         private String format;

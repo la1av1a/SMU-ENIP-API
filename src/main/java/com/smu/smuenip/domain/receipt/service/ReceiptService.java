@@ -53,7 +53,7 @@ public class ReceiptService {
                 image.getOriginalFilename());
         Receipt receipt = saveReceipt(imageUrl, userId, purchasedDate);
         OcrResponseDto ocrResponseDto = clovaOCRAPI.callNaverOcr(new OcrRequestDto.Images("jpg",
-                encodedImage, image.getOriginalFilename()));
+                encodedImage.split(",", 2)[1], image.getOriginalFilename()));
         List<OcrDataDto> ocrDataDtoList = extractOcrData(ocrResponseDto);
         ocrDataDtoList.forEach(ocrDataDto -> {
             ItemDto itemDto = clovaShoppingSearchingAPI.callShoppingApi(ocrDataDto.getName());

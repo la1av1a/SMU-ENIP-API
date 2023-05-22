@@ -85,6 +85,7 @@ public class PurchasedItemService {
         return purchasedItemPage.getContent().stream()
                 .map(purchasedItem -> PurchasedItemResponseDto.builder()
                         .purchasedItemId(purchasedItem.getPurchasedItemId())
+                        .purchasedItemExampleImage(purchasedItem.getImageUrl())
                         .receiptId(purchasedItem.getReceipt().getId())
                         .trashAmount(0) // TODO 추후 구현
                         .expenditureCost(purchasedItem.getItemPrice() + "원")

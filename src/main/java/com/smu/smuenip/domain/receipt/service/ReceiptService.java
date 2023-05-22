@@ -46,12 +46,14 @@ public class ReceiptService {
 
     @Transactional
     public void uploadReceipt(String encodedImage, LocalDate purchasedDate, Long userId) {
-        String imageUrl = null;
+        String resizedImageUrl = null;
+        String originalImageUrl = null;
         try {
             MultipartFile image = ImageUtils.base64ToMultipartFile(encodedImage);
             MultipartFile resizedImage = ImageUtils.resizeImage(image);
-            imageUrl = s3Api.uploadImageToS3(resizedImage, image.getOriginalFilename());
-            Receipt receipt = saveReceipt(imageUrl, userId, purchasedDate);
+            originalImageUrl = s3Api.uploadImageToS3(image, image.getOriginalFilename() + "-origin");
+            resizedImageUrl = s3Api.uploadImageToS3(resizedImage, image.getOriginalFilename());
+            Receipt receipt = saveReceipt(resizedImageUrl, originalImageUrl, userId, purchasedDate);
             OcrResponseDto ocrResponseDto = clovaOCRAPI.callNaverOcr(new OcrRequestDto.Images("jpg",
                     encodedImage.split(",", 2)[1], image.getOriginalFilename()));
             List<OcrDataDto> ocrDataDtoList = extractOcrData(ocrResponseDto);
@@ -62,8 +64,9 @@ public class ReceiptService {
             });
         } catch (Exception e) {
             log.error(e.getMessage());
-            if (imageUrl != null) {
-                s3Api.deleteImageFromS3(imageUrl);
+            if (resizedImageUrl != null) {
+                s3Api.deleteImageFromS3(resizedImageUrl);
+                s3Api.deleteImageFromS3(originalImageUrl);
             }
             throw new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage());
         }
@@ -96,11 +99,12 @@ public class ReceiptService {
         receipt.setComment(requestDto.getComment());
     }
 
-    public Receipt saveReceipt(String imageUrl, Long userId, LocalDate purchasedDate) {
+    public Receipt saveReceipt(String imageUrl, String originalImageUrl, Long userId, LocalDate purchasedDate) {
         User user = findUserByUserId(userId);
 
         Receipt receipt = Receipt.builder()
                 .imageUrl(imageUrl)
+                .originalImageUrl(originalImageUrl)
                 .user(user)
                 .purchasedDate(purchasedDate)
                 .build();
@@ -117,6 +121,7 @@ public class ReceiptService {
         return receipts.getContent().stream().map(receipt -> UserReceiptResponseDto.builder()
                         .id(receipt.getId())
                         .imageUrl(receipt.getImageUrl())
+                        .originalImageUrl(receipt.getOriginalImageUrl())
                         .comment(receipt.getComment())
                         .createdDate(receipt.getPurchasedDate())
                         .build())

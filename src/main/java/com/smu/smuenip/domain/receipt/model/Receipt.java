@@ -1,19 +1,13 @@
 package com.smu.smuenip.domain.receipt.model;
 
 import com.smu.smuenip.domain.user.model.User;
-import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+
+import javax.persistence.*;
+import java.time.LocalDate;
 
 @Getter
 @Entity
@@ -31,6 +25,8 @@ public class Receipt {
 
     @Column
     private String imageUrl;
+    @Column(name = "original_image_url")
+    private String originalImageUrl;
 
     @Column
     private String comment;
@@ -42,8 +38,9 @@ public class Receipt {
     private LocalDate purchasedDate;
 
     @Builder
-    public Receipt(String imageUrl, User user, LocalDate purchasedDate) {
+    public Receipt(String imageUrl, String originalImageUrl, User user, LocalDate purchasedDate) {
         this.imageUrl = imageUrl;
+        this.originalImageUrl = originalImageUrl;
         this.user = user;
         this.isRecycled = false;
         this.purchasedDate = purchasedDate;

@@ -12,6 +12,7 @@ public class PurchasedItemResponseDto {
 
     @JsonProperty("id")
     private Long purchasedItemId;
+    private String purchasedItemExampleImage;
     private String date;
     @JsonProperty("receiptList")
     private Long receiptId;
@@ -19,8 +20,9 @@ public class PurchasedItemResponseDto {
     private String expenditureCost;
 
     @Builder
-    public PurchasedItemResponseDto(Long purchasedItemId, LocalDate date, Long receiptId, int trashAmount, String expenditureCost) {
+    public PurchasedItemResponseDto(Long purchasedItemId, String purchasedItemExampleImage, LocalDate date, Long receiptId, int trashAmount, String expenditureCost) {
         this.purchasedItemId = purchasedItemId;
+        this.purchasedItemExampleImage = purchasedItemExampleImage;
         this.date = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.receiptId = receiptId;
         this.trashAmount = trashAmount;

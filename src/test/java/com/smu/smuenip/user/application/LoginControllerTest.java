@@ -3,7 +3,6 @@ package com.smu.smuenip.user.application;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smu.smuenip.application.login.dto.LoginRequestDto;
-import com.smu.smuenip.application.login.dto.UserRequestDto;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.model.UserAuth;
 import com.smu.smuenip.domain.user.repository.UserAuthRepository;
@@ -21,14 +20,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -58,7 +55,6 @@ class LoginControllerTest {
     @BeforeEach
     void setup() {
         User user = User.builder()
-                .loginId("test1234")
                 .email("test1234@gmail.com")
                 .score(111)
                 .role(Role.ROLE_USER)
@@ -73,40 +69,6 @@ class LoginControllerTest {
                 .build();
 
         userAuthRepository.save(userAuth);
-    }
-
-    @Test
-    void signUpTest() throws Exception {
-        //given
-        UserRequestDto userRequestDto = UserRequestDto.builder()
-                .loginId("c")
-                .email("test12a@example.com")
-                .password("password")
-                .build();
-
-        //when
-        MvcResult resultSuccess = mockMvc.perform(post("/user/signUp")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToString(userRequestDto))
-                )
-                .andExpect(status().isOk())
-                .andReturn();
-
-        //중복 회원가입
-        MvcResult resultFail = mockMvc.perform(post("/user/signUp")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectToString(userRequestDto)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        int actualOK = resultSuccess.getResponse().getStatus();
-        Optional<User> userOptional = userRepository.findUserByLoginId(userRequestDto.getLoginId());
-
-        // then
-        Assertions.assertThat(actualOK).isEqualTo(HttpStatus.OK.value());
-        String responseBody = resultFail.getResponse().getContentAsString(StandardCharsets.UTF_8);
-        Assertions.assertThat(responseBody).contains("유저가 이미 존재합니다");
-        assertUserAndAuthExist(userOptional);
     }
 
     @Test

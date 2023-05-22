@@ -21,10 +21,10 @@ public class User {
     private Long userId;
 
     @Column
-    private String loginId;
-
-    @Column
     private String email;
+
+    @Column(name = "nick_name")
+    private String nickName;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -37,9 +37,9 @@ public class User {
     private LocalDate createdDate;
 
     @Builder
-    public User(String loginId, String email, Role role, int score) {
-        this.loginId = loginId;
+    public User(String email, String nickName, Role role, int score) {
         this.email = email;
+        this.nickName = nickName;
         this.role = role;
         this.score = score;
         this.createdDate = LocalDate.now();

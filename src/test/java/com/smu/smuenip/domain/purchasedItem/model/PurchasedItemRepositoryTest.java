@@ -5,8 +5,6 @@ import com.smu.smuenip.domain.receipt.model.ReceiptRepository;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.enums.Role;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @DataJpaTest
 class PurchasedItemRepositoryTest {
@@ -33,18 +34,17 @@ class PurchasedItemRepositoryTest {
         LocalDate date = LocalDate.parse("2023-04-01", formatter);
 
         User user = User.builder()
-            .loginId("test1234")
-            .email("test1234@gmail.com")
-            .role(Role.ROLE_USER)
-            .score(0)
-            .build();
+                .email("test1234@gmail.com")
+                .role(Role.ROLE_USER)
+                .score(0)
+                .build();
 
         savedUser = userRepository.save(user);
 
         Receipt receipt = Receipt.builder()
-            .purchasedDate(date)
-            .user(savedUser)
-            .build();
+                .purchasedDate(date)
+                .user(savedUser)
+                .build();
 
         savedReceipt = receiptRepository.save(receipt);
 
@@ -65,28 +65,28 @@ class PurchasedItemRepositoryTest {
         // when
         PageRequest pageRequest = PageRequest.of(0, 10);
         Page<PurchasedItem> purchasedItemPage = purchasedItemRepository.findPurchasedItemsByCreatedDate(
-            givenYear, givenMonth, givenDay, savedUser.getUserId(), pageRequest);
+                givenYear, givenMonth, givenDay, savedUser.getUserId(), pageRequest);
         // then
         Assertions.assertThat(purchasedItemPage.getNumberOfElements()).isEqualTo(expectedSize);
     }
 
     void savePurchasedItem(LocalDate date, int itemPrice, int itemCount, String itemName,
-        User user, Receipt receipt) {
+                           User user, Receipt receipt) {
         PurchasedItem purchasedItem = createPurchasedItem(date, itemPrice, itemCount, itemName,
-            user, receipt);
+                user, receipt);
         purchasedItemRepository.save(purchasedItem);
     }
 
     PurchasedItem createPurchasedItem(LocalDate date, int itemPrice, int itemCount,
-        String itemName, User user, Receipt receipt) {
+                                      String itemName, User user, Receipt receipt) {
         return PurchasedItem.builder()
-            .itemPrice(itemPrice)
-            .itemCount(itemCount)
-            .itemName(itemName)
-            .purchasedDate(date)
-            .user(user)
-            .receipt(receipt)
-            .build();
+                .itemPrice(itemPrice)
+                .itemCount(itemCount)
+                .itemName(itemName)
+                .purchasedDate(date)
+                .user(user)
+                .receipt(receipt)
+                .build();
     }
 }
 

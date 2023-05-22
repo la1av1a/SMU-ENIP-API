@@ -9,6 +9,8 @@ import com.smu.smuenip.enums.Role;
 import com.smu.smuenip.enums.message.meesagesDetail.MessagesSuccess;
 import com.smu.smuenip.infrastructure.config.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,21 +26,21 @@ public class LoginController implements LoginControllerSwagger {
 
     @Override
     @PostMapping("/signUp")
-    public ResponseDto<Void> signUp(@RequestBody @Valid UserRequestDto requestDto) {
+    public ResponseEntity<ResponseDto<Void>> signUp(@RequestBody @Valid UserRequestDto requestDto) {
         userAuthService.createUser(requestDto);
 
-        return new ResponseDto<>(null, true, MessagesSuccess.SIGNUP_SUCCESS.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(null, MessagesSuccess.SIGNUP_SUCCESS.getMessage()), HttpStatus.OK);
     }
 
     @Override
     @PostMapping("/login")
-    public ResponseDto<LoginResult> login(@RequestBody @Valid LoginRequestDto requestDto) {
+    public ResponseEntity<ResponseDto<LoginResult>> login(@RequestBody @Valid LoginRequestDto requestDto) {
         LoginResult loginResult = userAuthService.login(requestDto);
 
         String message = loginResult.getRole() == Role.ROLE_USER ? MessagesSuccess.LOGIN_USER_SUCCESS.toString()
                 : MessagesSuccess.LOGIN_ADMIN_SUCCESS.toString();
 
-        return new ResponseDto<>(loginResult, true, message);
+        return new ResponseEntity<>(new ResponseDto<>(loginResult, message), HttpStatus.OK);
     }
 
     @GetMapping("/token")

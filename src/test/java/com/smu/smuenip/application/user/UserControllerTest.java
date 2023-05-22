@@ -14,7 +14,7 @@ import com.smu.smuenip.infrastructure.util.naver.ocr.ClovaOcrApi;
 import com.smu.smuenip.infrastructure.util.naver.ocr.OcrRequestDto;
 import com.smu.smuenip.infrastructure.util.naver.ocr.dto.OcrResponseDto;
 import com.smu.smuenip.infrastructure.util.naver.search.ClovaShoppingSearchingAPI;
-import com.smu.smuenip.infrastructure.util.s3.S3API;
+import com.smu.smuenip.infrastructure.util.s3.S3Api;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -56,7 +56,7 @@ class UserControllerTest {
     @MockBean
     ClovaOcrApi clovaOcrApi;
     @MockBean
-    S3API s3Api;
+    S3Api s3Api;
     @MockBean
     ClovaShoppingSearchingAPI clovaShoppingSearchingApi;
 

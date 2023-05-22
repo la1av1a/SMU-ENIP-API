@@ -7,6 +7,8 @@ import com.smu.smuenip.infrastructure.util.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -39,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             ex.printStackTrace();
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            ResponseDto responseDto = new ResponseDto(null, false, ex.getMessage());
+            ResponseEntity<ResponseDto<Void>> responseDto = new ResponseEntity(new ResponseDto(null, ex.getMessage()), HttpStatus.UNAUTHORIZED);
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.writer().writeValue(response.getWriter(), responseDto);
             return;

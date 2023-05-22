@@ -1,6 +1,8 @@
 package com.smu.smuenip.infrastructure.config.exception;
 
 import com.smu.smuenip.application.login.dto.ResponseDto;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,39 +15,38 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseDto<Void> handleValidationExceptions(
+    public ResponseEntity<ResponseDto<Void>> handleValidationExceptions(
             MethodArgumentNotValidException e) {
         e.printStackTrace();
 
-        // Extract field names and default messages from FieldErrors
         List<String> errorMessages = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> error.getField() + " : " + error.getDefaultMessage())
                 .collect(Collectors.toList());
 
         String combinedErrorMessage = String.join(", ", errorMessages);
 
-        return new ResponseDto<>(null, false, combinedErrorMessage);
+        return new ResponseEntity<>(new ResponseDto<>(null, combinedErrorMessage), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseDto<Void> handleBadRequestException(BadRequestException e) {
+    public ResponseEntity<ResponseDto<Void>> handleBadRequestException(BadRequestException e) {
         e.printStackTrace();
 
-        return new ResponseDto<>(null, false, e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(null, e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UnAuthorizedException.class)
-    public ResponseDto<Void> handleUnAuthorizedException(UnAuthorizedException e) {
+    public ResponseEntity<ResponseDto<Void>> handleUnAuthorizedException(UnAuthorizedException e) {
         e.printStackTrace();
 
-        return new ResponseDto<>(null, false, e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(null, e.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(UnExpectedErrorException.class)
-    public ResponseDto<Void> handleUnExpectedErrorException(UnExpectedErrorException e) {
+    public ResponseEntity<ResponseDto<Void>> handleUnExpectedErrorException(UnExpectedErrorException e) {
         e.printStackTrace();
 
-        return new ResponseDto<>(null, false, e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(null, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

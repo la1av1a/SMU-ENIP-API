@@ -18,7 +18,7 @@ import com.smu.smuenip.infrastructure.util.naver.ocr.ClovaOcrApi;
 import com.smu.smuenip.infrastructure.util.naver.ocr.OcrRequestDto;
 import com.smu.smuenip.infrastructure.util.naver.ocr.dto.OcrResponseDto;
 import com.smu.smuenip.infrastructure.util.naver.search.ClovaShoppingSearchingAPI;
-import com.smu.smuenip.infrastructure.util.s3.S3API;
+import com.smu.smuenip.infrastructure.util.s3.S3Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -42,27 +42,32 @@ public class ReceiptService {
     private final ClovaShoppingSearchingAPI clovaShoppingSearchingAPI;
     private final CategoryService categoryService;
     private final PurchasedItemService purchasedItemService;
-    private final S3API s3Api;
+    private final S3Api s3Api;
 
     @Transactional
     public void uploadReceipt(String encodedImage, LocalDate purchasedDate, Long userId) {
-
-        MultipartFile image = ImageUtils.base64ToMultipartFile(encodedImage);
-        MultipartFile resizedImage = ImageUtils.resizeImage(image);
-        String imageUrl = s3Api.uploadImageToS3(resizedImage,
-                image.getOriginalFilename());
-        Receipt receipt = saveReceipt(imageUrl, userId, purchasedDate);
-        OcrResponseDto ocrResponseDto = clovaOCRAPI.callNaverOcr(new OcrRequestDto.Images("jpg",
-                encodedImage.split(",", 2)[1], image.getOriginalFilename()));
-        List<OcrDataDto> ocrDataDtoList = extractOcrData(ocrResponseDto);
-        ocrDataDtoList.forEach(ocrDataDto -> {
-            ItemDto itemDto = clovaShoppingSearchingAPI.callShoppingApi(ocrDataDto.getName());
-            purchasedItemService.savePurchasedItem(ocrDataDto, itemDto, receipt, userId, purchasedDate,
-                    categoryService.findCategory(itemDto));
-        });
-
+        String imageUrl = null;
+        try {
+            MultipartFile image = ImageUtils.base64ToMultipartFile(encodedImage);
+            MultipartFile resizedImage = ImageUtils.resizeImage(image);
+            imageUrl = s3Api.uploadImageToS3(resizedImage, image.getOriginalFilename());
+            Receipt receipt = saveReceipt(imageUrl, userId, purchasedDate);
+            OcrResponseDto ocrResponseDto = clovaOCRAPI.callNaverOcr(new OcrRequestDto.Images("jpg",
+                    encodedImage.split(",", 2)[1], image.getOriginalFilename()));
+            List<OcrDataDto> ocrDataDtoList = extractOcrData(ocrResponseDto);
+            ocrDataDtoList.forEach(ocrDataDto -> {
+                ItemDto itemDto = clovaShoppingSearchingAPI.callShoppingApi(ocrDataDto.getName());
+                purchasedItemService.savePurchasedItem(ocrDataDto, itemDto, receipt, userId, purchasedDate,
+                        categoryService.findCategory(itemDto));
+            });
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            if (imageUrl != null) {
+                s3Api.deleteImageFromS3(imageUrl);
+            }
+            throw new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage());
+        }
     }
-
 
     @Transactional(readOnly = true)
     public List<UserReceiptResponseDto> findReceiptsByDate(LocalDate date, Long userId,
@@ -119,7 +124,6 @@ public class ReceiptService {
     }
 
     private List<OcrDataDto> extractOcrData(OcrResponseDto ocrResponseDto) {
-
         return ocrResponseDto.getImages()[0].receipt.result.subResults.get(
                         0).items.parallelStream()
                 .map(item -> new OcrDataDto(item.name == null ? "null" : item.name.formatted.value,

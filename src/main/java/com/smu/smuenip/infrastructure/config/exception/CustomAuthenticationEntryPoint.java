@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smu.smuenip.application.login.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
@@ -14,6 +15,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Configuration
 @RequiredArgsConstructor
@@ -43,7 +46,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        ResponseDto<Void> responseDto = new ResponseDto<>(null, false, message);
+        ResponseEntity<ResponseDto<Void>> responseDto = new ResponseEntity<>(new ResponseDto<>(null, message), UNAUTHORIZED);
 
         objectMapper.writeValue(response.getWriter(), responseDto);
     }

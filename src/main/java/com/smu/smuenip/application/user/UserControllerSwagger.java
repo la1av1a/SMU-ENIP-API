@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -25,7 +26,7 @@ public interface UserControllerSwagger {
     @ApiOperation(value = "영수증을 업로드", notes = "영수증 업로드시 필요한 API")
     @ApiImplicitParam(name = "Authorization", dataType = "String", paramType = "header",
             value = "Bearer <token>")
-    ResponseDto uploadImage(
+    ResponseEntity<ResponseDto<Void>> uploadImage(
             @RequestBody UserImageUploadRequestDto requestDTO,
             @AuthenticationPrincipal CustomUserDetails customUserDetails);
 
@@ -49,7 +50,7 @@ public interface UserControllerSwagger {
     @ApiOperation(value = "업로드한 영수증에 코멘트 남기기")
     @ApiImplicitParam(name = "Authorization", dataType = "String", paramType = "header",
             value = "Bearer <token>")
-    public ResponseDto<Void> setComment(
+    public ResponseEntity<ResponseDto<Void>> setComment(
             @RequestBody UserSetCommentRequestDto requestDto,
             @AuthenticationPrincipal CustomUserDetails userDetails);
 }

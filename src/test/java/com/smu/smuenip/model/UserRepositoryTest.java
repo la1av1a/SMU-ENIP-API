@@ -29,11 +29,13 @@ class UserRepositoryTest {
     @DisplayName("유저_랭킹_테스트")
     void findUserScore() {
         //given
+        String givenLoginId1 = "dasdsa";
         int givenScore1 = 40;
         User user1 = User.builder()
                 .score(givenScore1)
                 .build();
 
+        String givenLoginId2 = "test1234";
         int givenScore = 20;
 
         User user2 = User.builder()
@@ -58,8 +60,9 @@ class UserRepositoryTest {
         //then
 
         Assertions.assertThat(expectDto1.getRank()).isEqualTo(1);
-        
+
         Assertions.assertThat(expectDto2.getRank()).isEqualTo(2);
     }
+
 
 }

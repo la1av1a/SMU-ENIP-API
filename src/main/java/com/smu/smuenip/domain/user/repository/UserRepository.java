@@ -11,15 +11,17 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findUserByLoginId(String loginId);
-
     Optional<User> findUserByUserId(Long id);
 
     Optional<User> findUserByEmail(String email);
 
-    boolean existsUsersByLoginId(String loginId);
 
-    @Query(value = "SELECT u.login_id, u.score, RANK() OVER (ORDER BY score DESC) AS ranking "
+    /**
+     * @param size
+     * @param offset
+     * @return nickName, score, rank, userId
+     */
+    @Query(value = "SELECT u.nick_name, u.score, RANK() OVER (ORDER BY score DESC) AS ranking "
             + "FROM user u "
             + "ORDER BY ranking "
             + "LIMIT :size OFFSET :offset", nativeQuery = true)

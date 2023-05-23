@@ -1,9 +1,9 @@
-package com.smu.smuenip.application.user;
+package com.smu.smuenip.application.Receipt;
 
+import com.smu.smuenip.application.Receipt.dto.ReceiptImageUploadRequestDto;
+import com.smu.smuenip.application.Receipt.dto.ReceiptSetCommentRequestDto;
+import com.smu.smuenip.application.Receipt.dto.UserReceiptResponseDto;
 import com.smu.smuenip.application.login.dto.ResponseDto;
-import com.smu.smuenip.application.user.dto.UserImageUploadRequestDto;
-import com.smu.smuenip.application.user.dto.UserReceiptResponseDto;
-import com.smu.smuenip.application.user.dto.UserSetCommentRequestDto;
 import com.smu.smuenip.infrastructure.config.CustomUserDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -21,13 +21,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Api(tags = "영수증 업로드 등")
-public interface UserControllerSwagger {
+public interface ReceiptControllerSwagger {
 
     @ApiOperation(value = "영수증을 업로드", notes = "영수증 업로드시 필요한 API")
     @ApiImplicitParam(name = "Authorization", dataType = "String", paramType = "header",
             value = "Bearer <token>")
     ResponseEntity<ResponseDto<Void>> uploadImage(
-            @RequestBody UserImageUploadRequestDto requestDTO,
+            @RequestBody ReceiptImageUploadRequestDto requestDTO,
             @AuthenticationPrincipal CustomUserDetails customUserDetails);
 
     @ApiOperation(value = "업로드한 영수증들 조회")
@@ -51,6 +51,6 @@ public interface UserControllerSwagger {
     @ApiImplicitParam(name = "Authorization", dataType = "String", paramType = "header",
             value = "Bearer <token>")
     public ResponseEntity<ResponseDto<Void>> setComment(
-            @RequestBody UserSetCommentRequestDto requestDto,
+            @RequestBody ReceiptSetCommentRequestDto requestDto,
             @AuthenticationPrincipal CustomUserDetails userDetails);
 }

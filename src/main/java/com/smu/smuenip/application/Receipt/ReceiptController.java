@@ -1,9 +1,9 @@
-package com.smu.smuenip.application.user;
+package com.smu.smuenip.application.Receipt;
 
+import com.smu.smuenip.application.Receipt.dto.ReceiptImageUploadRequestDto;
+import com.smu.smuenip.application.Receipt.dto.ReceiptSetCommentRequestDto;
+import com.smu.smuenip.application.Receipt.dto.UserReceiptResponseDto;
 import com.smu.smuenip.application.login.dto.ResponseDto;
-import com.smu.smuenip.application.user.dto.UserImageUploadRequestDto;
-import com.smu.smuenip.application.user.dto.UserReceiptResponseDto;
-import com.smu.smuenip.application.user.dto.UserSetCommentRequestDto;
 import com.smu.smuenip.domain.receipt.service.ReceiptService;
 import com.smu.smuenip.enums.message.meesagesDetail.MessagesSuccess;
 import com.smu.smuenip.infrastructure.config.CustomUserDetails;
@@ -25,14 +25,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin
 @Slf4j
-public class UserController implements UserControllerSwagger {
+public class ReceiptController implements ReceiptControllerSwagger {
 
     private final ReceiptService receiptService;
 
     @Override
     @PostMapping("/receipt")
     public ResponseEntity<ResponseDto<Void>> uploadImage(
-            @RequestBody UserImageUploadRequestDto requestDTO,
+            @RequestBody ReceiptImageUploadRequestDto requestDTO,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -55,8 +55,8 @@ public class UserController implements UserControllerSwagger {
     }
 
     @Override
-    @PutMapping("/receipt")
-    public ResponseEntity<ResponseDto<Void>> setComment(@RequestBody UserSetCommentRequestDto requestDto,
+    @PatchMapping("/receipt")
+    public ResponseEntity<ResponseDto<Void>> setComment(@RequestBody ReceiptSetCommentRequestDto requestDto,
                                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
         receiptService.setComment(requestDto, Long.valueOf(userDetails.getId()));
         return new ResponseEntity<>(new ResponseDto<>(null, MessagesSuccess.COMMENT_SUCCESS.getMessage()), HttpStatus.OK);

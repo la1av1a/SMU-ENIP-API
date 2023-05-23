@@ -34,6 +34,7 @@ public class JwtUtil {
                 .claim("userId", subject.getUserId())
                 .claim("email", subject.getEmail())
                 .claim("role", subject.getRole())
+                .claim("provider", subject.getProvider())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(now.getTime() + tokenValidity))
                 .signWith(jwtProvider.getSecretKey())

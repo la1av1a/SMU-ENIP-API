@@ -17,6 +17,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     public UserInfoResponseDto getUserInfo(Long id) {
         User user = findUserById(id);
         return new UserInfoResponseDto(user);

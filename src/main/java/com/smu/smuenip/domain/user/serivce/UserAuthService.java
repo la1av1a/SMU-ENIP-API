@@ -71,6 +71,14 @@ public class UserAuthService {
         return new LoginResult(token, role);
     }
 
+    public void deleteUser(Long userId) {
+
+        if (!userRepository.existsById(userId))
+            throw new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage());
+
+        userRepository.deleteById(userId);
+    }
+
     @Transactional
     public LoginResult kakaoLogin(String code) {
         KakaoLoginDto kakaoLoginDto = kakaoApiCall.callKakaoLogin(code);

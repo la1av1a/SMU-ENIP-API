@@ -5,6 +5,7 @@ import com.smu.smuenip.application.login.dto.LoginResult;
 import com.smu.smuenip.application.login.dto.ResponseDto;
 import com.smu.smuenip.application.login.dto.UserRequestDto;
 import com.smu.smuenip.domain.user.serivce.UserAuthService;
+import com.smu.smuenip.domain.user.serivce.UserService;
 import com.smu.smuenip.enums.Role;
 import com.smu.smuenip.enums.message.meesagesDetail.MessagesSuccess;
 import com.smu.smuenip.infrastructure.config.CustomUserDetails;
@@ -23,6 +24,7 @@ import javax.validation.Valid;
 public class LoginController implements LoginControllerSwagger {
 
     private final UserAuthService userAuthService;
+    private final UserService userService;
 
     @Override
     @PostMapping("/signUp")
@@ -46,5 +48,12 @@ public class LoginController implements LoginControllerSwagger {
     @GetMapping("/token")
     public String getAccessToken(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return customUserDetails.getAccessToken();
+    }
+
+    @DeleteMapping("/")
+    public ResponseEntity<ResponseDto<Void>> deleteUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        userAuthService.deleteUser(Long.valueOf(customUserDetails.getId()));
+
+        return new ResponseEntity<>(new ResponseDto<>(null, MessagesSuccess.DELETE_USER_SUCCESS.getMessage()), HttpStatus.OK);
     }
 }

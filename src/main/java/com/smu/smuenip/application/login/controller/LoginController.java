@@ -1,9 +1,6 @@
 package com.smu.smuenip.application.login.controller;
 
-import com.smu.smuenip.application.login.dto.LoginRequestDto;
-import com.smu.smuenip.application.login.dto.LoginResult;
-import com.smu.smuenip.application.login.dto.ResponseDto;
-import com.smu.smuenip.application.login.dto.UserRequestDto;
+import com.smu.smuenip.application.login.dto.*;
 import com.smu.smuenip.domain.user.serivce.UserAuthService;
 import com.smu.smuenip.domain.user.serivce.UserService;
 import com.smu.smuenip.enums.Role;
@@ -55,5 +52,12 @@ public class LoginController implements LoginControllerSwagger {
         userAuthService.deleteUser(Long.valueOf(customUserDetails.getId()));
 
         return new ResponseEntity<>(new ResponseDto<>(null, MessagesSuccess.DELETE_USER_SUCCESS.getMessage()), HttpStatus.OK);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<ResponseDto<UserInfoResponseDto>> getUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        UserInfoResponseDto response = userService.getUserInfo(Long.valueOf(customUserDetails.getId()));
+
+        return new ResponseEntity<>(new ResponseDto<>(response, MessagesSuccess.RETRIEVE_USER_INFO_SUCCESS.getMessage()), HttpStatus.OK);
     }
 }

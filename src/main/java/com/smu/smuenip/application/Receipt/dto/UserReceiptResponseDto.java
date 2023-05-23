@@ -1,4 +1,4 @@
-package com.smu.smuenip.application.user.dto;
+package com.smu.smuenip.application.Receipt.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;

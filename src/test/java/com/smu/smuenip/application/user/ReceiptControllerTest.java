@@ -1,7 +1,7 @@
 package com.smu.smuenip.application.user;
 
 import com.smu.smuenip.JwtTokenUtil;
-import com.smu.smuenip.application.user.dto.UserImageUploadRequestDto;
+import com.smu.smuenip.application.Receipt.dto.ReceiptImageUploadRequestDto;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.model.UserAuth;
 import com.smu.smuenip.domain.user.repository.UserAuthRepository;
@@ -44,7 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(BCryptPasswordEncoderConfig.class)
 @Transactional
-class UserControllerTest {
+class ReceiptControllerTest {
 
     @Autowired
     UserRepository userRepository;
@@ -102,7 +102,7 @@ class UserControllerTest {
         String encodedString = Base64.getEncoder().encodeToString(fileContent);
         String dataUrl = "data:" + mimeType + ";base64," + encodedString;
 
-        UserImageUploadRequestDto requestDto = new UserImageUploadRequestDto();
+        ReceiptImageUploadRequestDto requestDto = new ReceiptImageUploadRequestDto();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String date = LocalDate.parse("2023-04-01", dateTimeFormatter).toString();
 

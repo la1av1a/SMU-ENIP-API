@@ -1,7 +1,7 @@
 package com.smu.smuenip.domain.receipt.service;
 
-import com.smu.smuenip.application.user.dto.UserReceiptResponseDto;
-import com.smu.smuenip.application.user.dto.UserSetCommentRequestDto;
+import com.smu.smuenip.application.Receipt.dto.ReceiptSetCommentRequestDto;
+import com.smu.smuenip.application.Receipt.dto.UserReceiptResponseDto;
 import com.smu.smuenip.domain.category.service.CategoryService;
 import com.smu.smuenip.domain.purchasedItem.service.PurchasedItemService;
 import com.smu.smuenip.domain.receipt.OcrDataDto;
@@ -91,7 +91,7 @@ public class ReceiptService {
     }
 
     @Transactional
-    public void setComment(UserSetCommentRequestDto requestDto, Long userId) {
+    public void setComment(ReceiptSetCommentRequestDto requestDto, Long userId) {
         Receipt receipt = receiptRepository.findReceiptByIdAndUserUserId(requestDto.getReceiptId(),
                         userId)
                 .orElseThrow(

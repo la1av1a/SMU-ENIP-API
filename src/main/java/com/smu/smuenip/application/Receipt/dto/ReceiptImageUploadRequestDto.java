@@ -1,4 +1,4 @@
-package com.smu.smuenip.application.user.dto;
+package com.smu.smuenip.application.Receipt.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserImageUploadRequestDto implements Serializable {
+public class ReceiptImageUploadRequestDto implements Serializable {
 
     @NotEmpty
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

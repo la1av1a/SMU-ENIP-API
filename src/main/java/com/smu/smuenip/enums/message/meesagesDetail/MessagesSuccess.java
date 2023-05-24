@@ -8,7 +8,10 @@ public enum MessagesSuccess implements Messages {
     LOGIN_USER_SUCCESS("유저 로그인 성공"),
     LOGIN_ADMIN_SUCCESS("관리자 로그인 성공"),
     UPLOAD_SUCCESS("업로드 성공"),
-    COMMENT_SUCCESS("코멘트 달기 성공");
+    COMMENT_SUCCESS("코멘트 달기 성공"),
+    DELETE_USER_SUCCESS("유저 삭제 성공"),
+    //유저 조회 성공
+    RETRIEVE_USER_INFO_SUCCESS("유저 조회 성공");
 
     private final String message;
 

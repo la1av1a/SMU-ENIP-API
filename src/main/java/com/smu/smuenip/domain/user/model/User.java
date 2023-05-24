@@ -26,6 +26,9 @@ public class User {
     @Column(name = "nick_name")
     private String nickName;
 
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
     @Column
     @Enumerated(EnumType.STRING)
     private Role role;

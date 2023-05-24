@@ -23,8 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @RequiredArgsConstructor
 @Service
 @Slf4j
@@ -64,11 +62,19 @@ public class UserAuthService {
         }
 
         String token = createToken(user.getUserId(), userAuth.getProviderId(), user.getEmail(),
-                user.getRole());
+                user.getRole(), Provider.LOCAL);
 
         Role role = user.getRole();
 
         return new LoginResult(token, role);
+    }
+
+    public void deleteUser(Long userId) {
+
+        if (!userRepository.existsById(userId))
+            throw new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage());
+
+        userRepository.deleteById(userId);
     }
 
     @Transactional
@@ -79,36 +85,16 @@ public class UserAuthService {
         String email = jwt.getClaim("email").asString();
         String sub = jwt.getClaim("sub").asString();
 
-        Optional<User> user = userRepository.findUserByEmail(email);
-        //유저가 있으면 UserAuth를 확인하고
+        User user = userRepository.findUserByEmail(email)
+                .orElseGet(() -> saveUser(createUserEntity(email, nickNameService.getRandomNickName(), Role.ROLE_USER)));
+        UserAuth userAuth = userAuthRepository.findUserAuthByUserAndProvider(user, Provider.KAKAO)
+                .orElseGet(() -> saveUsersAuth(createUserAuthEntity(user, sub, Provider.KAKAO, null)));
 
-        if (user.isPresent()) {
-            Optional<UserAuth> userAuth = userAuthRepository.findUserAuthByUserAndProvider(user.get(), Provider.KAKAO);
-            // 해당 프로바이더 연동 되어있다면 그냥 토큰 발급
-            if (userAuth.isPresent()) {
-                String token = createToken(user.get().getUserId(), userAuth.get().getProviderId(), user.get().getEmail(),
-                        user.get().getRole());
-                return new LoginResult(token, user.get().getRole());
-            }
-            // 연동 안 되어있다면 연동 시키고 토큰 발급
-            else {
-                UserAuth userAuth1 = createUserAuthEntity(user.get(), sub, Provider.KAKAO, null);
-                saveUsersAuth(userAuth1);
-                String token = createToken(user.get().getUserId(), userAuth1.getProviderId(), user.get().getEmail(),
-                        user.get().getRole());
-                return new LoginResult(token, user.get().getRole());
-            }
-        }
-        //유저가 없으면 User를 생성하고 UserAuth를 생성한다
-        else {
-            User user1 = createUserEntity(email, nickNameService.getRandomNickName(), Role.ROLE_USER);
-            saveUser(user1);
-            UserAuth userAuth1 = createUserAuthEntity(user1, sub, Provider.KAKAO, null);
-            saveUsersAuth(userAuth1);
-            String token = createToken(user1.getUserId(), userAuth1.getProviderId(), user1.getEmail(),
-                    user1.getRole());
-            return new LoginResult(token, user1.getRole());
-        }
+        String token = createToken(user.getUserId(), userAuth.getProviderId(), user.getEmail(),
+                user.getRole(), Provider.KAKAO);
+
+        return new LoginResult(token, user.getRole());
+
     }
 
 
@@ -122,14 +108,14 @@ public class UserAuthService {
     }
 
     @Transactional
-    public void saveUsersAuth(UserAuth userAuth) {
-        userAuthRepository.save(userAuth);
+    public UserAuth saveUsersAuth(UserAuth userAuth) {
+        return userAuthRepository.save(userAuth);
     }
 
     private String createToken(Long id, String userId, String email,
-                               Role role) {
+                               Role role, Provider provider) {
 
-        return jwtUtil.createToken(Subject.atk(id, userId, email, role));
+        return jwtUtil.createToken(Subject.atk(id, userId, email, role, provider));
     }
 
     private User createUserEntity(String email, String nickName, Role role) {
@@ -143,8 +129,8 @@ public class UserAuthService {
     }
 
 
-    private void saveUser(User user) {
-        userRepository.save(user);
+    private User saveUser(User user) {
+        return userRepository.save(user);
     }
 
 

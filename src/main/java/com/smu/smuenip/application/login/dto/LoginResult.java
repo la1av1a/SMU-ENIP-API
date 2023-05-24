@@ -8,9 +8,13 @@ public class LoginResult {
 
     private String token;
     private Role role;
-    
-    public LoginResult(String token, Role role) {
+    private String nickname;
+    private String profileImageUrl;
+
+    public LoginResult(String token, Role role, String nickname, String profileImageUrl) {
         this.token = token;
         this.role = role;
+        this.nickname = nickname;
+        this.profileImageUrl = profileImageUrl;
     }
 }

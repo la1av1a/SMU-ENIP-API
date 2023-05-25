@@ -8,7 +8,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @Controller
 public class SwaggerController {
 
-    @GetMapping("/swagger")
+    @GetMapping("/")
     public String redirectToSwagger() {
         return "redirect:https://www.smu-enip.site/swagger-ui/";
     }

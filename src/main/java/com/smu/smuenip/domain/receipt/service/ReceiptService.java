@@ -61,23 +61,23 @@ public class ReceiptService {
                     saveReceipt(resizedImageUrl, originalImageUrl, userId, purchasedDate));
 
             CompletableFuture<Mono<OcrResponseDto>> ocrResponseDtoFuture = CompletableFuture.supplyAsync(() ->
-                    clovaOCRAPI.callNaverOcr(new OcrRequestDto.Images("jpg", encodedImage.split(",", 2)[1], image.getOriginalFilename())));
-
+                    clovaOCRAPI.callNaverOcr(new OcrRequestDto.Images(image.getContentType(), encodedImage.split(",", 2)[1], image.getOriginalFilename())));
             ocrResponseDtoFuture.thenApply(ocrMono -> {
                 OcrResponseDto ocrResponseDto = ocrMono.block();
                 List<OcrDataDto> ocrDataDtoList = extractOcrData(ocrResponseDto);
 
-                ocrDataDtoList.forEach(ocrDataDto -> {
-                    ItemDto itemDto = clovaShoppingSearchingAPI.callShoppingApi(ocrDataDto.getName());
-                    Receipt receipt = receiptFuture.join();
-                    purchasedItemService.savePurchasedItem(ocrDataDto, itemDto, receipt, userId, purchasedDate, categoryService.findCategory(itemDto));
+                ocrDataDtoList.parallelStream().forEach(ocrDataDto -> {
+                    if (ocrDataDto != null && ocrDataDto.getName() != null) {
+                        ItemDto itemDto = clovaShoppingSearchingAPI.callShoppingApi(ocrDataDto.getName());
+                        Receipt receipt = receiptFuture.join();
+                        purchasedItemService.savePurchasedItem(ocrDataDto, itemDto, receipt, userId, purchasedDate, categoryService.findCategory(itemDto));
+                    }
                 });
                 return null;
-            });
+            }).join();
 
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage());
         }
     }
 

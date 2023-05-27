@@ -45,8 +45,8 @@ jobs:
 
             # Update nginx config to point to the new container
             chmod +x update_nginx.sh
-            ./update_nginx.sh ${{ env.NEW_CONTAINER_INFO }}
+            sudo ./update_nginx.sh 
 
             # Remove the old container
             chmod +x remove_old_container.sh
-            ./remove_old_container.sh ${{ env.NEW_CONTAINER_INFO }}
+            sudo ./remove_old_container.sh

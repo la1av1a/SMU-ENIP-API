@@ -38,7 +38,7 @@ public class ClovaOcrApi {
         header.add("Content-Type", "application/json");
     }
 
-    public OcrResponseDto callNaverOcr(Images images) {
+    public Mono<OcrResponseDto> callNaverOcr(Images images) {
 
         OcrRequestDto ocrRequestDto = OcrRequestDto.builder()
                 .requestId(clovaOcrVo.getRequestId())
@@ -75,12 +75,8 @@ public class ClovaOcrApi {
                 .onStatus(HttpStatus::is5xxServerError, clientResponse -> {
                     log.info("5xx error");
                     return Mono.error(new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage()));
-                })
-                .bodyToMono(OcrResponseDto.class)
-                .doOnSuccess(ocrResponseDto -> {
-                    log.info("ocr 종료");
-                });
+                }).bodyToMono(OcrResponseDto.class);
 
-        return result.block();
+        return result;
     }
 }

@@ -34,7 +34,7 @@ public class PurchasedItemService {
     public void savePurchasedItem(OcrDataDto ocrDataDto, ItemDto itemDto, Receipt receipt, Long userId,
                                   LocalDate purchased_date, Category category) {
 
-        String imageUrl = itemDto == null ? null : itemDto.getItems().get(0).getImage();
+        String imageUrl = itemDto.getItems() == null ? null : itemDto.getItems().get(0).getImage();
         User user = userService.findUserById(userId);
 
         PurchasedItem purchasedItem = createPurchasedItem(receipt, ocrDataDto.getName(),

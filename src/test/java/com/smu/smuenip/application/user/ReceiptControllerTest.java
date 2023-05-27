@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -92,7 +93,8 @@ class ReceiptControllerTest {
         ItemDto itemDto = objectMapper.readValue(searchDto, ItemDto.class);
 
         //when
-        Mockito.when(clovaOcrApi.callNaverOcr(Mockito.any(OcrRequestDto.Images.class))).thenReturn(ocrResponseDto);
+        Mockito.when(clovaOcrApi.callNaverOcr(Mockito.any(OcrRequestDto.Images.class)))
+                .thenReturn(Mono.just(ocrResponseDto));
         Mockito.when(clovaShoppingSearchingApi.callShoppingApi(Mockito.any(String.class))).thenReturn(itemDto);
         Mockito.when(s3Api.uploadImageToS3(Mockito.any(MultipartFile.class), Mockito.any(String.class))).thenReturn("ss.com");
 

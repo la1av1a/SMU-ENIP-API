@@ -16,6 +16,6 @@ public interface LoginControllerSwagger {
     ResponseEntity<ResponseDto<Void>> signUp(
             @RequestBody UserRequestDto requestDto);
 
-    @ApiOperation(value = "로그인", notes = "사용자 ID로 사용자 정보를 조회합니다")
+    @ApiOperation(value = "로그인", notes = "사용자 ID로 로그인")
     ResponseEntity<ResponseDto<LoginResult>> login(@RequestBody LoginRequestDto requestDto);
 }

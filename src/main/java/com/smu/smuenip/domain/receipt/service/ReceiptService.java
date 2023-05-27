@@ -26,9 +26,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -46,31 +48,39 @@ public class ReceiptService {
 
     @Transactional
     public void uploadReceipt(String encodedImage, LocalDate purchasedDate, Long userId) {
-        String resizedImageUrl = null;
-        String originalImageUrl = null;
         try {
             MultipartFile image = ImageUtils.base64ToMultipartFile(encodedImage);
-            MultipartFile resizedImage = ImageUtils.resizeImage(image);
-            originalImageUrl = s3Api.uploadImageToS3(image, image.getOriginalFilename() + "-origin");
-            resizedImageUrl = s3Api.uploadImageToS3(resizedImage, image.getOriginalFilename());
-            Receipt receipt = saveReceipt(resizedImageUrl, originalImageUrl, userId, purchasedDate);
-            OcrResponseDto ocrResponseDto = clovaOCRAPI.callNaverOcr(new OcrRequestDto.Images("jpg",
-                    encodedImage.split(",", 2)[1], image.getOriginalFilename()));
-            List<OcrDataDto> ocrDataDtoList = extractOcrData(ocrResponseDto);
-            ocrDataDtoList.forEach(ocrDataDto -> {
-                ItemDto itemDto = clovaShoppingSearchingAPI.callShoppingApi(ocrDataDto.getName());
-                purchasedItemService.savePurchasedItem(ocrDataDto, itemDto, receipt, userId, purchasedDate,
-                        categoryService.findCategory(itemDto));
+            CompletableFuture<String> originalImageUrlFuture = CompletableFuture.supplyAsync(() ->
+                    s3Api.uploadImageToS3(image, image.getOriginalFilename() + "-origin"));
+            CompletableFuture<String> resizedImageUrlFuture = CompletableFuture.supplyAsync(() -> {
+                MultipartFile resizedImage = ImageUtils.resizeImage(image);
+                return s3Api.uploadImageToS3(resizedImage, image.getOriginalFilename());
             });
+
+            CompletableFuture<Receipt> receiptFuture = originalImageUrlFuture.thenCombine(resizedImageUrlFuture, (originalImageUrl, resizedImageUrl) ->
+                    saveReceipt(resizedImageUrl, originalImageUrl, userId, purchasedDate));
+
+            CompletableFuture<Mono<OcrResponseDto>> ocrResponseDtoFuture = CompletableFuture.supplyAsync(() ->
+                    clovaOCRAPI.callNaverOcr(new OcrRequestDto.Images("jpg", encodedImage.split(",", 2)[1], image.getOriginalFilename())));
+
+            ocrResponseDtoFuture.thenApply(ocrMono -> {
+                OcrResponseDto ocrResponseDto = ocrMono.block();
+                List<OcrDataDto> ocrDataDtoList = extractOcrData(ocrResponseDto);
+
+                ocrDataDtoList.forEach(ocrDataDto -> {
+                    ItemDto itemDto = clovaShoppingSearchingAPI.callShoppingApi(ocrDataDto.getName());
+                    Receipt receipt = receiptFuture.join();
+                    purchasedItemService.savePurchasedItem(ocrDataDto, itemDto, receipt, userId, purchasedDate, categoryService.findCategory(itemDto));
+                });
+                return null;
+            });
+
         } catch (Exception e) {
             log.error(e.getMessage());
-            if (resizedImageUrl != null) {
-                s3Api.deleteImageFromS3(resizedImageUrl);
-                s3Api.deleteImageFromS3(originalImageUrl);
-            }
             throw new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage());
         }
     }
+
 
     @Transactional(readOnly = true)
     public List<UserReceiptResponseDto> findReceiptsByDate(LocalDate date, Long userId,

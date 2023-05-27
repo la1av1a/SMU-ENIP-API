@@ -41,12 +41,12 @@ jobs:
           script: |
             chmod +x deploy.sh
             NEW_CONTAINER_INFO=$(./deploy.sh la1av1a/express-cicd:${GITHUB_SHA::7})
-            echo "NEW_CONTAINER_INFO=$NEW_CONTAINER_INFO" >> $GITHUB_ENV
+            echo "NEW_CONTAINER_INFO=$NEW_CONTAINER_INFO"
 
             # Update nginx config to point to the new container
             chmod +x update_nginx.sh
-            sudo ./update_nginx.sh 
+            sudo ./update_nginx.sh $NEW_CONTAINER_INFO
 
             # Remove the old container
             chmod +x remove_old_container.sh
-            sudo ./remove_old_container.sh
+            sudo ./remove_old_container.sh $NEW_CONTAINER_INFO

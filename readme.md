@@ -1,3 +1,5 @@
+Swagger API : Https://www.smu-enip.site/
+
 ## Architecture
 ![image](https://github.com/la1av1a/SMU-RecycleTrack-API/assets/81461486/beff7c08-3dfe-4d79-b193-2403dff79c86)
 

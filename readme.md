@@ -1,7 +1,5 @@
 ## 시스템 구성도
-![제목 없는 다이어그램-3-4 drawio](https://user-images.githubusercontent.com/81461486/232366263-52953a5b-8f60-463f-9894-f6bf3d39562c.png)
-
-
+![image](https://github.com/la1av1a/SMU-RecycleTrack-API/assets/81461486/beff7c08-3dfe-4d79-b193-2403dff79c86)
 
 
 - [x] CI CD

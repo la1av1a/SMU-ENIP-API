@@ -31,7 +31,7 @@ public class ReceiptController implements ReceiptControllerSwagger {
     private final ReceiptService receiptService;
 
     @Override
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<ResponseDto<Void>> uploadImage(
             @RequestBody ReceiptImageUploadRequestDto requestDTO,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
@@ -56,7 +56,7 @@ public class ReceiptController implements ReceiptControllerSwagger {
     }
 
     @Override
-    @PatchMapping("/")
+    @PatchMapping("")
     public ResponseEntity<ResponseDto<Void>> setComment(@RequestBody ReceiptSetCommentRequestDto requestDto,
                                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
         receiptService.setComment(requestDto, Long.valueOf(userDetails.getId()));

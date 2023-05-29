@@ -21,7 +21,7 @@ public class RecycleController {
 
     private final RecycledImageService recycledImageService;
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<ResponseDto<Void>> recycledImageUpload(
             @RequestBody RecycledImageUploadRequestDto requestDto) {
 

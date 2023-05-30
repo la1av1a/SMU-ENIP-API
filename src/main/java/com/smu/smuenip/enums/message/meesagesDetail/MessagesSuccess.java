@@ -11,7 +11,9 @@ public enum MessagesSuccess implements Messages {
     COMMENT_SUCCESS("코멘트 달기 성공"),
     DELETE_USER_SUCCESS("유저 삭제 성공"),
     //유저 조회 성공
-    RETRIEVE_USER_INFO_SUCCESS("유저 조회 성공");
+    RETRIEVE_USER_INFO_SUCCESS("유저 조회 성공"),
+    APPROVE_SUCCESS("승인 성공"),
+    REJECT_SUCCESS("거절 성공");
 
     private final String message;
 

@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user/oauth/login")
 @RestController
 @RequiredArgsConstructor
-public class OauthLoginController {
+public class OauthLoginController implements OauthLoginControllerSwagger {
 
     private final UserAuthService userAuthService;
 
+    @Override
     @GetMapping("/kakao")
     public ResponseEntity<ResponseDto<LoginResult>> kakaoLogin(@RequestParam("code") String code) {
-        return new ResponseEntity<>(new ResponseDto<>(userAuthService.kakaoLogin(code), MessagesSuccess.LOGIN_USER_SUCCESS.getMessage()), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto<>(userAuthService.kakaoLogin(code),
+            MessagesSuccess.LOGIN_USER_SUCCESS.getMessage()), HttpStatus.OK);
     }
 }

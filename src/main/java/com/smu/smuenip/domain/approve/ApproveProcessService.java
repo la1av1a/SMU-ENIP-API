@@ -33,6 +33,5 @@ public class ApproveProcessService {
     public void changeApprove(Long approveId, boolean isApproved) {
         Approve approve = approveService.findById(approveId);
         approve.setApproved(isApproved);
-        approveService.saveApprove(approve);
     }
 }

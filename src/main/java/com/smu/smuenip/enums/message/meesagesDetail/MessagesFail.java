@@ -11,7 +11,9 @@ public enum MessagesFail implements Messages {
     IMAGE_UPLOAD_FAIL("이미지 업로드에 실패했습니다. 다시 시도해주세요."),
     RECEIPT_NOT_FOUND("영수증 정보를 찾을 수 없습니다"),
     ALREADY_APPROVED("이미 승인된 이미지입니다"),
-    APPROVE_NOT_FOUND("승인 정보를 찾을 수 없습니다");
+    APPROVE_NOT_FOUND("승인 정보를 찾을 수 없습니다"),
+    //이미 승인되었거나 거절되어있는 이미지입니다.
+    ALREADY_APPROVED_OR_REJECTED("이미 승인되었거나 거절되어있는 이미지입니다.");
 
     private final String message;
 

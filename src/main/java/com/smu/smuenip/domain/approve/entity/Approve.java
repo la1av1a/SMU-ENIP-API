@@ -8,9 +8,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+@Getter
 @Entity
 @NoArgsConstructor
 public class Approve {
@@ -38,9 +40,22 @@ public class Approve {
         this.recycledImage = recycledImage;
         this.admin = admin;
         this.isApproved = isApproved;
+
+        User user = recycledImage.getPurchasedItem().getUser();
+        user.incrementScore();
     }
 
     public void setApproved(boolean approved) {
-        isApproved = approved;
+
+        User user = recycledImage.getPurchasedItem().getUser();
+
+        if (approved) {
+            user.incrementScore();
+            isApproved = true;
+            return;
+        }
+        
+        user.decrementScore();
+        isApproved = false;
     }
 }

@@ -5,6 +5,7 @@ import com.smu.smuenip.domain.recycledImage.RecycledImage;
 import com.smu.smuenip.domain.recycledImage.RecycledImageService;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.serivce.UserService;
+import com.smu.smuenip.enums.message.meesagesDetail.MessagesFail;
 import com.smu.smuenip.infrastructure.config.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,11 @@ public class ApproveProcessService {
 
     public void changeApprove(Long approveId, boolean isApproved) {
         Approve approve = approveService.findById(approveId);
+
+        if (approve.isApproved() == isApproved) {
+            throw new BadRequestException(MessagesFail.ALREADY_APPROVED_OR_REJECTED.getMessage());
+        }
+
         approve.setApproved(isApproved);
     }
 }

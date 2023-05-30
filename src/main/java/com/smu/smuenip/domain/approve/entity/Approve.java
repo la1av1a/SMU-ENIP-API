@@ -38,4 +38,8 @@ public class Approve {
         this.admin = admin;
         this.isApproved = isApproved;
     }
+
+    public void setApproved(boolean approved) {
+        isApproved = approved;
+    }
 }

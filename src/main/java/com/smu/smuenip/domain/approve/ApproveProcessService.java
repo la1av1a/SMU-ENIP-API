@@ -29,4 +29,10 @@ public class ApproveProcessService {
         Approve approve = approveService.createApprove(recycledImage, admin, isApproved);
         approveService.saveApprove(approve);
     }
+
+    public void changeApprove(Long approveId, boolean isApproved) {
+        Approve approve = approveService.findById(approveId);
+        approve.setApproved(isApproved);
+        approveService.saveApprove(approve);
+    }
 }

@@ -13,7 +13,8 @@ public enum MessagesSuccess implements Messages {
     //유저 조회 성공
     RETRIEVE_USER_INFO_SUCCESS("유저 조회 성공"),
     APPROVE_SUCCESS("승인 성공"),
-    REJECT_SUCCESS("거절 성공");
+    REJECT_SUCCESS("거절 성공"),
+    CHANGE_APPROVE_SUCCESS("승인 변경 성공");
 
     private final String message;
 

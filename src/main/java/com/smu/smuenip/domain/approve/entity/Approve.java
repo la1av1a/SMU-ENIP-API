@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -19,11 +20,11 @@ public class Approve {
     private Long id;
 
     @OneToOne
-    @Column(name = "recyled_image_id")
+    @JoinColumn(name = "recycled_image_id")
     private RecycledImage recycledImage;
 
     @OneToOne
-    @Column(name = "admin_id")
+    @JoinColumn(name = "admin_id")
     private User admin;
 
     @Column(name = "is_approved")

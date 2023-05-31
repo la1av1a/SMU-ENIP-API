@@ -39,7 +39,7 @@ public class SecurityConfig {
             .antMatchers(swaggerURL).permitAll()
             .antMatchers("/user/rank/**", "/", "/signUp", "/login").permitAll()
             .antMatchers("/admin/**").hasRole("ADMIN")
-            .anyRequest().authenticated()
+            .anyRequest().permitAll()
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

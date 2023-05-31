@@ -5,7 +5,6 @@ import com.smu.smuenip.domain.user.repository.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,7 +13,7 @@ public class RankService {
 
     private final UserRepository userRepository;
 
-    @Cacheable(value = "rank", key = "#size + #offset")
+
     public List<RankDto> getRanking(int size, int offset) {
         List<Object[]> userScoreList = userRepository.findUserScore(size, offset);
 

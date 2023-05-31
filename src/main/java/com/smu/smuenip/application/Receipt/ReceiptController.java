@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@RequestMapping("/receipt")
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin
@@ -30,7 +31,7 @@ public class ReceiptController implements ReceiptControllerSwagger {
     private final ReceiptService receiptService;
 
     @Override
-    @PostMapping("/receipt")
+    @PostMapping("")
     public ResponseEntity<ResponseDto<Void>> uploadImage(
             @RequestBody ReceiptImageUploadRequestDto requestDTO,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
@@ -45,7 +46,7 @@ public class ReceiptController implements ReceiptControllerSwagger {
 
 
     @Override
-    @GetMapping("/receipt/list")
+    @GetMapping("/list")
     public List<UserReceiptResponseDto> getUploadedItems(
             @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -55,7 +56,7 @@ public class ReceiptController implements ReceiptControllerSwagger {
     }
 
     @Override
-    @PatchMapping("/receipt")
+    @PatchMapping("")
     public ResponseEntity<ResponseDto<Void>> setComment(@RequestBody ReceiptSetCommentRequestDto requestDto,
                                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
         receiptService.setComment(requestDto, Long.valueOf(userDetails.getId()));

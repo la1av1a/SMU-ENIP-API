@@ -1,13 +1,19 @@
 package com.smu.smuenip.domain.user.model;
 
 import com.smu.smuenip.enums.Role;
+import java.time.LocalDate;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-
-import javax.persistence.*;
-import java.time.LocalDate;
 
 @Getter
 @Entity
@@ -46,5 +52,13 @@ public class User {
         this.role = role;
         this.score = score;
         this.createdDate = LocalDate.now();
+    }
+
+    public void incrementScore() {
+        this.score += 1;
+    }
+
+    public void decrementScore() {
+        this.score -= 1;
     }
 }

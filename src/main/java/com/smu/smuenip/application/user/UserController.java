@@ -28,17 +28,24 @@ public class UserController {
         return customUserDetails.getAccessToken();
     }
 
-    @DeleteMapping("/")
-    public ResponseEntity<ResponseDto<Void>> deleteUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    @DeleteMapping("")
+    public ResponseEntity<ResponseDto<Void>> deleteUser(
+        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         userAuthService.deleteUser(Long.valueOf(customUserDetails.getId()));
 
-        return new ResponseEntity<>(new ResponseDto<>(null, MessagesSuccess.DELETE_USER_SUCCESS.getMessage()), HttpStatus.OK);
+        return new ResponseEntity<>(
+            new ResponseDto<>(null, MessagesSuccess.DELETE_USER_SUCCESS.getMessage()),
+            HttpStatus.OK);
     }
 
-    @GetMapping("/")
-    public ResponseEntity<ResponseDto<UserInfoResponseDto>> getUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        UserInfoResponseDto response = userService.getUserInfo(Long.valueOf(customUserDetails.getId()));
+    @GetMapping("")
+    public ResponseEntity<ResponseDto<UserInfoResponseDto>> getUser(
+        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        UserInfoResponseDto response = userService.getUserInfo(
+            Long.valueOf(customUserDetails.getId()));
 
-        return new ResponseEntity<>(new ResponseDto<>(response, MessagesSuccess.RETRIEVE_USER_INFO_SUCCESS.getMessage()), HttpStatus.OK);
+        return new ResponseEntity<>(
+            new ResponseDto<>(response, MessagesSuccess.RETRIEVE_USER_INFO_SUCCESS.getMessage()),
+            HttpStatus.OK);
     }
 }

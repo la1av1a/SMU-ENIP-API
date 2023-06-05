@@ -9,11 +9,9 @@ public class RankDto implements Serializable {
 
     private String nickName;
     private int score;
-    private Long rank;
 
-    public RankDto(String nickName, int score, Long rank) {
+    public RankDto(String nickName, int score) {
         this.nickName = nickName;
         this.score = score;
-        this.rank = rank;
     }
 }

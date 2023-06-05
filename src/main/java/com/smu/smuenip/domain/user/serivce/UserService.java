@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -26,10 +24,5 @@ public class UserService {
     @Transactional(readOnly = true)
     public User findUserById(Long id) {
         return userRepository.findUserByUserId(id).orElseThrow(() -> new UnExpectedErrorException(MessagesFail.USER_NOT_FOUND.getMessage()));
-    }
-
-    @Transactional(readOnly = true)
-    public List<Object[]> findUserScore(int size, int offset) {
-        return userRepository.findUserScore(size, offset);
     }
 }

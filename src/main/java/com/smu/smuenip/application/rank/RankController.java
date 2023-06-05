@@ -5,7 +5,6 @@ import com.smu.smuenip.domain.rank.RankService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -21,8 +20,7 @@ public class RankController implements RankControllerSwagger {
 
     @Override
     @GetMapping("/rank")
-    public List<RankDto> getRanking(@RequestParam(value = "size", defaultValue = "20") int size,
-                                    @RequestParam(value = "offset", defaultValue = "0") int offset) {
-        return rankService.getRanking(size, offset);
+    public List<RankDto> getRanking() {
+        return rankService.getRanking();
     }
 }

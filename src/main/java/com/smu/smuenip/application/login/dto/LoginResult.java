@@ -10,11 +10,13 @@ public class LoginResult {
     private Role role;
     private String nickname;
     private String profileImageUrl;
+    private int score;
 
-    public LoginResult(String token, Role role, String nickname, String profileImageUrl) {
+    public LoginResult(String token, Role role, String nickname, String profileImageUrl, int score) {
         this.token = token;
         this.role = role;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
+        this.score = score;
     }
 }

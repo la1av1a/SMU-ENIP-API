@@ -66,7 +66,7 @@ public class UserAuthService {
 
         Role role = user.getRole();
 
-        return new LoginResult(token, role, user.getNickName(), user.getProfileImageUrl());
+        return new LoginResult(token, role, user.getNickName(), user.getProfileImageUrl(), user.getScore());
     }
 
     public void deleteUser(Long userId) {
@@ -93,8 +93,7 @@ public class UserAuthService {
         String token = createToken(user.getUserId(), userAuth.getProviderId(), user.getEmail(),
                 user.getRole(), Provider.KAKAO);
 
-        return new LoginResult(token, user.getRole(), user.getNickName(), user.getProfileImageUrl());
-
+        return new LoginResult(token, user.getRole(), user.getNickName(), user.getProfileImageUrl(), user.getScore());
     }
 
 

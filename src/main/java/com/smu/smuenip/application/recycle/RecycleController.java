@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/item/image")
 @RequiredArgsConstructor
-public class RecycleController {
+public class RecycleController implements RecycleControllerSwagger {
 
     private final RecycledImageProcessService recycledImageProcessService;
 

@@ -125,6 +125,7 @@ public class UserAuthService {
                 .nickName(nickName)
                 .role(role)
                 .score(0)
+                .weight(0)
                 .build();
     }
 

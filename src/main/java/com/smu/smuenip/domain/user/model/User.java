@@ -37,15 +37,19 @@ public class User implements Serializable {
     @Column
     private int score;
 
+    @Column
+    private int weight;
+
     @CreatedDate
     private LocalDate createdDate;
 
     @Builder
-    public User(String email, String nickName, Role role, int score) {
+    public User(String email, String nickName, Role role, int score, int weight) {
         this.email = email;
         this.nickName = nickName;
         this.role = role;
         this.score = score;
+        this.weight = weight;
         this.createdDate = LocalDate.now();
     }
 

@@ -1,7 +1,8 @@
-package com.smu.smuenip.application.admin;
+package com.smu.smuenip.application.admin.dto;
+
+import lombok.Getter;
 
 import javax.validation.constraints.NotEmpty;
-import lombok.Getter;
 
 @Getter
 public class ApproveRequestDto {

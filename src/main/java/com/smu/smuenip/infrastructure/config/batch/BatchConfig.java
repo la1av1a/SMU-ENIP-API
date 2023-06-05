@@ -20,7 +20,7 @@ public class BatchConfig {
         return TriggerBuilder.newTrigger()
                 .forJob(userScoreUpdateJobDetail)
                 .withIdentity("userScoreUpdateTrigger")
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInHours(1).repeatForever())
+                .withSchedule(CronScheduleBuilder.cronSchedule("0 0 * * * ?"))
                 .build();
     }
 }

@@ -9,23 +9,25 @@ import org.springframework.data.repository.query.Param;
 public interface PurchasedItemRepository extends JpaRepository<PurchasedItem, Long> {
 
     @Query(value = "SELECT p "
-        + "FROM PurchasedItem p "
-        + "JOIN FETCH p.receipt r "
-        + "WHERE YEAR(r.purchasedDate) = :year "
-        + "AND MONTH(r.purchasedDate) = :month "
-        + "AND DAY(r.purchasedDate) = :day "
-        + "AND r.user.userId = :userId",
-        countQuery = "SELECT COUNT(p) "
             + "FROM PurchasedItem p "
-            + "JOIN p.receipt r "
+            + "JOIN FETCH p.receipt r "
             + "WHERE YEAR(r.purchasedDate) = :year "
             + "AND MONTH(r.purchasedDate) = :month "
             + "AND DAY(r.purchasedDate) = :day "
-            + "AND r.user.userId = :userId"
+            + "AND r.user.userId = :userId",
+            countQuery = "SELECT COUNT(p) "
+                    + "FROM PurchasedItem p "
+                    + "JOIN p.receipt r "
+                    + "WHERE YEAR(r.purchasedDate) = :year "
+                    + "AND MONTH(r.purchasedDate) = :month "
+                    + "AND DAY(r.purchasedDate) = :day "
+                    + "AND r.user.userId = :userId"
     )
     Page<PurchasedItem> findPurchasedItemsByCreatedDate(@Param("year") int year,
-        @Param("month") int month, @Param("day") int day, @Param("userId") Long userId,
-        Pageable pageable);
+                                                        @Param("month") int month, @Param("day") int day, @Param("userId") Long userId,
+                                                        Pageable pageable);
+
+    Page<PurchasedItem> findPurchasedItemByUserUserId(Long userId, Pageable pageable);
 
 
 }

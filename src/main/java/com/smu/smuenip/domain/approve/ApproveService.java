@@ -2,7 +2,7 @@ package com.smu.smuenip.domain.approve;
 
 import com.smu.smuenip.domain.approve.entity.Approve;
 import com.smu.smuenip.domain.approve.entity.ApproveRepository;
-import com.smu.smuenip.domain.recycledImage.RecycledImage;
+import com.smu.smuenip.domain.recycledImage.entity.RecycledImage;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.enums.message.meesagesDetail.MessagesFail;
 import com.smu.smuenip.infrastructure.config.exception.BadRequestException;
@@ -29,8 +29,8 @@ public class ApproveService {
     @Transactional(readOnly = true)
     public Approve findById(Long approveId) {
         return approveRepository.findById(approveId)
-            .orElseThrow(
-                () -> new BadRequestException(MessagesFail.APPROVE_NOT_FOUND.getMessage()));
+                .orElseThrow(
+                        () -> new BadRequestException(MessagesFail.APPROVE_NOT_FOUND.getMessage()));
     }
 
     public Approve createApprove(RecycledImage recycledImage, User user, boolean isApproved) {

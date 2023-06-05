@@ -1,16 +1,13 @@
 package com.smu.smuenip.domain.approve.entity;
 
-import com.smu.smuenip.domain.recycledImage.RecycledImage;
+import com.smu.smuenip.domain.recycledImage.entity.RecycledImage;
 import com.smu.smuenip.domain.user.model.User;
-import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -54,7 +51,7 @@ public class Approve {
             isApproved = true;
             return;
         }
-        
+
         user.decrementScore();
         isApproved = false;
     }

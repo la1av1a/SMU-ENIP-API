@@ -63,18 +63,20 @@ public class PurchasedItemService {
                 .build();
     }
 
-    public List<PurchasedItemResponseDto> getPurchasedItems(LocalDate date, Long userId,
-                                                            Pageable pageable) {
+    public List<PurchasedItemResponseDto> getPurchasedItems(LocalDate date, Long userId, Pageable pageable) {
+        if (date == null) {
+            Page<PurchasedItem> purchasedItemPage = purchasedItemRepository.findPurchasedItemByUserUserId(userId, pageable);
+            return entityPageToDto(purchasedItemPage);
+        }
 
         int year = date.getYear();
         int month = date.getMonthValue();
         int day = date.getDayOfMonth();
 
-        Page<PurchasedItem> purchasedItemPage = purchasedItemRepository.findPurchasedItemsByCreatedDate(
-                year, month, day, userId, pageable);
-
+        Page<PurchasedItem> purchasedItemPage = purchasedItemRepository.findPurchasedItemsByCreatedDate(year, month, day, userId, pageable);
         return entityPageToDto(purchasedItemPage);
     }
+
 
     public PurchasedItem findPurchasedItemById(Long purchasedItemId) {
         return purchasedItemRepository.findById(purchasedItemId).orElseThrow(

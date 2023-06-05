@@ -1,24 +1,31 @@
-package com.smu.smuenip.domain.recycledImage;
+package com.smu.smuenip.domain.recycledImage.service;
 
 import com.smu.smuenip.application.purchasedItem.dto.RecycledImageUploadRequestDto;
+import com.smu.smuenip.application.recycle.dto.RecycledImageResponseDto;
 import com.smu.smuenip.domain.purchasedItem.model.PurchasedItem;
 import com.smu.smuenip.domain.purchasedItem.service.PurchasedItemService;
+import com.smu.smuenip.domain.recycledImage.entity.RecycledImage;
+import com.smu.smuenip.domain.recycledImage.entity.RecycledImageRepository;
+import com.smu.smuenip.enums.Role;
 import com.smu.smuenip.infrastructure.config.exception.UnExpectedErrorException;
 import com.smu.smuenip.infrastructure.util.Image.ImageUtils;
 import com.smu.smuenip.infrastructure.util.s3.S3Api;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
-public class RecycledImageService {
+public class RecycledImageProcessService {
 
     private final RecycledImageRepository recycledImageRepository;
     private final PurchasedItemService purchasedItemService;
     private final S3Api s3Api;
+    private final RecycledImageService recycledImageService;
 
     @Transactional
     public void RecycledImageUpload(RecycledImageUploadRequestDto requestDto) {
@@ -28,18 +35,18 @@ public class RecycledImageService {
 
         try {
             MultipartFile imageMultiPartFile = ImageUtils.base64ToMultipartFile(
-                requestDto.getImage());
+                    requestDto.getImage());
             MultipartFile resizedImage = ImageUtils.resizeImage(imageMultiPartFile);
             resizedImageUrl = s3Api.uploadImageToS3(resizedImage,
-                imageMultiPartFile.getOriginalFilename());
+                    imageMultiPartFile.getOriginalFilename());
             originalImageUrl = s3Api.uploadImageToS3(imageMultiPartFile,
-                imageMultiPartFile.getOriginalFilename() + "-origin");
+                    imageMultiPartFile.getOriginalFilename() + "-origin");
 
             PurchasedItem purchasedItem = purchasedItemService.findPurchasedItemById(
-                requestDto.getItemId());
+                    requestDto.getItemId());
 
             RecycledImage recycledImage = createRecycledImage(resizedImageUrl, originalImageUrl,
-                purchasedItem);
+                    purchasedItem);
             recycledImageRepository.save(recycledImage);
         } catch (Exception e) {
             s3Api.deleteImageFromS3(resizedImageUrl);
@@ -49,20 +56,33 @@ public class RecycledImageService {
     }
 
     @Transactional(readOnly = true)
+    public List<RecycledImageResponseDto> getRecycledItems(Long userId, Role role, LocalDate date, Boolean isRecycled) {
+
+        List<RecycledImageResponseDto> recycledImageResponseDtoList;
+
+        if (role == Role.ROLE_USER) {
+            recycledImageResponseDtoList = recycledImageService.getRecycledImageListForUser(userId, date, isRecycled);
+        }
+        recycledImageResponseDtoList = recycledImageService.getRecycledImageListForAdmin(date, isRecycled);
+
+        return recycledImageResponseDtoList;
+    }
+
+    @Transactional(readOnly = true)
     public RecycledImage findRecycledById(Long recycledImageId) {
         return recycledImageRepository.findById(recycledImageId)
-            .orElseThrow(() -> new UnExpectedErrorException("존재하지 않는 이미지입니다."));
+                .orElseThrow(() -> new UnExpectedErrorException("존재하지 않는 이미지입니다."));
     }
 
     private RecycledImage createRecycledImage(String imageUrl, String originalImageUrl,
-        PurchasedItem purchasedItem) {
+                                              PurchasedItem purchasedItem) {
         return RecycledImage.builder()
-            .recycledImageUrl(imageUrl)
-            .originalImageUrl(originalImageUrl)
-            .uploadDate(LocalDate.now())
-            .purchasedItem(purchasedItem)
-            .isApproved(false)
-            .isChecked(false)
-            .build();
+                .recycledImageUrl(imageUrl)
+                .originalImageUrl(originalImageUrl)
+                .uploadDate(LocalDate.now())
+                .purchasedItem(purchasedItem)
+                .isApproved(false)
+                .isChecked(false)
+                .build();
     }
 }

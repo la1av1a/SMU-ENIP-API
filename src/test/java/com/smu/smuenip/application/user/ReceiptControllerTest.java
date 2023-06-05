@@ -74,7 +74,7 @@ class ReceiptControllerTest {
         String loginId = "test1234";
         String email = "test1234@gmail.com";
         String password = passwordEncoder.encode("test1234");
-        User user = new User(loginId, email, Role.ROLE_USER, 0);
+        User user = new User(loginId, email, Role.ROLE_USER, 0, 0);
         savedUser = userRepository.save(user);
 
         UserAuth userAuth = new UserAuth(user, Provider.LOCAL, password, loginId);

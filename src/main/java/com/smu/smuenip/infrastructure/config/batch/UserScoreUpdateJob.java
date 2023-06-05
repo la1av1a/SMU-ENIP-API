@@ -22,7 +22,7 @@ public class UserScoreUpdateJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        redisService.flushAll();
+        redisService.flushRank();
         List<User> users = userRepository.findAll();
 
         for (User user : users) {

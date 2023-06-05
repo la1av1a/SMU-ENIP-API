@@ -148,7 +148,7 @@ public class ReceiptService {
                         0).items.parallelStream()
                 .map(item -> new OcrDataDto(item.name == null ? "null" : item.name.formatted.value,
                         item.count == null ? "null" : item.count.formatted.value,
-                        item.price.formatted == null ? "null" : item.price.formatted.value))
+                        item.price.price.formatted == null ? "null" : item.price.price.formatted.value))
                 .collect(Collectors.toList());
     }
 

@@ -21,13 +21,19 @@ public class RedisService {
 
     public void saveOrUpdateUser(User user) {
         zSetOperations.add("userScore", user, user.getScore());
+        zSetOperations.add("userWeight", user, user.getWeight());
     }
 
-    public void flushAll() {
+    public void flushRank() {
         redisTemplate.delete("userScore");
+        redisTemplate.delete("userWeight");
     }
 
-    public Set<User> getUsers() {
+    public Set<User> getUsersScore() {
         return zSetOperations.reverseRange("userScore", 0, -1);
+    }
+
+    public Set<User> getUsersWeight() {
+        return zSetOperations.reverseRange("userWeight", 0, -1);
     }
 }

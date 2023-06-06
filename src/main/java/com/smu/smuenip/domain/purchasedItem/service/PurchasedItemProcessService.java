@@ -107,6 +107,7 @@ public class PurchasedItemProcessService {
 
     private List<PurchasedItemResponseDto> entityToDto(List<PurchasedItem> purchasedItemPage) {
         return purchasedItemPage.stream()
+            .filter(purchasedItem -> purchasedItem.getReceipt() != null)
             .map(purchasedItem -> PurchasedItemResponseDto.builder()
                 .purchasedItemId(purchasedItem.getPurchasedItemId())
                 .categoryImage(purchasedItem.getCategory().getCategoryImage())

@@ -1,5 +1,6 @@
 package com.smu.smuenip.domain.purchasedItem.model;
 
+import com.smu.smuenip.domain.category.entity.Category;
 import com.smu.smuenip.domain.receipt.model.Receipt;
 import com.smu.smuenip.domain.recycledImage.entity.RecycledImage;
 import com.smu.smuenip.domain.user.model.User;
@@ -40,6 +41,10 @@ public class PurchasedItem {
     @Column
     private String imageUrl;
 
+    @JoinColumn(name = "category")
+    @ManyToOne
+    private Category category;
+
     @Column
     private int itemCount;
 
@@ -52,14 +57,12 @@ public class PurchasedItem {
     @OneToOne(mappedBy = "purchasedItem", fetch = FetchType.LAZY)
     private RecycledImage recycledImage;
 
-    private String category;
-
     @Column
     private LocalDate purchasedDate;
 
     @Builder
     public PurchasedItem(User user, Receipt receipt, String itemName, String imageUrl,
-        int itemCount, int itemPrice, int trashAmount, String category, LocalDate purchasedDate) {
+        int itemCount, int itemPrice, int trashAmount, Category category, LocalDate purchasedDate) {
         this.user = user;
         this.receipt = receipt;
         this.itemName = itemName;

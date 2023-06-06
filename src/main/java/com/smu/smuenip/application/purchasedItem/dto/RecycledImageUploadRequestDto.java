@@ -3,8 +3,10 @@ package com.smu.smuenip.application.purchasedItem.dto;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class RecycledImageUploadRequestDto {
 
     @NotEmpty(message = "분리수거 대상 이미지의 id는 비어서는 안 됩니다")

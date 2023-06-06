@@ -1,7 +1,7 @@
 package com.smu.smuenip.application.purchasedItem;
 
 import com.smu.smuenip.application.purchasedItem.dto.PurchasedItemResponseDto;
-import com.smu.smuenip.domain.purchasedItem.service.PurchasedItemService;
+import com.smu.smuenip.domain.purchasedItem.service.PurchasedItemProcessService;
 import com.smu.smuenip.infrastructure.config.CustomUserDetails;
 import java.time.LocalDate;
 import java.util.List;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PurchasedItemController implements PurchasedItemControllerSwagger {
 
-    private final PurchasedItemService purchasedItemService;
+    private final PurchasedItemProcessService purchasedItemProcessService;
 
     //이름, "분류"
     @Override
@@ -32,12 +32,13 @@ public class PurchasedItemController implements PurchasedItemControllerSwagger {
         @PageableDefault Pageable pageable) {
 
         if (isRecycled == null) {
-            return purchasedItemService.getAllPurchasedItems(date,
+            return purchasedItemProcessService.getAllPurchasedItems(date,
                 Long.valueOf(userDetails.getId()),
                 pageable);
         }
 
-        return purchasedItemService.getNotRecycledItems(Long.parseLong(userDetails.getId()));
+        return purchasedItemProcessService.getRecycledItemsByIsRecycled(
+            Long.valueOf(userDetails.getId()), isRecycled);
 
     }
 }

@@ -2,7 +2,7 @@ package com.smu.smuenip.domain.receipt.service;
 
 import com.smu.smuenip.application.Receipt.dto.ReceiptSetCommentRequestDto;
 import com.smu.smuenip.application.Receipt.dto.UserReceiptResponseDto;
-import com.smu.smuenip.domain.purchasedItem.service.PurchasedItemService;
+import com.smu.smuenip.domain.purchasedItem.service.PurchasedItemProcessService;
 import com.smu.smuenip.domain.receipt.OcrDataDto;
 import com.smu.smuenip.domain.receipt.model.Receipt;
 import com.smu.smuenip.domain.receipt.model.ReceiptRepository;
@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Slf4j
 @Service
@@ -38,7 +39,7 @@ public class ReceiptService {
     private final ReceiptRepository receiptRepository;
     private final UserRepository userRepository;
     private final ClovaOcrApi clovaOCRAPI;
-    private final PurchasedItemService purchasedItemService;
+    private final PurchasedItemProcessService purchasedItemProcessService;
     private final S3Api s3Api;
     private final ElasticSearchService elasticSearchService;
 
@@ -59,23 +60,34 @@ public class ReceiptService {
                     encodedImage.split(",", 2)[1], image.getOriginalFilename()));
 
             OcrResponseDto ocrResponseDto = ocrMono.block();
+            assert ocrResponseDto != null;
             List<OcrDataDto> ocrDataDtoList = extractOcrData(ocrResponseDto);
 
-            ocrDataDtoList.forEach(ocrDataDto -> {
-                if (ocrDataDto != null && ocrDataDto.getName() != null) {
-                    Mono<ElSearchResponseDto> elSearchResponseDtoMono = elasticSearchService.searchProductWeight(
-                        ocrDataDto.getName());
+            List<Mono<ElSearchResponseDto>> monos = ocrDataDtoList.parallelStream()
+                .filter(ocrDataDto -> ocrDataDto != null && ocrDataDto.getName() != null)
+                .map(ocrDataDto -> elasticSearchService.searchProductWeight(
+                    removeClosingPattern(ocrDataDto.getName())))
+                .collect(Collectors.toList());
 
-                    elSearchResponseDtoMono.doOnSuccess(elSearchResponseDto -> {
-                        purchasedItemService.savePurchasedItem(ocrDataDto,
+            Mono.zip(monos, array -> array)
+                .publishOn(Schedulers.boundedElastic())
+                .doOnSuccess(array -> {
+                    for (int i = 0; i < array.length; i++) {
+                        ElSearchResponseDto elSearchResponseDto = (ElSearchResponseDto) array[i];
+                        OcrDataDto ocrDataDto = ocrDataDtoList.get(i);
+                        purchasedItemProcessService.savePurchasedItem(ocrDataDto,
                             elSearchResponseDto, receipt, userId, purchasedDate);
-                    });
-                }
-            });
-
+                    }
+                })
+                .subscribe();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    private String removeClosingPattern(String originalStr) {
+        return originalStr.replaceAll(".*\\)", "");
     }
 
 

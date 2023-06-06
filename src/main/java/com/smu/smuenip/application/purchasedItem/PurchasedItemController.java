@@ -6,8 +6,6 @@ import com.smu.smuenip.infrastructure.config.CustomUserDetails;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,13 +26,11 @@ public class PurchasedItemController implements PurchasedItemControllerSwagger {
     public List<PurchasedItemResponseDto> getPurchasedItems(
         @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
         @RequestParam(value = "isRecycled", required = false) Boolean isRecycled,
-        @AuthenticationPrincipal CustomUserDetails userDetails,
-        @PageableDefault Pageable pageable) {
+        @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         if (isRecycled == null) {
             return purchasedItemProcessService.getAllPurchasedItems(date,
-                Long.valueOf(userDetails.getId()),
-                pageable);
+                Long.valueOf(userDetails.getId()));
         }
 
         return purchasedItemProcessService.getRecycledItemsByIsRecycled(

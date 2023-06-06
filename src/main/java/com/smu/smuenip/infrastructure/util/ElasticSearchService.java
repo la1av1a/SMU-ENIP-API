@@ -6,6 +6,9 @@ import com.smu.smuenip.enums.message.meesagesDetail.MessagesFail;
 import com.smu.smuenip.infrastructure.config.exception.UnExpectedErrorException;
 import com.smu.smuenip.infrastructure.util.elasticSearch.ElSearchRequestDto;
 import com.smu.smuenip.infrastructure.util.elasticSearch.ElSearchResponseDto;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class ElasticSearchService {
     private String authorization;
     private MultiValueMap<String, String> header;
 
-    public ElSearchResponseDto searchProductWeight(String name) {
+    public Mono<ElSearchResponseDto> searchProductWeight(String name) {
 
         ElSearchRequestDto requestDto = new ElSearchRequestDto();
 
@@ -61,18 +61,15 @@ public class ElasticSearchService {
 
         log.info("Request Body: {}", json);
 
-        ElSearchResponseDto result = WebClient.create(baseUrl)
-                .post()
-                .uri(uriBuilder -> uriBuilder
-                        .path(path)
-                        .build())
-                .headers(httpHeaders -> httpHeaders.addAll(header))
-                .bodyValue(json)
-                .retrieve()
-                .bodyToMono(ElSearchResponseDto.class)
-                .block();
-
-        return result;
+        return WebClient.create(baseUrl)
+            .post()
+            .uri(uriBuilder -> uriBuilder
+                .path(path)
+                .build())
+            .headers(httpHeaders -> httpHeaders.addAll(header))
+            .bodyValue(json)
+            .retrieve()
+            .bodyToMono(ElSearchResponseDto.class);
     }
 
     @PostConstruct

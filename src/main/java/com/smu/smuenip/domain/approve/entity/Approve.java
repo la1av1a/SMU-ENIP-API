@@ -2,12 +2,17 @@ package com.smu.smuenip.domain.approve.entity;
 
 import com.smu.smuenip.domain.recycledImage.entity.RecycledImage;
 import com.smu.smuenip.domain.user.model.User;
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -16,6 +21,7 @@ public class Approve {
 
     @Id
     @Column(name = "approve_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
@@ -41,18 +47,17 @@ public class Approve {
         User user = recycledImage.getPurchasedItem().getUser();
         user.incrementScore();
     }
-
+    
     public void setApproved(boolean approved) {
-
         User user = recycledImage.getPurchasedItem().getUser();
 
         if (approved) {
+            user.decrementScore();
+        } else {
             user.incrementScore();
-            isApproved = true;
-            return;
         }
 
-        user.decrementScore();
-        isApproved = false;
+        isApproved = approved;
     }
+
 }

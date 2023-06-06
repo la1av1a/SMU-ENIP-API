@@ -63,7 +63,6 @@ public class RecycledImageProcessService {
         }
 
         return recycledImageService.getRecycledImageListForAdmin(date, isRecycled);
-
     }
 
     @Transactional(readOnly = true)

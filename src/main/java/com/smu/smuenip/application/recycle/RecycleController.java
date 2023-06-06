@@ -41,10 +41,10 @@ public class RecycleController implements RecycleControllerSwagger {
     public ResponseEntity<ResponseDto<?>> getRecycledItems(
         @AuthenticationPrincipal CustomUserDetails userDetails,
         @RequestParam(value = "date", required = false) LocalDate date,
-        @RequestParam(value = "isRecycled", required = false) Boolean isRecycled) {
+        @RequestParam(value = "isApproved", required = false) Boolean isApproved) {
 
         List<RecycledImageResponseDto> recycledImageResponseDtoList = recycledImageProcessService.getRecycledItems(
-            Long.parseLong(userDetails.getId()), userDetails.getRole(), date, isRecycled);
+            Long.parseLong(userDetails.getId()), userDetails.getRole(), date, isApproved);
 
         return new ResponseEntity<>(new ResponseDto<>(recycledImageResponseDtoList,
             MessagesSuccess.GET_SUCCESS.getMessage()), HttpStatus.OK);

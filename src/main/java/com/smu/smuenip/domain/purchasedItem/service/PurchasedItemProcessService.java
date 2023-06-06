@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,21 +80,20 @@ public class PurchasedItemProcessService {
     }
 
     @Transactional(readOnly = true)
-    public List<PurchasedItemResponseDto> getAllPurchasedItems(LocalDate date, Long userId,
-        Pageable pageable) {
+    public List<PurchasedItemResponseDto> getAllPurchasedItems(LocalDate date, Long userId) {
         if (date == null) {
-            Page<PurchasedItem> purchasedItemPage = purchasedItemRepository.findPurchasedItemByUserUserId(
-                userId, pageable);
-            return entityToDto(purchasedItemPage.get().collect(Collectors.toList()));
+            List<PurchasedItem> purchasedItemList = purchasedItemRepository.findPurchasedItemByUserUserId(
+                userId);
+            return entityToDto(purchasedItemList);
         }
 
         int year = date.getYear();
         int month = date.getMonthValue();
         int day = date.getDayOfMonth();
 
-        Page<PurchasedItem> purchasedItemPage = purchasedItemRepository.findPurchasedItemsByCreatedDate(
-            year, month, day, userId, pageable);
-        return entityToDto(purchasedItemPage.get().collect(Collectors.toList()));
+        List<PurchasedItem> purchasedItemList = purchasedItemRepository.findPurchasedItemsByCreatedDate(
+            year, month, day, userId);
+        return entityToDto(purchasedItemList);
     }
 
 

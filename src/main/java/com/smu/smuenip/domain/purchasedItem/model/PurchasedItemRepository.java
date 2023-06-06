@@ -1,8 +1,6 @@
 package com.smu.smuenip.domain.purchasedItem.model;
 
 import java.util.List;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,11 +22,12 @@ public interface PurchasedItemRepository extends JpaRepository<PurchasedItem, Lo
             + "AND DAY(r.purchasedDate) = :day "
             + "AND r.user.userId = :userId"
     )
-    Page<PurchasedItem> findPurchasedItemsByCreatedDate(@Param("year") int year,
-        @Param("month") int month, @Param("day") int day, @Param("userId") Long userId,
-        Pageable pageable);
+    List<PurchasedItem> findPurchasedItemsByCreatedDate(@Param("year") int year,
+        @Param("month") int month, @Param("day") int day, @Param("userId") Long userId);
 
-    Page<PurchasedItem> findPurchasedItemByUserUserId(Long userId, Pageable pageable);
+    @Query("SELECT p FROM PurchasedItem p "
+        + "WHERE p.user.userId = :userId")
+    List<PurchasedItem> findPurchasedItemByUserUserId(Long userId);
 
     @Query("SELECT p FROM PurchasedItem p "
         + "LEFT JOIN FETCH p.recycledImage r "

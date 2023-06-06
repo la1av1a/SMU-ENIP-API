@@ -8,8 +8,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import java.time.LocalDate;
 import java.util.List;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +25,5 @@ public interface PurchasedItemControllerSwagger {
     public List<PurchasedItemResponseDto> getPurchasedItems(
         @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
         @RequestParam(value = "isRecycled", required = false) Boolean isRecycled,
-        @AuthenticationPrincipal CustomUserDetails userDetails,
-        @PageableDefault Pageable pageable);
+        @AuthenticationPrincipal CustomUserDetails userDetails);
 }

@@ -29,11 +29,11 @@ public class RedisService {
         redisTemplate.delete("userWeight");
     }
 
-    public Set<User> getUsersScore() {
-        return zSetOperations.reverseRange("userScore", 0, -1);
+    public Set<User> getUsersScore(int size, int offset) {
+        return zSetOperations.reverseRange("userScore", offset - 1, offset + size - 1);
     }
 
-    public Set<User> getUsersWeight() {
-        return zSetOperations.reverseRange("userWeight", 0, -1);
+    public Set<User> getUsersWeight(int size, int offset) {
+        return zSetOperations.reverseRange("userWeight", offset - 1, offset + size - 1);
     }
 }

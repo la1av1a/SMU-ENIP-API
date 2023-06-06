@@ -21,8 +21,10 @@ public class RankController implements RankControllerSwagger {
 
     @Override
     @GetMapping("/rank")
-    public List<RankDto> getRanking(@RequestParam(value = "value") String value) {
+    public List<RankDto> getRanking(@RequestParam(value = "value") String value,
+                                    @RequestParam(value = "size", defaultValue = "10", required = false) int size,
+                                    @RequestParam(value = "offset", defaultValue = "1", required = false) int offset) {
 
-        return rankService.getRanking(value);
+        return rankService.getRanking(value, size, offset);
     }
 }

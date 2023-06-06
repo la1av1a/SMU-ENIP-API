@@ -30,10 +30,12 @@ public class RedisService {
     }
 
     public Set<User> getUsersScore(int size, int offset) {
-        return zSetOperations.reverseRange("userScore", offset - 1, offset + size - 1);
+        offset -= 1;
+        return zSetOperations.reverseRange("userScore", offset, offset + size - 1);
     }
 
     public Set<User> getUsersWeight(int size, int offset) {
-        return zSetOperations.reverseRange("userWeight", offset - 1, offset + size - 1);
+        offset -= 1;
+        return zSetOperations.reverseRange("userWeight", offset, offset + size - 1);
     }
 }

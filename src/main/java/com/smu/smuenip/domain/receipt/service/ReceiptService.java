@@ -20,7 +20,6 @@ import com.smu.smuenip.infrastructure.util.naver.ocr.dto.OcrResponseDto;
 import com.smu.smuenip.infrastructure.util.s3.S3Api;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,37 +45,33 @@ public class ReceiptService {
     public void uploadReceipt(String encodedImage, LocalDate purchasedDate, Long userId) {
         try {
             MultipartFile image = ImageUtils.base64ToMultipartFile(encodedImage);
-            CompletableFuture<String> originalImageUrlFuture = CompletableFuture.supplyAsync(() ->
-                s3Api.uploadImageToS3(image, image.getOriginalFilename() + "-origin"));
-            CompletableFuture<String> resizedImageUrlFuture = CompletableFuture.supplyAsync(() -> {
-                MultipartFile resizedImage = ImageUtils.resizeImage(image);
-                return s3Api.uploadImageToS3(resizedImage, image.getOriginalFilename());
-            });
 
-            CompletableFuture<Receipt> receiptFuture = originalImageUrlFuture.thenCombine(
-                resizedImageUrlFuture, (originalImageUrl, resizedImageUrl) ->
-                    saveReceipt(resizedImageUrl, originalImageUrl, userId, purchasedDate));
+            String originalImageUrl = s3Api.uploadImageToS3(image,
+                image.getOriginalFilename() + "-origin");
 
-            CompletableFuture<Mono<OcrResponseDto>> ocrResponseDtoFuture = CompletableFuture.supplyAsync(
-                () ->
-                    clovaOCRAPI.callNaverOcr(new OcrRequestDto.Images(image.getContentType(),
-                        encodedImage.split(",", 2)[1], image.getOriginalFilename())));
-            ocrResponseDtoFuture.thenApply(ocrMono -> {
-                OcrResponseDto ocrResponseDto = ocrMono.block();
-                List<OcrDataDto> ocrDataDtoList = extractOcrData(ocrResponseDto);
+            MultipartFile resizedImage = ImageUtils.resizeImage(image);
+            String url = s3Api.uploadImageToS3(resizedImage, image.getOriginalFilename());
 
-                ocrDataDtoList.parallelStream().forEach(ocrDataDto -> {
-                    if (ocrDataDto != null && ocrDataDto.getName() != null) {
-                        Receipt receipt = receiptFuture.join();
-                        ElSearchResponseDto elSearchResponseDto = elasticSearchService.searchProductWeight(
-                            ocrDataDto.getName());
+            Receipt receipt = saveReceipt(url, originalImageUrl, userId, purchasedDate);
+
+            Mono<OcrResponseDto> ocrMono = clovaOCRAPI.callNaverOcr(
+                new OcrRequestDto.Images(image.getContentType(),
+                    encodedImage.split(",", 2)[1], image.getOriginalFilename()));
+
+            OcrResponseDto ocrResponseDto = ocrMono.block();
+            List<OcrDataDto> ocrDataDtoList = extractOcrData(ocrResponseDto);
+
+            ocrDataDtoList.forEach(ocrDataDto -> {
+                if (ocrDataDto != null && ocrDataDto.getName() != null) {
+                    Mono<ElSearchResponseDto> elSearchResponseDtoMono = elasticSearchService.searchProductWeight(
+                        ocrDataDto.getName());
+
+                    elSearchResponseDtoMono.doOnSuccess(elSearchResponseDto -> {
                         purchasedItemService.savePurchasedItem(ocrDataDto,
-                            elSearchResponseDto, receipt, userId,
-                            purchasedDate);
-                    }
-                });
-                return null;
-            }).join();
+                            elSearchResponseDto, receipt, userId, purchasedDate);
+                    });
+                }
+            });
 
         } catch (Exception e) {
             e.printStackTrace();

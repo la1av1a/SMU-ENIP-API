@@ -1,11 +1,10 @@
 package com.smu.smuenip.application.purchasedItem.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
-import lombok.Getter;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 public class PurchasedItemResponseDto {
@@ -18,14 +17,21 @@ public class PurchasedItemResponseDto {
     private Long receiptId;
     private int trashAmount = 0;
     private String expenditureCost;
+    private boolean isRecycled;
+    private String category;
 
     @Builder
-    public PurchasedItemResponseDto(Long purchasedItemId, String purchasedItemExampleImage, LocalDate date, Long receiptId, int trashAmount, String expenditureCost) {
+    public PurchasedItemResponseDto(Long purchasedItemId, String purchasedItemExampleImage,
+        LocalDate date,
+        Long receiptId, int trashAmount, String expenditureCost, boolean isRecycled,
+        String category) {
         this.purchasedItemId = purchasedItemId;
         this.purchasedItemExampleImage = purchasedItemExampleImage;
         this.date = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.receiptId = receiptId;
         this.trashAmount = trashAmount;
         this.expenditureCost = expenditureCost;
+        this.isRecycled = isRecycled;
+        this.category = category;
     }
 }

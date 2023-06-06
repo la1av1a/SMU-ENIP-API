@@ -25,7 +25,8 @@ public interface PurchasedItemControllerSwagger {
             value = "Bearer <token>"),
     })
     public List<PurchasedItemResponseDto> getPurchasedItems(
-        @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+        @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+        @RequestParam(value = "isRecycled", required = false) Boolean isRecycled,
         @AuthenticationPrincipal CustomUserDetails userDetails,
         @PageableDefault Pageable pageable);
 }

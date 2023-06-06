@@ -29,11 +29,16 @@ public class ApproveService {
     @Transactional(readOnly = true)
     public Approve findById(Long approveId) {
         return approveRepository.findById(approveId)
-                .orElseThrow(
-                        () -> new BadRequestException(MessagesFail.APPROVE_NOT_FOUND.getMessage()));
+            .orElseThrow(
+                () -> new BadRequestException(MessagesFail.APPROVE_NOT_FOUND.getMessage()));
     }
 
     public Approve createApprove(RecycledImage recycledImage, User user, boolean isApproved) {
         return new Approve(recycledImage, user, isApproved);
     }
+
+    public void deleteApprove(Approve approve) {
+        approveRepository.delete(approve);
+    }
+
 }

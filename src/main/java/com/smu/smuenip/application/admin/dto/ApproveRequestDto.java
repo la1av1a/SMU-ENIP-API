@@ -1,14 +1,14 @@
 package com.smu.smuenip.application.admin.dto;
 
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
-
-import javax.validation.constraints.NotEmpty;
 
 @Getter
 public class ApproveRequestDto {
 
-    @NotEmpty
+    @NotNull
     private Long recycledImageId;
-    @NotEmpty
+    
+    @NotNull
     private boolean approve;
 }

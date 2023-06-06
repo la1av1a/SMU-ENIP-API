@@ -37,7 +37,10 @@ public class UserAuthService {
 
     @Transactional
     public void createUser(UserRequestDto requestDto) throws BadRequestException {
-        if (userAuthRepository.existsUserAuthByProviderIdAndProvider(requestDto.getLoginId(), Provider.LOCAL)) {
+        // user의 email이 존재하는지 확인
+
+        if (userAuthRepository.existsUserAuthsByProviderIdOrUserEmailAndProvider
+            (requestDto.getLoginId(), requestDto.getEmail(), Provider.LOCAL)) {
             throw new BadRequestException(MessagesFail.USER_EXISTS.getMessage());
         }
 
@@ -45,7 +48,8 @@ public class UserAuthService {
         User user = createUserEntity(requestDto.getEmail(), nickName, Role.ROLE_USER);
 
         String encodedPassword = passwordEncoderConfig.encodePassword(requestDto.getPassword());
-        UserAuth userAuth = createUserAuthEntity(user, requestDto.getLoginId(), Provider.LOCAL, encodedPassword);
+        UserAuth userAuth = createUserAuthEntity(user, requestDto.getLoginId(), Provider.LOCAL,
+            encodedPassword);
 
         saveUser(user);
         saveUsersAuth(userAuth);
@@ -54,25 +58,28 @@ public class UserAuthService {
     @Transactional(readOnly = true)
     public LoginResult login(LoginRequestDto requestDto) throws BadRequestException {
 
-        UserAuth userAuth = findUserAuthByProviderIdAndProvider(requestDto.getLoginId(), Provider.LOCAL);
+        UserAuth userAuth = findUserAuthByProviderIdAndProvider(requestDto.getLoginId(),
+            Provider.LOCAL);
         User user = userAuth.getUser();
         if (!passwordEncoderConfig.matchPassword(requestDto.getPassword(),
-                userAuth.getPassword())) {
+            userAuth.getPassword())) {
             throw new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage());
         }
 
         String token = createToken(user.getUserId(), userAuth.getProviderId(), user.getEmail(),
-                user.getRole(), Provider.LOCAL);
+            user.getRole(), Provider.LOCAL);
 
         Role role = user.getRole();
 
-        return new LoginResult(token, role, user.getNickName(), user.getProfileImageUrl(), user.getScore());
+        return new LoginResult(token, role, user.getNickName(), user.getProfileImageUrl(),
+            user.getScore());
     }
 
     public void deleteUser(Long userId) {
 
-        if (!userRepository.existsById(userId))
+        if (!userRepository.existsById(userId)) {
             throw new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage());
+        }
 
         userRepository.deleteById(userId);
     }
@@ -86,24 +93,27 @@ public class UserAuthService {
         String sub = jwt.getClaim("sub").asString();
 
         User user = userRepository.findUserByEmail(email)
-                .orElseGet(() -> saveUser(createUserEntity(email, nickNameService.getRandomNickName(), Role.ROLE_USER)));
+            .orElseGet(() -> saveUser(
+                createUserEntity(email, nickNameService.getRandomNickName(), Role.ROLE_USER)));
         UserAuth userAuth = userAuthRepository.findUserAuthByUserAndProvider(user, Provider.KAKAO)
-                .orElseGet(() -> saveUsersAuth(createUserAuthEntity(user, sub, Provider.KAKAO, null)));
+            .orElseGet(() -> saveUsersAuth(createUserAuthEntity(user, sub, Provider.KAKAO, null)));
 
         String token = createToken(user.getUserId(), userAuth.getProviderId(), user.getEmail(),
-                user.getRole(), Provider.KAKAO);
+            user.getRole(), Provider.KAKAO);
 
-        return new LoginResult(token, user.getRole(), user.getNickName(), user.getProfileImageUrl(), user.getScore());
+        return new LoginResult(token, user.getRole(), user.getNickName(), user.getProfileImageUrl(),
+            user.getScore());
     }
 
 
-    private UserAuth createUserAuthEntity(User user, String providerId, Provider provider, String password) {
+    private UserAuth createUserAuthEntity(User user, String providerId, Provider provider,
+        String password) {
         return UserAuth.builder()
-                .user(user)
-                .providerId(providerId)
-                .provider(provider)
-                .password(password)
-                .build();
+            .user(user)
+            .providerId(providerId)
+            .provider(provider)
+            .password(password)
+            .build();
     }
 
     @Transactional
@@ -112,7 +122,7 @@ public class UserAuthService {
     }
 
     private String createToken(Long id, String userId, String email,
-                               Role role, Provider provider) {
+        Role role, Provider provider) {
 
         return jwtUtil.createToken(Subject.atk(id, userId, email, role, provider));
     }
@@ -120,12 +130,12 @@ public class UserAuthService {
     private User createUserEntity(String email, String nickName, Role role) {
 
         return User.builder()
-                .email(email)
-                .nickName(nickName)
-                .role(role)
-                .score(0)
-                .weight(0)
-                .build();
+            .email(email)
+            .nickName(nickName)
+            .role(role)
+            .score(0)
+            .weight(0)
+            .build();
     }
 
 
@@ -135,8 +145,9 @@ public class UserAuthService {
 
 
     @Transactional(readOnly = true)
-    public UserAuth findUserAuthByProviderIdAndProvider(String providerId, Provider provider) throws BadRequestException {
+    public UserAuth findUserAuthByProviderIdAndProvider(String providerId, Provider provider)
+        throws BadRequestException {
         return userAuthRepository.findUserAuthByProviderIdAndProvider(providerId, provider)
-                .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
+            .orElseThrow(() -> new BadRequestException(MessagesFail.USER_NOT_FOUND.getMessage()));
     }
 }

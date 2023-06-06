@@ -15,6 +15,9 @@ public class Category {
     @Column
     private String categoryName;
 
-    @Column(name = "category_image_url")
+    @Column(name = "category_image")
     private String categoryImage;
+
+    @Column(name = "category_image_url")
+    private String recycleImage;
 }

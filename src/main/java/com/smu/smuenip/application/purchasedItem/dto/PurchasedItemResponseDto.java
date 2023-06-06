@@ -16,7 +16,7 @@ public class PurchasedItemResponseDto {
     private String date;
     @JsonProperty("receiptList")
     private Long receiptId;
-    private int trashAmount = 0;
+    private String trashAmount;
     private String expenditureCost;
     private boolean isRecycled;
     private String category;
@@ -30,7 +30,7 @@ public class PurchasedItemResponseDto {
         this.purchasedItemExampleImage = purchasedItemExampleImage;
         this.date = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.receiptId = receiptId;
-        this.trashAmount = trashAmount;
+        this.trashAmount = trashAmount + "g";
         this.expenditureCost = expenditureCost;
         this.isRecycled = isRecycled;
         this.category = category;

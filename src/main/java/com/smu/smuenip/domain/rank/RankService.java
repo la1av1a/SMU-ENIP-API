@@ -16,13 +16,13 @@ public class RankService {
 
     private final RedisService redisService;
 
-    public List<RankDto> getRanking(String value) {
+    public List<RankDto> getRanking(String value, int size, int offest) {
         if (value.equals("weight"))
-            return redisService.getUsersWeight().stream()
+            return redisService.getUsersWeight(size, offest).stream()
                     .map(this::userToRankDto)
                     .collect(Collectors.toList());
         else if (value.equals("score")) {
-            return redisService.getUsersScore().stream()
+            return redisService.getUsersScore(size, offest).stream()
                     .map(this::userToRankDto)
                     .collect(Collectors.toList());
         }

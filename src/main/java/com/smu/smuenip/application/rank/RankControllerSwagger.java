@@ -14,6 +14,9 @@ public interface RankControllerSwagger {
     @ApiOperation("유저 랭킹 리스트")
     @ApiImplicitParam(name = "value", dataType = "String", paramType = "query",
             value = "weight 또는 score", example = "weight or rank")
-    public List<RankDto> getRanking(@RequestParam(value = "value") String value);
+    public List<RankDto> getRanking(@RequestParam(value = "value") String value,
+                                    @RequestParam(value = "size", defaultValue = "10", required = false) int size,
+                                    @RequestParam(value = "offset", defaultValue = "1", required = false) int offset);
+
 
 }

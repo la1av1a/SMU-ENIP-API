@@ -67,7 +67,7 @@ public class ClovaOcrApi {
                         .build())
                 .headers(httpHeaders -> httpHeaders.addAll(header))
                 .bodyValue(json)
-                .retrieve() // response 받아오기
+                .retrieve()
                 .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
                     log.info("4xx error");
                     return Mono.error(new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage()));

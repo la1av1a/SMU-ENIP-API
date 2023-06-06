@@ -1,6 +1,8 @@
 package com.smu.smuenip.domain.purchasedItem.service;
 
 import com.smu.smuenip.application.purchasedItem.dto.PurchasedItemResponseDto;
+import com.smu.smuenip.domain.category.entity.Category;
+import com.smu.smuenip.domain.category.service.CategoryService;
 import com.smu.smuenip.domain.purchasedItem.model.PurchasedItem;
 import com.smu.smuenip.domain.purchasedItem.model.PurchasedItemRepository;
 import com.smu.smuenip.domain.receipt.OcrDataDto;
@@ -27,6 +29,7 @@ public class PurchasedItemProcessService {
 
     private final PurchasedItemRepository purchasedItemRepository;
     private final PurchasedItemService purchasedItemService;
+    private final CategoryService categoryService;
     private final UserService userService;
 
     @Transactional
@@ -34,6 +37,8 @@ public class PurchasedItemProcessService {
         Receipt receipt,
         Long userId, LocalDate purchased_date) {
         User user = userService.findUserById(userId);
+        Category category = categoryService.getCategoryByCategoryName(
+            elSearchResponseDto.getCategory());
 
         PurchasedItem purchasedItem = createPurchasedItem(
             receipt,
@@ -43,7 +48,7 @@ public class PurchasedItemProcessService {
             ocrDataDto.getPrice().equals("null") ? 0 : Integer.parseInt(ocrDataDto.getPrice()),
             ocrDataDto.getCount().equals("null") ? 0 : Integer.parseInt(ocrDataDto.getCount()),
             elSearchResponseDto.getTrashAmount(),
-            elSearchResponseDto.getCategory(),
+            category,
             purchased_date);
 
         purchasedItemRepository.save(purchasedItem);
@@ -60,7 +65,7 @@ public class PurchasedItemProcessService {
     }
 
     private PurchasedItem createPurchasedItem(Receipt receipt, String itemName, String imageUrl,
-        User user, int itemPrice, int itemCount, int trashAmount, String category,
+        User user, int itemPrice, int itemCount, int trashAmount, Category category,
         LocalDate purchasedDate) {
 
         return PurchasedItem.builder()
@@ -104,13 +109,13 @@ public class PurchasedItemProcessService {
         return purchasedItemPage.stream()
             .map(purchasedItem -> PurchasedItemResponseDto.builder()
                 .purchasedItemId(purchasedItem.getPurchasedItemId())
-                .purchasedItemExampleImage(purchasedItem.getReceipt().getImageUrl())
+                .categoryImage(purchasedItem.getCategory().getCategoryImage())
+                .category(purchasedItem.getCategory().getCategoryName())
                 .receiptId(purchasedItem.getReceipt().getId())
                 .trashAmount(purchasedItem.getTrashAmount())
                 .expenditureCost(purchasedItem.getItemPrice() + "원")
                 .date(purchasedItem.getReceipt().getPurchasedDate())
                 .isRecycled(purchasedItem.getRecycledImage() != null)
-                .category(purchasedItem.getCategory())
                 .build()
             ).collect(Collectors.toList());
     }

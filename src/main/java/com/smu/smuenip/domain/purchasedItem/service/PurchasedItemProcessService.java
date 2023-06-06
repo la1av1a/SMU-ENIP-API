@@ -114,6 +114,7 @@ public class PurchasedItemProcessService {
                 .category(purchasedItem.getCategory().getCategoryName())
                 .receiptId(purchasedItem.getReceipt().getId())
                 .trashAmount(purchasedItem.getTrashAmount())
+                .name(purchasedItem.getItemName())
                 .receiptImage(purchasedItem.getReceipt().getOriginalImageUrl())
                 .expenditureCost(purchasedItem.getItemPrice() + "원")
                 .date(purchasedItem.getReceipt().getPurchasedDate())

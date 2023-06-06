@@ -3,6 +3,8 @@ package com.smu.smuenip.application.purchasedItem;
 import com.smu.smuenip.application.purchasedItem.dto.PurchasedItemResponseDto;
 import com.smu.smuenip.domain.purchasedItem.service.PurchasedItemService;
 import com.smu.smuenip.infrastructure.config.CustomUserDetails;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -13,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
-import java.util.List;
-
 @RequestMapping("/item")
 @RestController
 @RequiredArgsConstructor
@@ -23,13 +22,22 @@ public class PurchasedItemController implements PurchasedItemControllerSwagger {
 
     private final PurchasedItemService purchasedItemService;
 
+    //이름, "분류"
     @Override
     @GetMapping("/list")
     public List<PurchasedItemResponseDto> getPurchasedItems(
-            @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @PageableDefault Pageable pageable) {
-        return purchasedItemService.getPurchasedItems(date, Long.valueOf(userDetails.getId()),
+        @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+        @RequestParam(value = "isRecycled", required = false) Boolean isRecycled,
+        @AuthenticationPrincipal CustomUserDetails userDetails,
+        @PageableDefault Pageable pageable) {
+
+        if (isRecycled == null) {
+            return purchasedItemService.getAllPurchasedItems(date,
+                Long.valueOf(userDetails.getId()),
                 pageable);
+        }
+
+        return purchasedItemService.getNotRecycledItems(Long.parseLong(userDetails.getId()));
+
     }
 }

@@ -34,4 +34,9 @@ public interface PurchasedItemRepository extends JpaRepository<PurchasedItem, Lo
         + "LEFT JOIN FETCH p.recycledImage r "
         + "WHERE p.user.userId = :userId AND r IS NULL")
     List<PurchasedItem> findNotRecycledItemsByUserUserId(@Param("userId") Long userId);
+
+    @Query("SELECT p FROM PurchasedItem p "
+        + "LEFT JOIN FETCH p.recycledImage r "
+        + "WHERE p.user.userId =:userId AND r IS NOT NULL")
+    List<PurchasedItem> findRecycledItemsByUserUserId(@Param("userId") Long userId);
 }

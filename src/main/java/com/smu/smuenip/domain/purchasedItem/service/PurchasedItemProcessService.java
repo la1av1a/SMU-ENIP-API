@@ -23,9 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PurchasedItemService {
+public class PurchasedItemProcessService {
 
     private final PurchasedItemRepository purchasedItemRepository;
+    private final PurchasedItemService purchasedItemService;
     private final UserService userService;
 
     @Transactional
@@ -48,12 +49,14 @@ public class PurchasedItemService {
         purchasedItemRepository.save(purchasedItem);
     }
 
-    @Transactional(readOnly = true)
-    public List<PurchasedItemResponseDto> getNotRecycledItems(Long userId) {
-        List<PurchasedItem> purchasedItemPage = purchasedItemRepository.findNotRecycledItemsByUserUserId(
-            userId);
+    public List<PurchasedItemResponseDto> getRecycledItemsByIsRecycled(Long userId,
+        Boolean isRecycled) {
 
-        return entityToDto(purchasedItemPage);
+        if (!isRecycled) {
+            return entityToDto(purchasedItemService.getNotRecycledItemsByUserUserId(userId));
+        }
+
+        return entityToDto(purchasedItemService.getRecycledItemsByUserUserId(userId));
     }
 
     private PurchasedItem createPurchasedItem(Receipt receipt, String itemName, String imageUrl,
@@ -101,7 +104,7 @@ public class PurchasedItemService {
         return purchasedItemPage.stream()
             .map(purchasedItem -> PurchasedItemResponseDto.builder()
                 .purchasedItemId(purchasedItem.getPurchasedItemId())
-                .purchasedItemExampleImage(purchasedItem.getImageUrl())
+                .purchasedItemExampleImage(purchasedItem.getReceipt().getImageUrl())
                 .receiptId(purchasedItem.getReceipt().getId())
                 .trashAmount(purchasedItem.getTrashAmount())
                 .expenditureCost(purchasedItem.getItemPrice() + "원")

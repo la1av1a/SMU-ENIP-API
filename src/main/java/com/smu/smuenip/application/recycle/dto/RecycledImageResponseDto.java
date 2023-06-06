@@ -1,8 +1,7 @@
 package com.smu.smuenip.application.recycle.dto;
 
-import lombok.Getter;
-
 import java.time.LocalDate;
+import lombok.Getter;
 
 @Getter
 public class RecycledImageResponseDto {
@@ -14,7 +13,9 @@ public class RecycledImageResponseDto {
     private final boolean isChecked;
     private final boolean isApproved;
 
-    public RecycledImageResponseDto(LocalDate date, Long userId, Long recycledImageId, String image, boolean isChecked, boolean isApproved) {
+    public RecycledImageResponseDto(LocalDate date, Long userId,
+        Long recycledImageId, String image,
+        boolean isChecked, boolean isApproved) {
         this.date = date;
         this.userId = userId;
         this.recycledImageId = recycledImageId;

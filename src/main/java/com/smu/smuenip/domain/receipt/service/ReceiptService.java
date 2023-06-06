@@ -2,7 +2,7 @@ package com.smu.smuenip.domain.receipt.service;
 
 import com.smu.smuenip.application.Receipt.dto.ReceiptSetCommentRequestDto;
 import com.smu.smuenip.application.Receipt.dto.UserReceiptResponseDto;
-import com.smu.smuenip.domain.purchasedItem.service.PurchasedItemService;
+import com.smu.smuenip.domain.purchasedItem.service.PurchasedItemProcessService;
 import com.smu.smuenip.domain.receipt.OcrDataDto;
 import com.smu.smuenip.domain.receipt.model.Receipt;
 import com.smu.smuenip.domain.receipt.model.ReceiptRepository;
@@ -39,7 +39,7 @@ public class ReceiptService {
     private final ReceiptRepository receiptRepository;
     private final UserRepository userRepository;
     private final ClovaOcrApi clovaOCRAPI;
-    private final PurchasedItemService purchasedItemService;
+    private final PurchasedItemProcessService purchasedItemProcessService;
     private final S3Api s3Api;
     private final ElasticSearchService elasticSearchService;
 
@@ -75,7 +75,7 @@ public class ReceiptService {
                     for (int i = 0; i < array.length; i++) {
                         ElSearchResponseDto elSearchResponseDto = (ElSearchResponseDto) array[i];
                         OcrDataDto ocrDataDto = ocrDataDtoList.get(i);
-                        purchasedItemService.savePurchasedItem(ocrDataDto,
+                        purchasedItemProcessService.savePurchasedItem(ocrDataDto,
                             elSearchResponseDto, receipt, userId, purchasedDate);
                     }
                 })

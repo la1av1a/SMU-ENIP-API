@@ -66,8 +66,10 @@ public class RecycledImage {
 
         User user = this.purchasedItem.getUser();
 
+        isChecked = true;
         if (approved) {
             user.incrementScore();
+
             isApproved = true;
             return;
         }

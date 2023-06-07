@@ -7,18 +7,21 @@ import com.smu.smuenip.domain.purchasedItem.service.PurchasedItemProcessService;
 import com.smu.smuenip.domain.recycledImage.entity.RecycledImage;
 import com.smu.smuenip.domain.recycledImage.entity.RecycledImageRepository;
 import com.smu.smuenip.enums.Role;
+import com.smu.smuenip.infrastructure.config.exception.BadRequestException;
 import com.smu.smuenip.infrastructure.config.exception.UnExpectedErrorException;
 import com.smu.smuenip.infrastructure.util.Image.ImageUtils;
 import com.smu.smuenip.infrastructure.util.s3.S3Api;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RecycledImageProcessService {
 
     private final RecycledImageRepository recycledImageRepository;
@@ -28,6 +31,10 @@ public class RecycledImageProcessService {
 
     @Transactional
     public void RecycledImageUpload(RecycledImageUploadRequestDto requestDto) {
+
+        if (recycledImageService.isExistsByItemId(requestDto.getItemId())) {
+            throw new BadRequestException("이미 해당 아이템 대상으로 이미지가 업로드가 되어있습니다.");
+        }
 
         String resizedImageUrl = null;
         String originalImageUrl = null;
@@ -59,6 +66,7 @@ public class RecycledImageProcessService {
         Boolean isRecycled) {
 
         if (role == Role.ROLE_USER) {
+            log.info("호출");
             return recycledImageService.getRecycledImageListForUser(userId, date, isRecycled);
         }
 

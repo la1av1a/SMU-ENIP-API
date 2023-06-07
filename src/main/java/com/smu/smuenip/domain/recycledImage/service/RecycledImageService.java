@@ -2,12 +2,11 @@ package com.smu.smuenip.domain.recycledImage.service;
 
 import com.smu.smuenip.application.recycle.dto.RecycledImageResponseDto;
 import com.smu.smuenip.domain.recycledImage.entity.RecycledImageRepository;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -16,20 +15,24 @@ public class RecycledImageService {
     private final RecycledImageRepository recycledImageRepository;
 
     @Transactional(readOnly = true)
-    public List<RecycledImageResponseDto> getRecycledImageListForUser(Long userId, LocalDate date, Boolean isRecycled) {
+    public List<RecycledImageResponseDto> getRecycledImageListForUser(Long userId, LocalDate date,
+        Boolean isRecycled) {
 
         List<RecycledImageResponseDto> recycledImageList;
         if (date == null) {
             if (isRecycled == null) {
                 recycledImageList = recycledImageRepository.findRecycledResponseDtoByUserId(userId);
             } else {
-                recycledImageList = recycledImageRepository.findRecycledResponseDtoByCheckedAndApprovedAndUserId(userId, isRecycled);
+                recycledImageList = recycledImageRepository.findRecycledResponseDtoByCheckedAndApprovedAndUserId(
+                    userId, isRecycled);
             }
         } else {
             if (isRecycled == null) {
-                recycledImageList = recycledImageRepository.findRecycledResponseDtoByUserIdAndDate(userId, date);
+                recycledImageList = recycledImageRepository.findRecycledResponseDtoByUserIdAndDate(
+                    userId, date);
             } else {
-                recycledImageList = recycledImageRepository.findRecycledResponseDtoByUserIdAndDateAndIsRecycled(userId, date, isRecycled);
+                recycledImageList = recycledImageRepository.findRecycledResponseDtoByUserIdAndDateAndIsRecycled(
+                    userId, date, isRecycled);
             }
         }
 
@@ -37,20 +40,28 @@ public class RecycledImageService {
     }
 
     @Transactional(readOnly = true)
-    public List<RecycledImageResponseDto> getRecycledImageListForAdmin(LocalDate date, Boolean isRecycled) {
+    public boolean isExistsByItemId(Long itemId) {
+        return recycledImageRepository.existsRecycledImageByPurchasedItemPurchasedItemId(itemId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<RecycledImageResponseDto> getRecycledImageListForAdmin(LocalDate date,
+        Boolean isRecycled) {
 
         List<RecycledImageResponseDto> recycledImageList;
         if (date == null) {
             if (isRecycled == null) {
                 recycledImageList = recycledImageRepository.findAllRecycledImages();
             } else {
-                recycledImageList = recycledImageRepository.findRecycledImagesByCheckedAndApproved(isRecycled);
+                recycledImageList = recycledImageRepository.findRecycledImagesByCheckedAndApproved(
+                    isRecycled);
             }
         } else {
             if (isRecycled == null) {
                 recycledImageList = recycledImageRepository.findRecycledImagesByDate(date);
             } else {
-                recycledImageList = recycledImageRepository.findRecycledImagesByDateAndIsRecycled(date, isRecycled);
+                recycledImageList = recycledImageRepository.findRecycledImagesByDateAndIsRecycled(
+                    date, isRecycled);
             }
         }
 

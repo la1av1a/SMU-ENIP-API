@@ -25,7 +25,7 @@ public interface RecycledImageRepository extends JpaRepository<RecycledImage, Lo
             "FROM RecycledImage r " +
             "JOIN r.purchasedItem p " +
             "JOIN p.user u " +
-            "WHERE u.userId = :userId AND r.isChecked = false AND r.isApproved = :isApproved")
+            "WHERE u.userId = :userId AND r.isChecked = true AND r.isApproved = :isApproved")
     List<RecycledImageResponseDto> findRecycledResponseDtoByCheckedAndApprovedAndUserId(Long userId,
         boolean isApproved);
 

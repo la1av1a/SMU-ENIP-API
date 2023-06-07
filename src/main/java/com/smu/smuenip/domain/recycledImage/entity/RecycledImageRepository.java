@@ -12,10 +12,12 @@ public interface RecycledImageRepository extends JpaRepository<RecycledImage, Lo
         "SELECT new com.smu.smuenip.application.recycle.dto.RecycledImageResponseDto(p.purchasedDate, u.userId, r.id, r.recycledImageUrl, r.isChecked, r.isApproved) "
             +
             "FROM RecycledImage r " +
-            "JOIN r.purchasedItem p " +
-            "JOIN p.user u " +
-            "WHERE u.userId = :userId")
+            "LEFT JOIN r.purchasedItem p " +
+            "LEFT JOIN p.user u "
+            + "WHERE r.purchasedItem.user.userId = :userId")
     List<RecycledImageResponseDto> findRecycledResponseDtoByUserId(Long userId);
+
+    boolean existsRecycledImageByPurchasedItemPurchasedItemId(Long itemId);
 
     @Query(value =
         "SELECT new com.smu.smuenip.application.recycle.dto.RecycledImageResponseDto(p.purchasedDate, u.userId, r.id, r.recycledImageUrl, r.isChecked, r.isApproved) "
@@ -23,7 +25,7 @@ public interface RecycledImageRepository extends JpaRepository<RecycledImage, Lo
             "FROM RecycledImage r " +
             "JOIN r.purchasedItem p " +
             "JOIN p.user u " +
-            "WHERE u.userId = :userId AND r.isChecked = true AND r.isApproved = :isApproved")
+            "WHERE u.userId = :userId AND r.isChecked = false AND r.isApproved = :isApproved")
     List<RecycledImageResponseDto> findRecycledResponseDtoByCheckedAndApprovedAndUserId(Long userId,
         boolean isApproved);
 

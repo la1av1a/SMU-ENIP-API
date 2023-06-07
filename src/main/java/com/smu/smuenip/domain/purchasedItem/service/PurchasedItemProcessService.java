@@ -107,7 +107,8 @@ public class PurchasedItemProcessService {
             .filter(purchasedItem -> purchasedItem.getReceipt() != null)
             .map(purchasedItem -> PurchasedItemResponseDto.builder()
                 .purchasedItemId(purchasedItem.getPurchasedItemId())
-                .categoryImage(purchasedItem.getCategory().getCategoryImage())
+                .categoryImage(purchasedItem.getCategory().getCategoryImage() == null ? null
+                    : purchasedItem.getCategory().getCategoryImage())
                 .category(purchasedItem.getCategory().getCategoryName())
                 .receiptId(purchasedItem.getReceipt().getId())
                 .trashAmount(purchasedItem.getTrashAmount())

@@ -21,6 +21,7 @@ public class ApproveProcessService {
     private final RecycledImageProcessService recycledImageProcessService;
     private final UserService userService;
 
+    @Transactional
     public void processRecycledImage(Long purchasedItemId, Long adminId, boolean isApproved) {
 
         if (approveService.existsByRecycledImageId(purchasedItemId)) {
@@ -30,6 +31,7 @@ public class ApproveProcessService {
         RecycledImage recycledImage = recycledImageProcessService.findRecycledById(purchasedItemId);
         User admin = userService.findUserById(adminId);
 
+        recycledImage.setApproved(isApproved);
         Approve approve = approveService.createApprove(recycledImage, admin, isApproved);
         approveService.saveApprove(approve);
     }

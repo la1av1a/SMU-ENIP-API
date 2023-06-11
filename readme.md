@@ -1,38 +1,30 @@
 Swagger API : Https://www.smu-enip.site/
 
-## Architecture
+<div align=center>
+
+<div><h1>📚 Introduce</h1>
+ 본 프로젝트는 영수증 업로드 기반으로 상품명을 추출하여 사전에 입력해둔 데이터를 찾아 분리수거 방법을 제시하는 <b>앱 서비스</b> 입니다<p>
+</div>
+
+<div><h1>📚 Architecture</h1></div>
+
 ![image](https://github.com/la1av1a/SMU-RecycleTrack-API/assets/81461486/beff7c08-3dfe-4d79-b193-2403dff79c86)
 
+<p>
 
-- [x] CI CD
-    - [x] GithubActions를 이용한 CI 환경 구축
-    - [x] GithubActions, dockerhub를 이용한 CD 환경 구축
+<div><h1>📚 STACKS</h1>
+<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white">
+  <img src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+    <img src="https://img.shields.io/badge/JPA-092E20?style=for-the-badge&logo=&logoColor=white"> 
+  <img src="https://img.shields.io/badge/mysql-3776AB?style=for-the-badge&logo=&logoColor=white">
+</div>
 
-- [x] Swagger
-    - [x] Swaager를 통한 API문서 자동 완성 환경 구축
-
-- [x] db
-    - [x] Master-slave 시스템 환경 구축
-
-- [x] SpringSecurity
-    - [x] SpringSecurity를 이용한 인증 인가 환경 구축
-
-- [x] 회원가입
-    - [x] loginId,password,email로 회원가입
-    - [x] 유저 정보 저장
-
-- [x] 로그인
-    - [x] KAKAO를 통한 Oauth 로그인
-    - [x] loginId,password를 입력받아 로그인
-    - [x] RDB와 비교하여 아이디 비밀번호 검증
-    - [x] 토큰 생성
-    - [x] Redis에 로그인된 유저 정보 저장
-
-- [x] 영수증 업로드
-    - [x] CLOVA API활용, 구매 목록 추출
-    - [x] 유저가 업로드한 사진 S3에 업로드 후 url 취득
-    - [x] 추출한 데이터와 사진URL 테이블에 저장
-
-- [ ] 랭킹
-    - [x] 유저 랭킹 API
-
+<div>
+    <div>
+  <img src="https://img.shields.io/badge/ec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white">
+  <img src="https://img.shields.io/badge/opensearch-005EB8?style=for-the-badge&logo=OpenSearch&logoColor=white">
+  <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white">
+  <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
+</div>
+</div>
+</div>

@@ -76,5 +76,14 @@ public class RecycledImage {
 
         user.decrementScore();
         isApproved = false;
+        setApprovedByNull();
+    }
+
+    public void setApprovedBy(User user) {
+        this.approvedBy = user;
+    }
+
+    public void setApprovedByNull() {
+        this.approvedBy = null;
     }
 }

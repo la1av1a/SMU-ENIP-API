@@ -31,6 +31,7 @@ public class ApproveProcessService {
         RecycledImage recycledImage = recycledImageProcessService.findRecycledById(purchasedItemId);
         User admin = userService.findUserById(adminId);
 
+        recycledImage.setApprovedBy(admin);
         recycledImage.setApproved(isApproved);
         Approve approve = approveService.createApprove(recycledImage, admin, isApproved);
         approveService.saveApprove(approve);

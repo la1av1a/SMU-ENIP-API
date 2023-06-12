@@ -38,6 +38,11 @@ public class PurchasedItemProcessService {
         Category category = categoryService.getCategoryByCategoryName(
             elSearchResponseDto.getCategory());
 
+        if (category == null) {
+            log.info("유효한 상품이 아님");
+            return;
+        }
+
         PurchasedItem purchasedItem = createPurchasedItem(
             receipt,
             ocrDataDto.getName(),

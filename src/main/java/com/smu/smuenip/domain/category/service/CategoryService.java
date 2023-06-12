@@ -14,6 +14,7 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public Category getCategoryByCategoryName(String categoryName) {
-        return categoryRepository.findCategoryByCategoryName(categoryName).orElse(null);
+        return categoryRepository.findCategoryByCategoryName(categoryName)
+            .orElse(null);
     }
 }

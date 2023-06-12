@@ -65,8 +65,7 @@ public class ReceiptService {
 
             List<Mono<ElSearchResponseDto>> monos = ocrDataDtoList.parallelStream()
                 .filter(ocrDataDto -> ocrDataDto != null && ocrDataDto.getName() != null)
-                .map(ocrDataDto -> elasticSearchService.searchProductWeight(
-                    removeClosingPattern(ocrDataDto.getName())))
+                .map(ocrDataDto -> elasticSearchService.searchProductWeight(ocrDataDto.getName()))
                 .collect(Collectors.toList());
 
             Mono.zip(monos, array -> array)
@@ -83,11 +82,6 @@ public class ReceiptService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-
-    private String removeClosingPattern(String originalStr) {
-        return originalStr.replaceAll(".*\\)", "");
     }
 
 

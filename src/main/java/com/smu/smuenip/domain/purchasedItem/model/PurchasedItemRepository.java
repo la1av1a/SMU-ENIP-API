@@ -16,7 +16,7 @@ public interface PurchasedItemRepository extends JpaRepository<PurchasedItem, Lo
         + "AND r.user.userId = :userId",
         countQuery = "SELECT COUNT(p) "
             + "FROM PurchasedItem p "
-            + "JOIN p.receipt r "
+            + "JOIN FETCH p.receipt r "
             + "WHERE YEAR(r.purchasedDate) = :year "
             + "AND MONTH(r.purchasedDate) = :month "
             + "AND DAY(r.purchasedDate) = :day "

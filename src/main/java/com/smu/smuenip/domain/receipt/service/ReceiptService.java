@@ -16,7 +16,7 @@ import com.smu.smuenip.infrastructure.util.ElasticSearchService;
 import com.smu.smuenip.infrastructure.util.Image.ImageUtils;
 import com.smu.smuenip.infrastructure.util.elasticSearch.ElSearchResponseDto;
 import com.smu.smuenip.infrastructure.util.naver.ocr.ClovaOcrApi;
-import com.smu.smuenip.infrastructure.util.naver.ocr.dto.OcrRequestDto;
+import com.smu.smuenip.infrastructure.util.naver.ocr.OcrRequestDto;
 import com.smu.smuenip.infrastructure.util.naver.ocr.dto.OcrResponseDto;
 import java.time.LocalDate;
 import java.util.List;

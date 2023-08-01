@@ -2,11 +2,11 @@ package com.smu.smuenip.infrastructure.util.naver.ocr;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smu.smuenip.infrastructure.config.exception.UnExpectedErrorException;
-import com.smu.smuenip.infrastructure.util.naver.ocr.dto.OcrRequestDto;
 import com.smu.smuenip.infrastructure.util.naver.ocr.dto.OcrResponseDto;
 import java.io.IOException;
 import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
@@ -17,6 +17,7 @@ import org.springframework.util.FileCopyUtils;
  */
 @Service
 @RequiredArgsConstructor
+@Primary
 public class ClovaOcrApiMockImpl implements ClovaOcrApi {
 
     private final ObjectMapper objectMapper;

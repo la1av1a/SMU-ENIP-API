@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +31,7 @@ public class ElasticSearchService {
     private String authorization;
     private MultiValueMap<String, String> header;
 
-    public Mono<ElSearchResponseDto> searchProductWeight(String name) {
+    public ElSearchResponseDto searchProductWeight(String name) {
 
         ElSearchRequestDto requestDto = new ElSearchRequestDto();
 
@@ -69,7 +68,7 @@ public class ElasticSearchService {
             .headers(httpHeaders -> httpHeaders.addAll(header))
             .bodyValue(json)
             .retrieve()
-            .bodyToMono(ElSearchResponseDto.class);
+            .bodyToMono(ElSearchResponseDto.class).block();
     }
 
     @PostConstruct

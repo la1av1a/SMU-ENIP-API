@@ -1,11 +1,12 @@
 package com.smu.smuenip.domain.receipt.service;
 
-import com.smu.smuenip.application.Receipt.dto.ReceiptSetCommentRequestDto;
-import com.smu.smuenip.application.Receipt.dto.UserReceiptResponseDto;
+import com.smu.smuenip.application.receipt.dto.ReceiptSetCommentRequestDto;
+import com.smu.smuenip.application.receipt.dto.UserReceiptResponseDto;
 import com.smu.smuenip.domain.purchasedItem.service.PurchasedItemProcessService;
 import com.smu.smuenip.domain.receipt.OcrDataDto;
 import com.smu.smuenip.domain.receipt.model.Receipt;
 import com.smu.smuenip.domain.receipt.model.ReceiptRepository;
+import com.smu.smuenip.domain.upload.ImageUploadService;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.repository.UserRepository;
 import com.smu.smuenip.enums.message.meesagesDetail.MessagesFail;
@@ -15,72 +16,62 @@ import com.smu.smuenip.infrastructure.util.ElasticSearchService;
 import com.smu.smuenip.infrastructure.util.Image.ImageUtils;
 import com.smu.smuenip.infrastructure.util.elasticSearch.ElSearchResponseDto;
 import com.smu.smuenip.infrastructure.util.naver.ocr.ClovaOcrApi;
-import com.smu.smuenip.infrastructure.util.naver.ocr.OcrRequestDto;
+import com.smu.smuenip.infrastructure.util.naver.ocr.dto.OcrRequestDto;
 import com.smu.smuenip.infrastructure.util.naver.ocr.dto.OcrResponseDto;
-import com.smu.smuenip.infrastructure.util.s3.S3Api;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ReceiptService {
 
     private final ReceiptRepository receiptRepository;
     private final UserRepository userRepository;
-    private final ClovaOcrApi clovaOCRAPI;
-    private final PurchasedItemProcessService purchasedItemProcessService;
-    private final S3Api s3Api;
+    @Qualifier("clovaOcrApiMockImpl")
+    private final ClovaOcrApi clovaOcrApi;
+    private final ImageUploadService imageUploadService;
     private final ElasticSearchService elasticSearchService;
+    private final PurchasedItemProcessService purchasedItemProcessService;
+    private final String DIR_NAME = "receipt";
 
     public void uploadReceipt(String encodedImage, LocalDate purchasedDate, Long userId) {
         try {
             MultipartFile image = ImageUtils.base64ToMultipartFile(encodedImage);
+            String originalUrl = imageUploadService.uploadImages(encodedImage, DIR_NAME);
 
-            String originalImageUrl = s3Api.uploadImageToS3(image,
-                image.getOriginalFilename() + "-origin");
-
-            MultipartFile resizedImage = ImageUtils.resizeImage(image);
-            String url = s3Api.uploadImageToS3(resizedImage, image.getOriginalFilename());
-
-            Receipt receipt = saveReceipt(url, originalImageUrl, userId, purchasedDate);
-
-            Mono<OcrResponseDto> ocrMono = clovaOCRAPI.callNaverOcr(
+            Receipt receipt = saveReceipt(null,
+                originalUrl, userId, purchasedDate);
+            OcrResponseDto ocrResponseDto = clovaOcrApi.callNaverOcr(
                 new OcrRequestDto.Images(image.getContentType(),
                     encodedImage.split(",", 2)[1], image.getOriginalFilename()));
 
-            OcrResponseDto ocrResponseDto = ocrMono.block();
-            assert ocrResponseDto != null;
             List<OcrDataDto> ocrDataDtoList = extractOcrData(ocrResponseDto);
-
-            List<Mono<ElSearchResponseDto>> monos = ocrDataDtoList.parallelStream()
+            List<ElSearchResponseDto> elSearchResponseDtoList = ocrDataDtoList.stream()
                 .filter(ocrDataDto -> ocrDataDto != null && ocrDataDto.getName() != null)
                 .map(ocrDataDto -> elasticSearchService.searchProductWeight(ocrDataDto.getName()))
                 .collect(Collectors.toList());
 
-            Mono.zip(monos, array -> array)
-                .publishOn(Schedulers.boundedElastic())
-                .doOnSuccess(array -> {
-                    for (int i = 0; i < array.length; i++) {
-                        ElSearchResponseDto elSearchResponseDto = (ElSearchResponseDto) array[i];
-                        OcrDataDto ocrDataDto = ocrDataDtoList.get(i);
-                        purchasedItemProcessService.savePurchasedItem(ocrDataDto,
-                            elSearchResponseDto, receipt, userId, purchasedDate);
-                    }
-                })
-                .subscribe();
+            elSearchResponseDtoList
+                .forEach(elSearchResponseDto -> {
+                    int index = elSearchResponseDtoList.indexOf(elSearchResponseDto);
+                    purchasedItemProcessService.savePurchasedItem(ocrDataDtoList.get(index),
+                        elSearchResponseDto, receipt,
+                        userId, purchasedDate);
+                });
+
         } catch (Exception e) {
             e.printStackTrace();
+            throw new UnExpectedErrorException(MessagesFail.UNEXPECTED_ERROR.getMessage());
         }
     }
 

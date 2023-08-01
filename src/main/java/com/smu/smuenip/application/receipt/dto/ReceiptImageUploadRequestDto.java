@@ -1,12 +1,11 @@
-package com.smu.smuenip.application.Receipt.dto;
+package com.smu.smuenip.application.receipt.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.io.Serializable;
+import javax.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.validation.constraints.NotEmpty;
-import java.io.Serializable;
 
 @Getter
 @Setter

@@ -1,9 +1,9 @@
-package com.smu.smuenip.application.Receipt;
+package com.smu.smuenip.application.receipt;
 
-import com.smu.smuenip.application.Receipt.dto.ReceiptImageUploadRequestDto;
-import com.smu.smuenip.application.Receipt.dto.ReceiptSetCommentRequestDto;
-import com.smu.smuenip.application.Receipt.dto.UserReceiptResponseDto;
 import com.smu.smuenip.application.login.dto.ResponseDto;
+import com.smu.smuenip.application.receipt.dto.ReceiptImageUploadRequestDto;
+import com.smu.smuenip.application.receipt.dto.ReceiptSetCommentRequestDto;
+import com.smu.smuenip.application.receipt.dto.UserReceiptResponseDto;
 import com.smu.smuenip.domain.receipt.service.ReceiptService;
 import com.smu.smuenip.enums.message.meesagesDetail.MessagesSuccess;
 import com.smu.smuenip.infrastructure.config.CustomUserDetails;

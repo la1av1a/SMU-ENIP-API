@@ -1,7 +1,7 @@
 package com.smu.smuenip.infrastructure.util.naver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smu.smuenip.infrastructure.util.naver.ocr.ClovaOcrApi;
+import com.smu.smuenip.infrastructure.util.naver.ocr.ClovaOcrApiRealImpl;
 import com.smu.smuenip.infrastructure.util.naver.ocr.dto.OcrResponseDto;
 import com.smu.smuenip.infrastructure.util.naver.ocr.dto.OcrResponseDto.Image;
 import org.assertj.core.api.Assertions;
@@ -21,15 +21,15 @@ import java.util.stream.Collectors;
 
 @MockBean(JpaMetamodelMappingContext.class)
 @ExtendWith(SpringExtension.class)
-@WebFluxTest(ClovaOcrApi.class)
-class ClovaOcrApiTest {
+@WebFluxTest(ClovaOcrApiRealImpl.class)
+class ClovaOcrApiRealImplTest {
 
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @MockBean
-    private ClovaOcrApi clovaOCRAPI;
+    private ClovaOcrApiRealImpl clovaOCRAPIRealImpl;
 
     @Test
     void test() {

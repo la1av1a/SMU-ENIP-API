@@ -1,8 +1,7 @@
-package com.smu.smuenip.application.Receipt.dto;
-
-import lombok.Getter;
+package com.smu.smuenip.application.receipt.dto;
 
 import javax.validation.constraints.NotEmpty;
+import lombok.Getter;
 
 @Getter
 public class ReceiptSetCommentRequestDto {

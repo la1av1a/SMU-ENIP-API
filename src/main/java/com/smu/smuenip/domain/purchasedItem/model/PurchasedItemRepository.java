@@ -26,6 +26,9 @@ public interface PurchasedItemRepository extends JpaRepository<PurchasedItem, Lo
         @Param("month") int month, @Param("day") int day, @Param("userId") Long userId);
 
     @Query("SELECT p FROM PurchasedItem p "
+        + "LEFT JOIN FETCH p.recycledImage r "
+        + "LEFT JOIN FETCH p.receipt re "
+        + "LEFT JOIN FETCH p.category c "
         + "WHERE p.user.userId = :userId")
     List<PurchasedItem> findPurchasedItemByUserUserId(Long userId);
 

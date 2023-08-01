@@ -42,7 +42,7 @@ public class PurchasedItem {
     private String imageUrl;
 
     @JoinColumn(name = "category")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
     @Column

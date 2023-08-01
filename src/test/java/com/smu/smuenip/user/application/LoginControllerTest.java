@@ -2,6 +2,7 @@ package com.smu.smuenip.user.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smu.smuenip.S3MockConfig;
 import com.smu.smuenip.application.login.dto.LoginRequestDto;
 import com.smu.smuenip.domain.user.model.User;
 import com.smu.smuenip.domain.user.model.UserAuth;
@@ -36,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@Import(BCryptPasswordEncoderConfig.class)
+@Import({BCryptPasswordEncoderConfig.class, S3MockConfig.class})
 @TestInstance(Lifecycle.PER_CLASS)
 @Transactional
 class LoginControllerTest {

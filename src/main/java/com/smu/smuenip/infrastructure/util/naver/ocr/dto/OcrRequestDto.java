@@ -1,4 +1,4 @@
-package com.smu.smuenip.infrastructure.util.naver.ocr;
+package com.smu.smuenip.infrastructure.util.naver.ocr.dto;
 
 import lombok.Builder;
 import lombok.Getter;

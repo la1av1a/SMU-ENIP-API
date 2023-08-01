@@ -6,11 +6,11 @@ import com.smu.smuenip.domain.purchasedItem.model.PurchasedItem;
 import com.smu.smuenip.domain.purchasedItem.service.PurchasedItemProcessService;
 import com.smu.smuenip.domain.recycledImage.entity.RecycledImage;
 import com.smu.smuenip.domain.recycledImage.entity.RecycledImageRepository;
+import com.smu.smuenip.domain.upload.ImageUploadService;
 import com.smu.smuenip.enums.Role;
 import com.smu.smuenip.infrastructure.config.exception.BadRequestException;
 import com.smu.smuenip.infrastructure.config.exception.UnExpectedErrorException;
 import com.smu.smuenip.infrastructure.util.Image.ImageUtils;
-import com.smu.smuenip.infrastructure.util.s3.S3Api;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,9 @@ public class RecycledImageProcessService {
 
     private final RecycledImageRepository recycledImageRepository;
     private final PurchasedItemProcessService purchasedItemProcessService;
-    private final S3Api s3Api;
     private final RecycledImageService recycledImageService;
+    private final ImageUploadService imageUploadService;
+    private final String DIR_NAME = "recycled";
 
     @Transactional
     public void RecycledImageUpload(RecycledImageUploadRequestDto requestDto) {
@@ -43,10 +44,7 @@ public class RecycledImageProcessService {
             MultipartFile imageMultiPartFile = ImageUtils.base64ToMultipartFile(
                 requestDto.getImage());
             MultipartFile resizedImage = ImageUtils.resizeImage(imageMultiPartFile);
-            resizedImageUrl = s3Api.uploadImageToS3(resizedImage,
-                imageMultiPartFile.getOriginalFilename());
-            originalImageUrl = s3Api.uploadImageToS3(imageMultiPartFile,
-                imageMultiPartFile.getOriginalFilename() + "-origin");
+            imageUploadService.uploadImages(requestDto.getImage(), DIR_NAME);
 
             PurchasedItem purchasedItem = purchasedItemProcessService.findPurchasedItemById(
                 requestDto.getItemId());
@@ -55,8 +53,8 @@ public class RecycledImageProcessService {
                 purchasedItem);
             recycledImageRepository.save(recycledImage);
         } catch (Exception e) {
-            s3Api.deleteImageFromS3(resizedImageUrl);
-            s3Api.deleteImageFromS3(originalImageUrl);
+//            s3Api.deleteImageFromS3(resizedImageUrl);
+//            s3Api.deleteImageFromS3(originalImageUrl);
             throw new UnExpectedErrorException((e.getMessage()));
         }
     }

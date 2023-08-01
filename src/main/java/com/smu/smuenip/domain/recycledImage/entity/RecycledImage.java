@@ -5,6 +5,7 @@ import com.smu.smuenip.domain.user.model.User;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,7 +27,7 @@ public class RecycledImage {
     private Long id;
 
     @JoinColumn(name = "purchased_item_id")
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private PurchasedItem purchasedItem;
 
     @Column
@@ -44,7 +45,7 @@ public class RecycledImage {
     @Column
     private boolean isApproved;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approved_by", referencedColumnName = "user_id")
     private User approvedBy;
 

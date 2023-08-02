@@ -8,7 +8,7 @@ Swagger API : Https://www.smu-enip.site/
 
 <div><h1>📚 Architecture</h1></div>
 
-![image](https://github.com/la1av1a/SMU-RecycleTrack-API/assets/81461486/beff7c08-3dfe-4d79-b193-2403dff79c86)
+![image](https://github.com/la1av1a/SMU-RecycleTrack-API/assets/81461486/03ed3286-9a84-4bda-b670-b8fd62bf2dc5)
 
 <p>
 

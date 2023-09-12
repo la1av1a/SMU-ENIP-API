@@ -1,4 +1,4 @@
-Swagger API : Https://www.smu-enip.site/
+
 
 <div align=center>
 
